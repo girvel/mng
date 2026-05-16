@@ -1,4 +1,7 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <string.h>
 #define MNG_IMPLEMENTATION
 #include "mng.h"
 
@@ -9,6 +12,7 @@
 int
 main()
 {
-    printf("Hello, world!\n");
+    printf("zsh: %d\n", mng_is_installed("zsh"));
+    printf("fish: %d\n", mng_is_installed("fish"));
     return 0;
 }
