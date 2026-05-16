@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
+
 #define MNG_IMPLEMENTATION
 #include "mng.h"
 
@@ -12,7 +13,6 @@
 int
 main()
 {
-    printf("zsh: %d\n", mng_is_installed("zsh"));
-    printf("fish: %d\n", mng_is_installed("fish"));
+    mng_ensure_installed("fish-shell");
     return 0;
 }

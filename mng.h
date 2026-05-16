@@ -9,6 +9,10 @@
 // Checks if the package is installed (as a dependency or manually)
 bool mng_is_installed(const char *package) __attribute__((warn_unused_result));
 
+// Installs the package if not installed yet
+void
+mng_ensure_installed(const char *package)
+
 #endif // MNG_H
 
 //--------------------------------------------------------------------------------------------------
@@ -33,7 +37,7 @@ mng_is_installed(const char *package)
         exit(1);
     }
 
-    bool result;
+    bool result = false;
     if (fgets(buf, sizeof(buf), fp) != NULL) {
         const char *state = "installed";
         if (strncmp(state, buf, sizeof(state) - 1) == 0) {
@@ -48,6 +52,21 @@ end:
         perror("pclose failed");
     }
     return result;
+}
+
+void
+mng_ensure_installed(const char *package)
+{
+    if (mng_is_installed(package)) return;
+    printf("install %s\n", package);
+
+    char buf[256];
+    if (snprintf(buf, sizeof(buf), "xbps-install -S %s", package) >= (int)sizeof(buf)) {
+        exit(1);
+    }
+
+    int status = system(buf);
+    printf("Status: %d\n", status);
 }
 
 #endif
