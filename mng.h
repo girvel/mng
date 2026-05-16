@@ -10,8 +10,7 @@
 bool mng_is_installed(const char *package) __attribute__((warn_unused_result));
 
 // Installs the package if not installed yet
-void
-mng_ensure_installed(const char *package)
+void mng_ensure_installed(const char *package);
 
 #endif // MNG_H
 
