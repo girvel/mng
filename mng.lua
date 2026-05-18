@@ -72,4 +72,22 @@ mng.chsh = function(user, path)
   end
 end
 
+mng.mkdir = function(path)
+  os.execute("mkdir -p "..path)
+end
+
+mng.file_set = function(path, content)
+  local f = assert(io.open(path, "w"))
+  f:write(content)
+  f:close()
+end
+
+--- @return string
+mng.file_get = function(path, content)
+  local f = assert(io.open(path, "r"))
+  local result = f:read("*a")
+  f:close()
+  return result
+end
+
 return mng

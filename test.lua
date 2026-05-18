@@ -7,3 +7,5 @@ end
 
 mng.ensure_installed("zsh", "git")
 mng.chsh("girvel", "/usr/bin/zsh")
+mng.mkdir("/home/girvel/workshop")
+mng.file_set("/home/girvel/.zshrc", mng.file_get("./.zshrc"))
