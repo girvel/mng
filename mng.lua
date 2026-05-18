@@ -25,4 +25,8 @@ mng.ensure_installed = function(pkg)
   end
 end
 
+mng.chsh = function(pkg)
+  
+end
+
 return mng
