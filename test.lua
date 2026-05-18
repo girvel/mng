@@ -1,4 +1,9 @@
 local mng = require("mng")
 
-mng.ensure_installed("fish-shell")
-os.execute("su girvel -c 'chsh -s /usr/bin/fish'")
+if os.getenv("USER") ~= "root" then
+  io.stderr:write("Expected $USER to be root; please run with sudo.\n")
+  os.exit(1)
+end
+
+mng.ensure_installed("zsh")
+mng.chsh("girvel", "/usr/bin/zsh")
