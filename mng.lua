@@ -22,12 +22,23 @@ string.split = function(str, pat, plain)
   end
 end
 
---- @param cmd string
+--- @type string?
+local user = nil
+
+local cmd_fmt = function(fmt, ...)
+  if select("#", ...) > 0 then fmt = fmt:format(...) end
+  if user ~= nil then
+    fmt = string.format("su %s -c '%s'", user, fmt:gsub("'", "\\'"))
+  end
+  return fmt
+end
+
+--- @param command string
 --- @return string
---- @return integer
-local cmd_read = function(cmd, ...)
-  if select("#", ...) > 0 then cmd = cmd:format(...) end
-  local f = assert(io.popen(cmd, "r"))
+--- @return integer?
+local cmd_read = function(command, ...)
+  command = cmd_fmt(command, ...)
+  local f = assert(io.popen(command, "r"))
   local result = f:read("*a")
   local _, _, code = f:close()
   if result:sub(-1, -1) == "\n" then
@@ -36,20 +47,25 @@ local cmd_read = function(cmd, ...)
   return result, code
 end
 
+local cmd = function(command, ...)
+  command = cmd_fmt(command, ...)
+  os.execute(command)
+end
+
 local is_installed = function(pkg)
   return cmd_read("xbps-query %s -p state,automatic-install", pkg) == "installed"
 end
 
 local install = function(pkg)
-  os.execute("xbps-install -yS "..pkg)
+  cmd("xbps-install -yS "..pkg)
 end
 
-local get_shell = function(user)
-  return cmd_read("getent passwd %s", user):split(":")[7]
+local get_shell = function(this_user)
+  return cmd_read("getent passwd %s", this_user):split(":")[7]
 end
 
-local change_shell = function(user, path)
-  os.execute("sudo -u "..user.." chsh -s "..path)
+local change_shell = function(this_user, path)
+  cmd("sudo -u "..this_user.." chsh -s "..path)
 end
 
 ----------------------------------------------------------------------------------------------------
@@ -67,17 +83,34 @@ mng.ensure_installed = function(...)
   end
 end
 
-mng.chsh = function(user, path)
-  if get_shell(user) ~= path then
-    change_shell(user, path)
+mng.cmd = function(command, ...)
+  return cmd(command, ...)
+end
+
+mng.cmd_read = function(command, ...)
+  return cmd_read(command, ...)
+end
+
+mng.as_user = function(new_user, f)
+  local prev = user
+  user = new_user
+  f()
+  user = prev
+end
+
+mng.chsh = function(path)
+  local current_user = os.getenv("USER")
+  if get_shell(current_user) ~= path then
+    change_shell(current_user, path)
   end
 end
 
 mng.mkdir = function(path)
-  os.execute("mkdir -p "..path)
+  cmd("mkdir -p "..path)
 end
 
 mng.directory_exists = function(path)
+  path = cmd_read("echo %s", path)
   if path:sub(-1) ~= "/" then
     path = path.."/"
   end
@@ -88,6 +121,7 @@ mng.directory_exists = function(path)
 end
 
 mng.file_set = function(path, content)
+  cmd("touch %s", path)
   local f = assert(io.open(path, "w"))
   f:write(content)
   f:close()
@@ -105,15 +139,15 @@ mng.git_clone = function(repo_path, destination)
   if not mng.directory_exists(destination)
     or not mng.directory_exists(destination.."/.git")
   then
-    os.execute("git clone "..repo_path.." "..destination.." --recurse-submodules")
+    cmd("git clone "..repo_path.." "..destination.." --recurse-submodules")
   else
-    os.execute("cd "..destination.."; git pull")
-    os.execute("cd "..destination.."; git submodule update --init --recursive")
+    cmd("cd "..destination.."; git pull")
+    cmd("cd "..destination.."; git submodule update --init --recursive")
   end
 end
 
-mng.stow = function(user, source, target)
-  os.execute("sudo -u "..user.." stow -d "..source.." -t "..target.." .")
+mng.stow = function(source, target)
+  cmd("stow -d "..source.." -t "..target.." .")
 end
 
 return mng
