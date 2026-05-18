@@ -57,9 +57,12 @@ end
 
 local mng = {}
 
-mng.ensure_installed = function(pkg)
-  if not is_installed(pkg) then
-    install(pkg)
+mng.ensure_installed = function(...)
+  for i = 1, select("#", ...) do
+    local pkg = select(i, ...)
+    if not is_installed(pkg) then
+      install(pkg)
+    end
   end
 end
 

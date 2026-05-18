@@ -5,5 +5,5 @@ if os.getenv("USER") ~= "root" then
   os.exit(1)
 end
 
-mng.ensure_installed("zsh")
+mng.ensure_installed("zsh", "git")
 mng.chsh("girvel", "/usr/bin/zsh")
