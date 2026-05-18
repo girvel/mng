@@ -24,15 +24,16 @@ end
 
 --- @param cmd string
 --- @return string
+--- @return integer
 local cmd_read = function(cmd, ...)
   if select("#", ...) > 0 then cmd = cmd:format(...) end
   local f = assert(io.popen(cmd, "r"))
   local result = f:read("*a")
-  f:close()
+  local _, _, code = f:close()
   if result:sub(-1, -1) == "\n" then
-    return result:sub(1, -2)
+    result = result:sub(1, -2)
   end
-  return result
+  return result, code
 end
 
 local is_installed = function(pkg)
@@ -76,6 +77,16 @@ mng.mkdir = function(path)
   os.execute("mkdir -p "..path)
 end
 
+mng.directory_exists = function(path)
+  if path:sub(-1) ~= "/" then
+    path = path.."/"
+  end
+  local f = io.open(path, "r")
+  if not f then return false end
+  f:close()
+  return true
+end
+
 mng.file_set = function(path, content)
   local f = assert(io.open(path, "w"))
   f:write(content)
@@ -88,6 +99,21 @@ mng.file_get = function(path, content)
   local result = f:read("*a")
   f:close()
   return result
+end
+
+mng.git_clone = function(repo_path, destination)
+  if not mng.directory_exists(destination)
+    or not mng.directory_exists(destination.."/.git")
+  then
+    os.execute("git clone "..repo_path.." "..destination.." --recurse-submodules")
+  else
+    os.execute("cd "..destination.."; git pull")
+    os.execute("cd "..destination.."; git submodule update --init --recursive")
+  end
+end
+
+mng.stow = function(user, source, target)
+  os.execute("sudo -u "..user.." stow -d "..source.." -t "..target.." .")
 end
 
 return mng

@@ -1,1 +1,3 @@
-echo hello world 2
+export EDITOR="nvim"
+export WORKSHOP="$HOME/workshop"
+source $HOME/.config/zsh/config.zsh
