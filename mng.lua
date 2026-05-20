@@ -9,7 +9,6 @@ local mng = {}
 --- @param plain boolean?
 --- @return string[]
 local string_split = function(str, pat, plain)
-  -- TODO don't use string built-in
   local t = {}
 
   while true do
@@ -36,7 +35,6 @@ local cmd_fmt = function(fmt, ...)
   end
   return fmt
 end
-
 
 ----------------------------------------------------------------------------------------------------
 -- [SECTION] API
@@ -187,19 +185,14 @@ end
 mng.service_on = function(...)
   for i = 1, select("#", ...) do
     local name = select(i, ...)
-    local target_path = "/var/service/"..name
-    local source_path = "/etc/sv/"..name
-    mng.symlink(target_path, source_path)
-
-    ::continue::
+    mng.symlink("/var/service/"..name, "/etc/sv/"..name)
   end
 end
 
 mng.service_off = function(...)
   for i = 1, select("#", ...) do
     local name = select(i, ...)
-    local target_path = "/var/service/"..name
-    mng.file_remove(target_path)
+    mng.file_remove("/var/service/"..name)
   end
 end
 

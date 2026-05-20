@@ -1,4 +1,6 @@
 local mng = require("mng")
+local gnome = require("mng.gnome")
+
 
 if os.getenv("USER") ~= "root" then
   error("Expected $USER to be root; please run with sudo.")
@@ -35,4 +37,6 @@ mng.as_user("girvel", function()
   mng.git_repo("https://github.com/girvel/dotfiles", "/home/girvel/dotfiles")
   mng.stow("/home/girvel/dotfiles", "/home/girvel")
   mng.file_set("/home/girvel/.zshrc", mng.file_get("./.zshrc"))
+
+  gnome.gsettings("org.gnome.desktop.interface", "clock-show-weekday", "true")
 end)
