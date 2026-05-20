@@ -6,32 +6,33 @@ end
 
 local hostname = mng.hostname_get()
 if hostname == "sovngard1" then
-  mng.install_ensure(
+  mng.package(
     "mesa-dri", "virtualbox-ose-guest", "virtualbox-ose-guest", "virtualbox-ose-guest-dkms"
   )
-  mng.service_ensure_enabled("vboxservice")
+  mng.service_on("vboxservice")
 else
   error("No machine-specific configuration for "..hostname)
 end
 
-mng.install_ensure(
+mng.package(
   "zsh", "git", "stow", "curl", "neovim", "ripgrep", "eza",
-  "gnome", "gdm", "dbus", "elogind", "NetworkManager", "pipewire", "wireplumber"
+  "gnome", "pipewire",
+  "ghostty"
 )
 
-mng.service_ensure_disabled("dhcpcd", "wpa_supplicant")
-mng.service_ensure_enabled("dbus", "NetworkManager", "gdm")
+mng.service_off("dhcpcd", "wpa_supplicant")
+mng.service_on("dbus", "NetworkManager", "gdm")
 
 mng.as_user("girvel", function()
-  mng.shell_ensure("/usr/bin/zsh")
-  if not mng.directory_exists("~/.oh-my-zsh") then
+  mng.shell("/usr/bin/zsh")
+  if not mng.dir_exists("~/.oh-my-zsh") then
     mng.cmd [[
       sh -c \
         "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
     ]]
   end
-  mng.mkdir("~/workshop")
-  mng.git_clone("https://github.com/girvel/dotfiles", "/home/girvel/dotfiles")
+  mng.dir("~/workshop")
+  mng.git_repo("https://github.com/girvel/dotfiles", "/home/girvel/dotfiles")
   mng.stow("/home/girvel/dotfiles", "/home/girvel")
   mng.file_set("/home/girvel/.zshrc", mng.file_get("./.zshrc"))
 end)

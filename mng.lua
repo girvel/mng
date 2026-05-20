@@ -32,7 +32,7 @@ end
 local cmd_fmt = function(fmt, ...)
   if select("#", ...) > 0 then fmt = fmt:format(...) end
   if mng.user ~= nil then
-    fmt = string.format("su %s -c '%s'", mng.user, fmt:gsub("'", "\\'"))
+    fmt = string.format("su %s -c '%s'", mng.user, fmt:gsub("'", "'\\''"))
   end
   return fmt
 end
@@ -64,22 +64,22 @@ mng.cmd_read = function(command, ...)
   return result, code
 end
 
-mng.install = function(pkg)
-  mng.cmd("xbps-install -yS "..pkg)
+mng.package = function(...)
+  for i = 1, select("#", ...) do
+    local pkg = select(i, ...)
+    if not mng.package_is_installed(pkg) then
+      mng.package_install(pkg)
+    end
+  end
 end
 
-mng.install_get = function(pkg)
+mng.package_is_installed = function(pkg)
   -- automatic-install isn't switched off by xbps-install by default
   return mng.cmd_read("xbps-query %s -p state", pkg) == "installed"
 end
 
-mng.install_ensure = function(...)
-  for i = 1, select("#", ...) do
-    local pkg = select(i, ...)
-    if not mng.install_get(pkg) then
-      mng.install(pkg)
-    end
-  end
+mng.package_install = function(pkg)
+  mng.cmd("xbps-install -yS "..pkg)
 end
 
 mng.as_user = function(new_user, f)
@@ -87,6 +87,13 @@ mng.as_user = function(new_user, f)
   mng.user = new_user
   f()
   mng.user = prev
+end
+
+mng.shell = function(path)
+  local current_user = os.getenv("USER")
+  if mng.shell_get(current_user) ~= path then
+    mng.shell_set(path)
+  end
 end
 
 mng.shell_get = function(this_user)
@@ -98,18 +105,11 @@ mng.shell_set = function(path)
   mng.cmd("chsh -s %s", path)
 end
 
-mng.shell_ensure = function(path)
-  local current_user = os.getenv("USER")
-  if mng.shell_get(current_user) ~= path then
-    mng.shell_set(path)
-  end
-end
-
-mng.mkdir = function(path)
+mng.dir = function(path)
   mng.cmd("mkdir -p "..path)
 end
 
-mng.directory_exists = function(path)
+mng.dir_exists = function(path)
   path = mng.cmd_read("echo %s", path)
   if path:sub(-1) ~= "/" then
     path = path.."/"
@@ -143,9 +143,9 @@ mng.file_remove = function(path)
   mng.cmd("rm -f %s", path)
 end
 
-mng.git_clone = function(repo_path, destination)
-  if not mng.directory_exists(destination)
-    or not mng.directory_exists(destination.."/.git")
+mng.git_repo = function(repo_path, destination)
+  if not mng.dir_exists(destination)
+    or not mng.dir_exists(destination.."/.git")
   then
     mng.cmd("git clone "..repo_path.." "..destination.." --recurse-submodules")
   else
@@ -162,6 +162,16 @@ mng.hostname_get = function()
   return string_strip(mng.file_get("/etc/hostname"))
 end
 
+mng.symlink = function(path, value)
+  if mng.symlink_exists(path) then
+    if mng.symlink_get(path) == value then
+      return
+    end
+    mng.file_remove(path)
+  end
+  mng.symlink_set(path, value)
+end
+
 mng.symlink_exists = function(path)
   return mng.cmd_read("if [ -L %s ]; then echo 1; else echo 0; fi", path) == "1"
 end
@@ -174,24 +184,18 @@ mng.symlink_set = function(path, value)
   mng.cmd("ln -sfn %s %s", value, path)
 end
 
-mng.service_ensure_enabled = function(...)
+mng.service_on = function(...)
   for i = 1, select("#", ...) do
     local name = select(i, ...)
     local target_path = "/var/service/"..name
     local source_path = "/etc/sv/"..name
-    if mng.symlink_exists(target_path) then
-      if mng.symlink_get(target_path) == source_path then
-        goto continue
-      end
-      mng.file_remove(target_path)
-    end
-    mng.symlink_set(target_path, source_path)
+    mng.symlink(target_path, source_path)
 
     ::continue::
   end
 end
 
-mng.service_ensure_disabled = function(...)
+mng.service_off = function(...)
   for i = 1, select("#", ...) do
     local name = select(i, ...)
     local target_path = "/var/service/"..name
