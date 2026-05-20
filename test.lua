@@ -1,11 +1,24 @@
 local mng = require("mng")
 
 if os.getenv("USER") ~= "root" then
-  io.stderr:write("Expected $USER to be root; please run with sudo.\n")
-  os.exit(1)
+  error("Expected $USER to be root; please run with sudo.")
 end
 
-mng.ensure_installed("zsh", "git", "stow", "curl", "neovim", "ripgrep")
+mng.ensure_installed("void-vepo-nonfree")
+
+local hostname = mng.hostname_get()
+if hostname == "sovngard1" then
+  mng.ensure_installed(
+    "mesa-dri", "virtualbox-ose-guest", "virtualbox-ose-guest", "virtualbox-ose-guest-dkms"
+  )
+  -- TODO enable virtualbox service
+else
+  error("No machine-specific configuration for "..hostname)
+end
+
+mng.ensure_installed(
+  "zsh", "git", "stow", "curl", "neovim", "ripgrep"
+)
 
 mng.as_user("girvel", function()
   mng.chsh("/usr/bin/zsh")

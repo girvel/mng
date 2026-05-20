@@ -7,6 +7,7 @@
 --- @param plain boolean?
 --- @return string[]
 string.split = function(str, pat, plain)
+  -- TODO don't use string built-in
   local t = {}
 
   while true do
@@ -20,6 +21,10 @@ string.split = function(str, pat, plain)
     t[#t + 1] = str:sub(1, pos1 - 1)
     str = str:sub(pos2 + 1)
   end
+end
+
+local string_strip = function(str)
+  return select(3, str:find("^%s*(.*)%s$"))
 end
 
 --- @type string?
@@ -148,6 +153,10 @@ end
 
 mng.stow = function(source, target)
   cmd("stow -d "..source.." -t "..target.." .")
+end
+
+mng.hostname_get = function()
+  return string_strip(mng.file_get("/etc/hostname"))
 end
 
 return mng
