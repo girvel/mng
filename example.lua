@@ -18,8 +18,10 @@ end
 
 gnome.on()
 mng.package(
-  "zsh", "git", "stow", "curl", "neovim", "ripgrep", "eza",
-  "ghostty"
+  "xdg-utils", "fuse",
+  "zsh", "git", "stow", "curl", "neovim", "ripgrep", "eza", "github-cli", "love", "htop",
+  "tree",
+  "ghostty", "firefox", "vlc"
 )
 
 mng.service_off("dhcpcd", "wpa_supplicant")
@@ -34,10 +36,15 @@ mng.as_user("girvel", function()
     ]]
   end
   mng.dir("~/workshop")
-  mng.git_repo("https://github.com/girvel/dotfiles", "/home/girvel/dotfiles")
-  mng.stow("/home/girvel/dotfiles", "/home/girvel")
-  mng.file_set("/home/girvel/.zshrc", mng.file_get("./.zshrc"))
+  mng.dir("~/.mozilla/firefox/girvel")
+  mng.dir("~/.config")
+  mng.dir("~/.local/bin")
+  mng.git_repo("https://github.com/girvel/dotfiles", "~/dotfiles")
+  mng.stow("~/dotfiles", "~")
+  mng.file_set("~/.zshrc", mng.file_get("./example/.zshrc"))
 
   gnome.gsettings("org.gnome.desktop.interface", "clock-show-weekday", "true")
+  gnome.gsettings("org.gnome.desktop.interface", "color-scheme", "'prefer-dark'")
+  gnome.gsettings("org.gnome.shell.keybindings", "show-screenshot-ui", "['<Super><Shift>s']")
   gnome.shortcut("custom0", "Open Ghostty", "ghostty", "<Ctrl><Alt>t")
 end)

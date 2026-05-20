@@ -127,6 +127,7 @@ mng.file_exists = function(path)
 end
 
 mng.file_set = function(path, content)
+  path = mng.cmd_read("echo %s", path)
   mng.cmd("touch %s", path)
   local f = assert(io.open(path, "w"))
   f:write(content)
