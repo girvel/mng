@@ -31,7 +31,7 @@ end
 local cmd_fmt = function(fmt, ...)
   if select("#", ...) > 0 then fmt = fmt:format(...) end
   if mng.user ~= nil then
-    fmt = string.format("su %s -c '%s'", mng.user, fmt:gsub("'", "'\\''"))
+    fmt = string.format("su %s -c %s", mng.user, mng.cmd_quote(fmt))
   end
   return fmt
 end
@@ -60,6 +60,10 @@ mng.cmd_read = function(command, ...)
     result = result:sub(1, -2)
   end
   return result, code
+end
+
+mng.cmd_quote = function(expr)
+  return ("'%s'"):format(expr:gsub("'", "'\\''"))
 end
 
 mng.package = function(...)

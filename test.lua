@@ -16,9 +16,9 @@ else
   error("No machine-specific configuration for "..hostname)
 end
 
+gnome.on()
 mng.package(
   "zsh", "git", "stow", "curl", "neovim", "ripgrep", "eza",
-  "gnome", "pipewire",
   "ghostty"
 )
 
@@ -39,4 +39,5 @@ mng.as_user("girvel", function()
   mng.file_set("/home/girvel/.zshrc", mng.file_get("./.zshrc"))
 
   gnome.gsettings("org.gnome.desktop.interface", "clock-show-weekday", "true")
+  gnome.shortcut("custom0", "Open Ghostty", "ghostty", "<Ctrl><Alt>t")
 end)
