@@ -21,7 +21,7 @@ mng.package(
   "xdg-utils", "fuse",
   "zsh", "git", "stow", "curl", "neovim", "ripgrep", "eza", "github-cli", "love", "htop",
   "tree",
-  "ghostty", "firefox", "vlc"
+  "ghostty", "firefox", "vlc", "obs", "kdenlive", "audacity"
 )
 
 mng.service_off("dhcpcd", "wpa_supplicant")
@@ -39,7 +39,7 @@ mng.as_user("girvel", function()
   mng.dir("~/.mozilla/firefox/girvel")
   mng.dir("~/.config")
   mng.dir("~/.local/bin")
-  mng.git_repo("https://github.com/girvel/dotfiles", "~/dotfiles")
+  mng.git_repo("https://github.com/girvel/dotfiles", "~/dotfiles", true)
   mng.stow("~/dotfiles", "~")
   mng.file_set("~/.zshrc", mng.file_get("./example/.zshrc"))
 

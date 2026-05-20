@@ -146,12 +146,17 @@ mng.file_remove = function(path)
   mng.cmd("rm -f %s", path)
 end
 
-mng.git_repo = function(repo_path, destination)
-  if not mng.dir_exists(destination)
-    or not mng.dir_exists(destination.."/.git")
-  then
-    mng.cmd("git clone "..repo_path.." "..destination.." --recurse-submodules")
-  else
+mng.git_repo = function(repo_path, destination, update)
+  if mng.dir_exists(destination) then
+    if mng.cmd_read("cd %s; git remote get-url origin", destination) == repo_path then
+      goto update
+    end
+    mng.dir_remove(destination)
+  end
+  mng.cmd("git clone "..repo_path.." "..destination.." --recurse-submodules")
+
+  ::update::
+  if update then
     mng.cmd("cd "..destination.."; git pull -q")
     mng.cmd("cd "..destination.."; git submodule update --init --recursive")
   end
