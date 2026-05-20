@@ -6,7 +6,7 @@ end
 
 local hostname = mng.hostname_get()
 if hostname == "sovngard1" then
-  mng.ensure_installed(
+  mng.install_ensure(
     "mesa-dri", "virtualbox-ose-guest", "virtualbox-ose-guest", "virtualbox-ose-guest-dkms"
   )
   mng.service_ensure_enabled("vboxservice")
@@ -14,7 +14,7 @@ else
   error("No machine-specific configuration for "..hostname)
 end
 
-mng.ensure_installed(
+mng.install_ensure(
   "zsh", "git", "stow", "curl", "neovim", "ripgrep", "eza",
   "gnome", "gdm", "dbus", "elogind", "NetworkManager", "pipewire", "wireplumber"
 )
@@ -23,7 +23,7 @@ mng.service_ensure_disabled("dhcpcd", "wpa_supplicant")
 mng.service_ensure_enabled("dbus", "NetworkManager", "gdm")
 
 mng.as_user("girvel", function()
-  mng.chsh("/usr/bin/zsh")
+  mng.shell_ensure("/usr/bin/zsh")
   if not mng.directory_exists("~/.oh-my-zsh") then
     mng.cmd [[
       sh -c \
