@@ -58,7 +58,8 @@ local cmd = function(command, ...)
 end
 
 local is_installed = function(pkg)
-  return cmd_read("xbps-query %s -p state,automatic-install", pkg) == "installed"
+  -- automatic-install isn't switched off by xbps-install by default
+  return cmd_read("xbps-query %s -p state", pkg) == "installed"
 end
 
 local install = function(pkg)
@@ -119,6 +120,10 @@ mng.directory_exists = function(path)
   if path:sub(-1) ~= "/" then
     path = path.."/"
   end
+  return mng.file_exists(path)
+end
+
+mng.file_exists = function(path)
   local f = io.open(path, "r")
   if not f then return false end
   f:close()
@@ -140,13 +145,17 @@ mng.file_get = function(path, content)
   return result
 end
 
+mng.file_remove = function(path)
+  cmd("rm -f %s", path)
+end
+
 mng.git_clone = function(repo_path, destination)
   if not mng.directory_exists(destination)
     or not mng.directory_exists(destination.."/.git")
   then
     cmd("git clone "..repo_path.." "..destination.." --recurse-submodules")
   else
-    cmd("cd "..destination.."; git pull")
+    cmd("cd "..destination.."; git pull -q")
     cmd("cd "..destination.."; git submodule update --init --recursive")
   end
 end
@@ -157,6 +166,43 @@ end
 
 mng.hostname_get = function()
   return string_strip(mng.file_get("/etc/hostname"))
+end
+
+mng.symlink_exists = function(path)
+  return cmd_read("if [ -L %s ]; then echo 1; else echo 0; fi", path) == "1"
+end
+
+mng.symlink_get = function(path)
+  return cmd_read("readlink -f %s", path)
+end
+
+mng.symlink_set = function(path, value)
+  cmd("ln -sfn %s %s", value, path)
+end
+
+mng.service_ensure_enabled = function(...)
+  for i = 1, select("#", ...) do
+    local name = select(i, ...)
+    local target_path = "/var/service/"..name
+    local source_path = "/etc/sv/"..name
+    if mng.symlink_exists(target_path) then
+      if mng.symlink_get(target_path) == source_path then
+        goto continue
+      end
+      mng.file_remove(target_path)
+    end
+    mng.symlink_set(target_path, source_path)
+
+    ::continue::
+  end
+end
+
+mng.service_ensure_disabled = function(...)
+  for i = 1, select("#", ...) do
+    local name = select(i, ...)
+    local target_path = "/var/service/"..name
+    mng.file_remove(target_path)
+  end
 end
 
 return mng

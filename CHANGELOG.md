@@ -1,2 +1,3 @@
+- [ ] ghostty
 - [ ] Refactor: `local is_installed, install` + `mng.ensure_installed` -> `mng.install, mng.install_get, mng.install_ensure` (and for the others too)
 - [ ] Replace test.lua -> /etc/mng.d/init.lua + CLI

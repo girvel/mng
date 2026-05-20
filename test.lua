@@ -4,21 +4,23 @@ if os.getenv("USER") ~= "root" then
   error("Expected $USER to be root; please run with sudo.")
 end
 
-mng.ensure_installed("void-vepo-nonfree")
-
 local hostname = mng.hostname_get()
 if hostname == "sovngard1" then
   mng.ensure_installed(
     "mesa-dri", "virtualbox-ose-guest", "virtualbox-ose-guest", "virtualbox-ose-guest-dkms"
   )
-  -- TODO enable virtualbox service
+  mng.service_ensure_enabled("vboxservice")
 else
   error("No machine-specific configuration for "..hostname)
 end
 
 mng.ensure_installed(
-  "zsh", "git", "stow", "curl", "neovim", "ripgrep"
+  "zsh", "git", "stow", "curl", "neovim", "ripgrep", "eza",
+  "gnome", "gdm", "dbus", "elogind", "NetworkManager", "pipewire", "wireplumber"
 )
+
+mng.service_ensure_disabled("dhcpcd", "wpa_supplicant")
+mng.service_ensure_enabled("dbus", "NetworkManager", "gdm")
 
 mng.as_user("girvel", function()
   mng.chsh("/usr/bin/zsh")
