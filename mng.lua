@@ -25,7 +25,7 @@ local string_split = function(str, pat, plain)
 end
 
 local string_strip = function(str)
-  return select(3, str:find("^%s*(.*)%s$"))
+  return str:gsub("^%s+", ""):gsub("%s+$", "")
 end
 
 local cmd_fmt = function(fmt, ...)
@@ -34,6 +34,12 @@ local cmd_fmt = function(fmt, ...)
     fmt = string.format("su %s -c %s", mng.user, mng.cmd_quote(fmt))
   end
   return fmt
+end
+
+--- @param str string
+--- @return string[]
+local tokenize = function(str)
+  return string_split(string_strip(str), "%s+")
 end
 
 ----------------------------------------------------------------------------------------------------
@@ -66,9 +72,8 @@ mng.cmd_quote = function(expr)
   return ("'%s'"):format(expr:gsub("'", "'\\''"))
 end
 
-mng.package = function(...)
-  for i = 1, select("#", ...) do
-    local pkg = select(i, ...)
+mng.package = function(packages)
+  for _, pkg in ipairs(tokenize(packages)) do
     if not mng.package_is_installed(pkg) then
       mng.package_install(pkg)
     end

@@ -4,7 +4,7 @@ local mng = require("mng")
 local gnome = {}
 
 gnome.on = function()
-  mng.package("gnome", "pipewire")
+  mng.package("gnome pipewire")
 end
 
 gnome.gsettings = function(schema, key, value)

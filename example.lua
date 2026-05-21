@@ -8,21 +8,18 @@ end
 
 local hostname = mng.hostname_get()
 if hostname == "sovngard1" then
-  mng.package(
-    "mesa-dri", "virtualbox-ose-guest", "virtualbox-ose-guest", "virtualbox-ose-guest-dkms"
-  )
+  mng.package("mesa-dri virtualbox-ose-guest virtualbox-ose-guest virtualbox-ose-guest-dkms")
   mng.service_on("vboxservice")
 else
   error("No machine-specific configuration for "..hostname)
 end
 
 gnome.on()
-mng.package(
-  "xdg-utils", "fuse",
-  "zsh", "git", "stow", "curl", "neovim", "ripgrep", "eza", "github-cli", "love", "htop",
-  "tree",
-  "ghostty", "firefox", "vlc", "obs", "kdenlive", "audacity"
-)
+mng.package [[
+  xdg-utils fuse
+  zsh git stow curl wget neovim ripgrep eza github-cli love htop tree
+  ghostty firefox vlc obs kdenlive audacity
+]]
 
 mng.service_off("dhcpcd", "wpa_supplicant")
 mng.service_on("dbus", "NetworkManager", "gdm")
