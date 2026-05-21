@@ -3,11 +3,16 @@
 - [ ] Write a README
 - [ ] Document API thoroughly
 - [ ] Maybe format API into an .md thing?
+- [ ] Write a very minimal example
 
 ## Queue
 
+- [ ] Retest from scratch
+- [ ] RU keyboard layout
 - [ ] autoproxy
 - [ ] aseprite
+- [ ] right dock
+  - [ ] pinning apps
 - [x] ldtk
 - [x] audacity
 - [x] OBS

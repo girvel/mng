@@ -17,7 +17,7 @@ end
 gnome.on()
 mng.package [[
   xdg-utils fuse
-  zsh git stow curl wget neovim ripgrep eza github-cli love htop tree
+  zsh git stow curl wget neovim ripgrep eza github-cli love htop tree jq
   ghostty firefox vlc obs kdenlive audacity
 ]]
 
@@ -56,4 +56,20 @@ mng.as_user("girvel", function()
   gnome.gsettings("org.gnome.desktop.interface", "color-scheme", "'prefer-dark'")
   gnome.gsettings("org.gnome.shell.keybindings", "show-screenshot-ui", "['<Super><Shift>s']")
   gnome.shortcut("custom0", "Open Ghostty", "ghostty", "<Ctrl><Alt>t")
+
+  gnome.extension("dash-to-dock@micxgx.gmail.com")
+    :gsettings("dock-position", "'LEFT'")
+    :gsettings("extend-height", "true")
+    :gsettings("dock-fixed", "true")
+    :gsettings("dash-max-icon-size", "40")
+    :gsettings("custom-theme-shrink", "true")
+    :gsettings("custom-background-color", "true")
+    :gsettings("background-color", "'#111111'")
+    :gsettings("transparency-mode", "'FIXED'")
+    :gsettings("background-opacity", "0.9")
+
+  gnome.gsettings(
+    "org.gnome.shell", "favorite-apps",
+    "['firefox.desktop', 'com.mitchellh.ghostty.desktop', 'ldtk.desktop', 'audacity.desktop', 'telegram.desktop', 'com.obsproject.Studio.desktop', 'org.kde.kdenlive.desktop']"
+  )
 end)
