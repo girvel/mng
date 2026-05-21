@@ -7,8 +7,8 @@
 ## Queue
 
 - [ ] autoproxy
-- [ ] ldtk
 - [ ] aseprite
+- [x] ldtk
 - [x] audacity
 - [x] OBS
 - [x] kdenlive

@@ -1,0 +1,6 @@
+[Desktop Entry]
+Name=LDtk
+Exec=/usr/local/bin/ldtk --no-sandbox
+Type=Application
+Terminal=false
+Icon=ldtk

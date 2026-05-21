@@ -24,6 +24,18 @@ mng.package [[
 mng.service_off("dhcpcd", "wpa_supplicant")
 mng.service_on("dbus", "NetworkManager", "gdm")
 
+local ldtk = "/usr/local/bin/ldtk"
+if not mng.file_exists(ldtk) then
+  mng.cmd("wget https://github.com/deepnight/ldtk/releases/download/v1.5.3/ubuntu-distribution.zip -O/tmp/ldtk.zip")
+  mng.cmd("unzip /tmp/ldtk.zip")
+  mng.cmd("mv LDtk*.AppImage %s", ldtk)
+  mng.cmd("chmod +x %s", ldtk)
+end
+mng.symlink("/usr/share/applications/ldtk.desktop", "./example/ldtk.desktop")
+mng.symlink("/usr/share/icons/hicolor/512x512/apps/ldtk.png", "./example/ldtk.png")
+mng.cmd("update-desktop-database /usr/share/applications")
+mng.cmd("gtk-update-icon-cache /usr/share/icons/hicolor")
+
 mng.as_user("girvel", function()
   mng.shell("/usr/bin/zsh")
   if not mng.dir_exists("~/.oh-my-zsh") then
