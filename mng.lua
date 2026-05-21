@@ -97,7 +97,7 @@ mng.as_user = function(new_user, f)
 end
 
 mng.shell = function(path)
-  local current_user = os.getenv("USER")
+  local current_user = mng.user or os.getenv("USER")
   if mng.shell_get(current_user) ~= path then
     mng.shell_set(path)
   end
