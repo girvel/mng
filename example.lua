@@ -10,6 +10,9 @@ local hostname = mng.hostname_get()
 if hostname == "sovngard1" then
   mng.package("mesa-dri virtualbox-ose-guest virtualbox-ose-guest virtualbox-ose-guest-dkms")
   mng.service_on("vboxservice")
+elseif hostname == "valholl" then
+  mng.package("void-repo-nonfree")
+  mng.package("nvidia")
 else
   error("No machine-specific configuration for "..hostname)
 end
