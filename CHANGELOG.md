@@ -7,12 +7,14 @@
 
 ## Queue
 
-- [ ] Retest from scratch
 - [ ] RU keyboard layout
-- [ ] autoproxy
 - [ ] aseprite
-- [ ] right dock
-  - [ ] pinning apps
+- [ ] autoproxy
+- [x] Real physical installation
+- [x] Retest from scratch
+- [x] right dock
+  - [x] pinning apps
+- [x] keyd
 - [x] ldtk
 - [x] audacity
 - [x] OBS

@@ -17,6 +17,13 @@ else
   error("No machine-specific configuration for "..hostname)
 end
 
+if hostname ~= "sovngard1" then
+  mng.package("keyd")
+  mng.dir("/etc/keyd")
+  mng.symlink("/etc/keyd/remap.conf", "./example/remap.conf")
+  mng.service_on("keyd")
+end
+
 gnome.on()
 mng.package [[
   xdg-utils fuse
