@@ -27,12 +27,12 @@ end
 gnome.on()
 mng.package [[
   xdg-utils fuse
-  zsh git stow curl wget neovim ripgrep eza github-cli love htop tree jq
+  zsh git stow curl wget neovim ripgrep eza github-cli love htop tree jq redsocks
   ghostty firefox vlc obs kdenlive audacity
 ]]
 
 mng.service_off("dhcpcd", "wpa_supplicant")
-mng.service_on("dbus", "NetworkManager", "gdm")
+mng.service_on("dbus", "NetworkManager", "gdm", "redsocks")
 
 local ldtk = "/usr/local/bin/ldtk"
 if not mng.file_exists(ldtk) then
@@ -82,4 +82,7 @@ mng.as_user("girvel", function()
     "org.gnome.shell", "favorite-apps",
     "['firefox.desktop', 'com.mitchellh.ghostty.desktop', 'ldtk.desktop', 'audacity.desktop', 'telegram.desktop', 'com.obsproject.Studio.desktop', 'org.kde.kdenlive.desktop']"
   )
+
+  mng.git_repo("https://github.com/girvel/autoproxy", "~/workshop/autoproxy")
+  -- mng.symlink()
 end)
