@@ -7,6 +7,8 @@
 
 ## Queue
 
+- [ ] Try wayland compositors
+- [ ] Modules
 - [ ] RU keyboard layout
 - [ ] aseprite
 - [ ] autoproxy

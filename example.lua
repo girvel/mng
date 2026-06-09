@@ -20,7 +20,7 @@ end
 if hostname ~= "sovngard1" then
   mng.package("keyd")
   mng.dir("/etc/keyd")
-  mng.symlink("/etc/keyd/remap.conf", "./example/remap.conf")
+  mng.symlink("/etc/keyd/remap.conf", "./example/assets/remap.conf")
   mng.service_on("keyd")
 end
 
@@ -41,8 +41,8 @@ if not mng.file_exists(ldtk) then
   mng.cmd("mv LDtk*.AppImage %s", ldtk)
   mng.cmd("chmod +x %s", ldtk)
 end
-mng.symlink("/usr/share/applications/ldtk.desktop", "./example/ldtk.desktop")
-mng.symlink("/usr/share/icons/hicolor/512x512/apps/ldtk.png", "./example/ldtk.png")
+mng.desktop_file("./example/assets/ldtk.desktop")
+mng.icon("./example/assets/ldtk.png")
 mng.cmd("update-desktop-database /usr/share/applications")
 mng.cmd("gtk-update-icon-cache /usr/share/icons/hicolor")
 
@@ -60,7 +60,14 @@ mng.as_user("girvel", function()
   mng.dir("~/.local/bin")
   mng.git_repo("https://github.com/girvel/dotfiles", "~/dotfiles", true)
   mng.stow("~/dotfiles", "~")
-  mng.file_set("~/.zshrc", mng.file_get("./example/.zshrc"))
+  mng.file_set("~/.zshrc", mng.file_get("./example/assets/.zshrc"))
+
+  mng.git_repo("https://github.com/girvel/autoproxy", "~/workshop/autoproxy")
+  mng.as_user(nil, function()
+    mng.symlink("/etc/redsocks.conf", "~/workshop/autoproxy/redsocks.conf")
+  end)
+  mng.desktop_file("./example/assets/autoproxy_1")
+  mng.desktop_file("./example/assets/autoproxy_2")
 
   gnome.gsettings("org.gnome.desktop.interface", "clock-show-weekday", "true")
   gnome.gsettings("org.gnome.desktop.interface", "color-scheme", "'prefer-dark'")
@@ -80,9 +87,6 @@ mng.as_user("girvel", function()
 
   gnome.gsettings(
     "org.gnome.shell", "favorite-apps",
-    "['firefox.desktop', 'com.mitchellh.ghostty.desktop', 'ldtk.desktop', 'audacity.desktop', 'telegram.desktop', 'com.obsproject.Studio.desktop', 'org.kde.kdenlive.desktop']"
+    "['firefox.desktop', 'autoproxy_1.desktop', 'com.mitchellh.ghostty.desktop', 'ldtk.desktop', 'audacity.desktop', 'telegram.desktop', 'com.obsproject.Studio.desktop', 'org.kde.kdenlive.desktop']"
   )
-
-  mng.git_repo("https://github.com/girvel/autoproxy", "~/workshop/autoproxy")
-  -- mng.symlink()
 end)

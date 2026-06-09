@@ -28,6 +28,10 @@ local string_strip = function(str)
   return str:gsub("^%s+", ""):gsub("%s+$", "")
 end
 
+local string_endswith = function(str, substr)
+  return str:sub(-#substr) == substr
+end
+
 local cmd_fmt = function(fmt, ...)
   if select("#", ...) > 0 then fmt = fmt:format(...) end
   if mng.user ~= nil then
@@ -179,11 +183,12 @@ mng.symlink = function(path, value)
   value = mng.cmd_read("realpath -s %s", value)
   if mng.symlink_exists(path) then
     if mng.symlink_get(path) == value then
-      return
+      return false
     end
     mng.file_remove(path)
   end
   mng.symlink_set(path, value)
+  return true
 end
 
 mng.symlink_exists = function(path)
@@ -209,6 +214,42 @@ mng.service_off = function(...)
   for i = 1, select("#", ...) do
     local name = select(i, ...)
     mng.file_remove("/var/service/"..name)
+  end
+end
+
+mng.desktop_file = function(path)
+  local target_dir
+  if mng.user then
+    target_dir = "/home/"..mng.user.."/.local/share/applications/"
+  else
+    target_dir = "/usr/share/applications/"
+  end
+
+  local shortname = path:match("[^/]+$")
+  if mng.symlink(target_dir..shortname, path) then
+    mng.cmd("update-desktop-database "..target_dir)
+  end
+end
+
+mng.icon = function(path)
+  local shortname = path:match("[^/]+$")
+  local resolution
+  if string_endswith(path, ".svg") then
+    resolution = "scalable"
+  else
+    local info = mng.cmd_read("file -b %s", mng.cmd_quote(path))
+    local w, h = info:match("(%d+)%s*x%s*(%d+)")
+    if not w or not h then
+      error("Could not determine resolution for icon "..path)
+    end
+    resolution = w.."x"..h
+  end
+  local target_dir = "/usr/share/icons/hicolor"..resolution.."/apps"
+  mng.dir(target_dir)
+  if mng.symlink(target_dir.."/"..shortname, path)
+    and mng.cmd_read("command -v gtk-update-icon-cache") ~= ""
+  then
+    mng.cmd("gtk-update-icon-cache -f -t /usr/share/icons/hicolor")
   end
 end
 
