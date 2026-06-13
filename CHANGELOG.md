@@ -7,10 +7,12 @@
 
 ## Queue
 
+- [ ] should fail on invalid symlinks
 - [ ] mng clean
 - [ ] Custom loading screen
 - [ ] Try wayland compositors
 - [ ] Modules
+    A pluggable script; errors are isolated, assets are grouped into the same folder
 - [ ] RU keyboard layout
 - [ ] aseprite
 - [ ] autoproxy

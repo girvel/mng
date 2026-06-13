@@ -29,6 +29,14 @@ local use_gnome = function()
   end)
 end
 
+local use_niri = function()
+  mng.package("dbus elogind niri fuzzel")
+  mng.service_on("dbus", "elogind")  -- TODO unify syntax with mng.package
+  mng.as_user("girvel", function()
+    mng.symlink("~/.config/niri/config.kdl", "./example/assets/niri_config.kdl")
+  end)
+end
+
 mng.start(...)
 
 local hostname = mng.hostname_get()
@@ -56,6 +64,7 @@ mng.package [[
 ]]
 
 -- use_gnome()
+use_niri()
 
 mng.service_on("redsocks")
 

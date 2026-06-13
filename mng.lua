@@ -227,8 +227,7 @@ local all_packages = {
 }
 
 local clean_packages = function()
-  io.write("PACKAGES")
-  io.flush()
+  print("PACKAGES")
 
   local installed_packages = string_split(string_strip(mng.cmd_read("xbps-query -m")), "\n")
   local redundant_packages = {}
@@ -239,21 +238,18 @@ local clean_packages = function()
     end
   end
 
-  if #redundant_packages == 0 then
-    print(" +")
-    return
-  else
-    print(":")
+  if #redundant_packages > 0 then
+    print("Found redundant packages:")
+    for _, pkg in ipairs(redundant_packages) do
+      print("- "..pkg)
+    end
+
+    if request_yes("Remove?") then
+      mng.cmd("xbps-remove -y %s", string_join(redundant_packages, " "))
+    end
   end
 
-  print("Found redundant packages:")
-  for _, pkg in ipairs(redundant_packages) do
-    print("- "..pkg)
-  end
-
-  if request_yes("Remove?") then
-    mng.cmd("xbps-remove -y %s", string_join(redundant_packages, " "))
-  end
+  mng.cmd("xbps-remove -o")
 end
 
 mng.package = function(packages)
@@ -403,8 +399,7 @@ local service_state = {
 }
 
 local clean_services = function()
-  io.write("SERVICES")
-  io.flush()
+  print("SERVICES")
 
   local services_real = string_split(string_strip(mng.cmd_read("ls /var/service")), "%s+")
   local services_to_off = {}
@@ -419,13 +414,6 @@ local clean_services = function()
     if v and not table_first_index(services_real, service) then
       table.insert(services_to_on, service)
     end
-  end
-
-  if #services_to_off == 0 and #services_to_on == 0 then
-    print(" +")
-    return
-  else
-    print(": ")
   end
 
   if #services_to_off > 0 then
