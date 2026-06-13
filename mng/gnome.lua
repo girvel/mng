@@ -5,6 +5,8 @@ local gnome = {}
 
 gnome.on = function()
   mng.package("gnome pipewire")
+  mng.service_off("dhcpcd", "wpa_supplicant")
+  mng.service_on("dbus", "NetworkManager", "gdm")
 end
 
 gnome.gsettings = function(schema, key, value)

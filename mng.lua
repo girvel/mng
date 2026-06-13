@@ -157,7 +157,7 @@ local cli_finish = function(args)
 end
 
 local cli_args
-local finish_subs = {}
+local finish_subs = {}  -- TODO rename, expose as advanced
 
 ----------------------------------------------------------------------------------------------------
 -- [SECTION] API
