@@ -165,6 +165,10 @@ local finish_subs = {}
 
 --- @param ... string CLI args
 mng.start = function(...)
+  if os.getenv("USER") ~= "root" then
+    error("Expected $USER to be root; please run with sudo.")
+  end
+
   local args = {...}
   cli("<MNG FILE>", "mng is a tool for procedural OS configuration")
   cli_args = {

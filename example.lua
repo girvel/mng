@@ -4,10 +4,6 @@ local gnome = require("mng.gnome")
 
 mng.start(...)
 
-if os.getenv("USER") ~= "root" then
-  error("Expected $USER to be root; please run with sudo.")
-end
-
 local hostname = mng.hostname_get()
 if hostname == "sovngard1" then
   mng.package("mesa-dri virtualbox-ose-guest virtualbox-ose-guest virtualbox-ose-guest-dkms")
