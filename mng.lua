@@ -46,9 +46,123 @@ local tokenize = function(str)
   return string_split(string_strip(str), "%s+")
 end
 
+--- @param t table
+--- @param item any
+--- @return integer?
+local table_first_index = function(t, item)
+  for i, e in ipairs(t) do
+    if e == item then return i end
+  end
+end
+
+local cli_seen = {}
+
+local cli = function(name, description)
+  if #cli_seen > 0 then
+    error("cli() call should come first")
+  end
+  table.insert(cli_seen, {type = "cli", name = name, description = description})
+end
+
+local cli_help = function(hide_description)
+  if cli_seen[1].type == "cli" then
+    local data = table.remove(cli_seen, 1)
+    if not hide_description then print(data.description) end
+    io.stdout:write("USAGE: "..data.name)
+  else
+    io.stdout:write("USAGE: <FILENAME>")
+  end
+
+  local was_prev_flag = false
+  for _, param in ipairs(cli_seen) do
+    if param.type == "command" then
+      io.stdout:write(" <command>")
+    elseif param.type == "flag" then
+      if not was_prev_flag then
+        io.stdout:write(" <flags>")
+      end
+    end
+
+    was_prev_flag = param.type == "flag"
+  end
+  print()
+
+  was_prev_flag = false
+  for _, param in ipairs(cli_seen) do
+    if param.type == "command" then
+      print()
+      print("COMMAND:")
+      for v, desc in pairs(param.possible_values) do
+        print("  "..v..": "..desc);
+      end
+    elseif param.type == "flag" then
+      if not was_prev_flag then
+        print()
+        print("FLAGS:")
+      end
+      print("  "..param.flag..": "..param.description)
+    end
+    was_prev_flag = param.type == "flag"
+  end
+end
+
+-- TODO move internals to mng.utils
+--- @param args string[]
+--- @param possible_values table<string, string>
+--- @param default string?
+--- @return string?
+local cli_command = function(args, possible_values, default)
+  table.insert(cli_seen, {
+    type = "command",
+    possible_values = possible_values,
+    default = default
+  })
+
+  if possible_values[args[1]] then
+    return table.remove(args, 1)
+  end
+  return default
+end
+
+local cli_flag = function(args, flag, description)
+  table.insert(cli_seen, {type = "flag", flag = flag, description = description})
+  local i = table_first_index(args, flag)
+  if i then
+    table.remove(args, i)
+  end
+  return not not i
+end
+
+local cli_finish = function(args)
+  if #args == 0 then return end
+  io.stdout:write("Unexpected args:")
+  for _, arg in ipairs(args) do
+    io.stdout:write(" "..arg)
+  end
+  io.stdout:write("\n\n")
+  cli_help(true)
+  os.exit(1)
+end
+
 ----------------------------------------------------------------------------------------------------
 -- [SECTION] API
 ----------------------------------------------------------------------------------------------------
+
+local cli_args
+
+--- @param ... string CLI args
+mng.start = function(...)
+  local args = {...}
+  cli("<MNG FILE>", "mng is a tool for procedural OS configuration")
+  cli_args = {
+    clean = cli_flag(args, "--clean", "Also clean the garbage"),
+  }
+  if cli_flag(args, "--help", "Display help") then
+    cli_help()
+    os.exit(0)
+  end
+  cli_finish(args)
+end
 
 --- @type string?
 mng.user = nil

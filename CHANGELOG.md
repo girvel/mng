@@ -7,6 +7,8 @@
 
 ## Queue
 
+- [ ] mng clean
+- [ ] Custom loading screen
 - [ ] Try wayland compositors
 - [ ] Modules
 - [ ] RU keyboard layout

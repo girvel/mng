@@ -2,6 +2,8 @@ local mng = require("mng")
 local gnome = require("mng.gnome")
 
 
+mng.start(...)
+
 if os.getenv("USER") ~= "root" then
   error("Expected $USER to be root; please run with sudo.")
 end
