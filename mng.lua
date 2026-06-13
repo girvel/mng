@@ -156,8 +156,14 @@ local cli_finish = function(args)
   os.exit(1)
 end
 
+local request_yes = function(phrase)
+  io.write("\n"..phrase.." [y/n] ")
+  local response = io.read("*l"):lower()
+  return response == "y" or response == "yes"
+end
+
 local cli_args
-local finish_subs = {}  -- TODO rename, expose as advanced
+local run_at_finish = {}  -- TODO rename, expose as advanced
 
 ----------------------------------------------------------------------------------------------------
 -- [SECTION] API
@@ -182,7 +188,7 @@ mng.start = function(...)
 end
 
 mng.finish = function()
-  for sub in pairs(finish_subs) do
+  for sub in pairs(run_at_finish) do
     sub()
   end
 end
@@ -220,8 +226,8 @@ local all_packages = {
   ["linux-headers"] = true,
 }
 
-local package_cleaning = function()
-  io.write("PACKAGES ")
+local clean_packages = function()
+  io.write("PACKAGES")
   io.flush()
 
   local installed_packages = string_split(string_strip(mng.cmd_read("xbps-query -m")), "\n")
@@ -234,7 +240,7 @@ local package_cleaning = function()
   end
 
   if #redundant_packages == 0 then
-    print("+")
+    print(" +")
     return
   else
     print(":")
@@ -244,16 +250,15 @@ local package_cleaning = function()
   for _, pkg in ipairs(redundant_packages) do
     print("- "..pkg)
   end
-  io.write("\nRemove? [y/n] ")
-  local response = io.read("*l"):lower()
-  if response == "y" or response == "yes" then
+
+  if request_yes("Remove?") then
     mng.cmd("xbps-remove -y %s", string_join(redundant_packages, " "))
   end
 end
 
 mng.package = function(packages)
   if cli_args.clean then
-    finish_subs[package_cleaning] = true
+    run_at_finish[clean_packages] = true
   end
 
   for _, pkg in ipairs(tokenize(packages)) do
@@ -386,16 +391,90 @@ mng.symlink_set = function(path, value)
   mng.cmd("ln -sfn %s %s", value, path)
 end
 
+local service_state = {
+  ["agetty-tty1"] = true,
+  ["agetty-tty2"] = true,
+  ["agetty-tty3"] = true,
+  ["agetty-tty4"] = true,
+  ["agetty-tty5"] = true,
+  ["agetty-tty6"] = true,
+  ["dhcpcd"] = true,
+  ["wpa_supplicant"] = true,
+}
+
+local clean_services = function()
+  io.write("SERVICES")
+  io.flush()
+
+  local services_real = string_split(string_strip(mng.cmd_read("ls /var/service")), "%s+")
+  local services_to_off = {}
+  for _, service in ipairs(services_real) do
+    if not service_state[service] then
+      table.insert(services_to_off, service)
+    end
+  end
+
+  local services_to_on = {}
+  for service, v in pairs(service_state) do
+    if v and not table_first_index(services_real, service) then
+      table.insert(services_to_on, service)
+    end
+  end
+
+  if #services_to_off == 0 and #services_to_on == 0 then
+    print(" +")
+    return
+  else
+    print(": ")
+  end
+
+  if #services_to_off > 0 then
+    print("Found redundant services:")
+    for _, service in ipairs(services_to_off) do
+      print("- "..service)
+    end
+
+    if request_yes("Disable?") then
+      mng.service_off(unpack(services_to_off))
+    end
+  end
+
+  if #services_to_on > 0 then
+    print("Found missing services:")
+    for _, service in ipairs(services_to_on) do
+      print("- "..service)
+    end
+
+    if request_yes("Enable?") then
+      mng.service_on(unpack(services_to_on))
+    end
+  end
+end
+
 mng.service_on = function(...)
+  if cli_args.clean then
+    run_at_finish[clean_services] = true
+  end
+
   for i = 1, select("#", ...) do
     local name = select(i, ...)
+    if cli_args.clean then
+      service_state[name] = true
+    end
     mng.symlink("/var/service/"..name, "/etc/sv/"..name)
   end
 end
 
 mng.service_off = function(...)
+  if cli_args.clean then
+    run_at_finish[clean_services] = true
+  end
+
   for i = 1, select("#", ...) do
     local name = select(i, ...)
+    if cli_args.clean then
+      service_state[name] = false
+    end
     mng.file_remove("/var/service/"..name)
   end
 end
@@ -417,7 +496,7 @@ mng.desktop_file = function(path)
 
   local shortname = path:match("[^/]+$")
   if mng.symlink(target_dir..shortname, path) then
-    finish_subs[update_desktop_db] = true
+    run_at_finish[update_desktop_db] = true
     update_desktop_db_dirs[target_dir] = true
   end
 end
@@ -444,7 +523,7 @@ mng.icon = function(path)
   local target_dir = "/usr/share/icons/hicolor"..resolution.."/apps"
   mng.dir(target_dir)
   if mng.symlink(target_dir.."/"..shortname, path) then
-    finish_subs[update_icon_cache] = true
+    run_at_finish[update_icon_cache] = true
   end
 end
 

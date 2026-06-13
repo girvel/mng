@@ -55,7 +55,7 @@ mng.package [[
   ghostty firefox vlc obs kdenlive audacity
 ]]
 
-use_gnome()
+-- use_gnome()
 
 mng.service_on("redsocks")
 
