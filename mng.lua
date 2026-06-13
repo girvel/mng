@@ -400,6 +400,13 @@ mng.service_off = function(...)
   end
 end
 
+local update_desktop_db_dirs = {}
+local update_desktop_db = function()
+  for dir in pairs(update_desktop_db_dirs) do
+    mng.cmd("update-desktop-database "..dir)
+  end
+end
+
 mng.desktop_file = function(path)
   local target_dir
   if mng.user then
@@ -410,7 +417,14 @@ mng.desktop_file = function(path)
 
   local shortname = path:match("[^/]+$")
   if mng.symlink(target_dir..shortname, path) then
-    mng.cmd("update-desktop-database "..target_dir)
+    finish_subs[update_desktop_db] = true
+    update_desktop_db_dirs[target_dir] = true
+  end
+end
+
+local update_icon_cache = function()
+  if mng.cmd_read("command -v gtk-update-icon-cache") ~= "" then
+    mng.cmd("gtk-update-icon-cache -f -t /usr/share/icons/hicolor")
   end
 end
 
@@ -429,10 +443,8 @@ mng.icon = function(path)
   end
   local target_dir = "/usr/share/icons/hicolor"..resolution.."/apps"
   mng.dir(target_dir)
-  if mng.symlink(target_dir.."/"..shortname, path)
-    and mng.cmd_read("command -v gtk-update-icon-cache") ~= ""
-  then
-    mng.cmd("gtk-update-icon-cache -f -t /usr/share/icons/hicolor")
+  if mng.symlink(target_dir.."/"..shortname, path) then
+    finish_subs[update_icon_cache] = true
   end
 end
 

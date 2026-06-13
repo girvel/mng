@@ -41,8 +41,6 @@ if not mng.file_exists(ldtk) then
 end
 mng.desktop_file("./example/assets/ldtk.desktop")
 mng.icon("./example/assets/ldtk.png")
-mng.cmd("update-desktop-database /usr/share/applications")
-mng.cmd("gtk-update-icon-cache /usr/share/icons/hicolor")
 
 mng.as_user("girvel", function()
   mng.shell("/usr/bin/zsh")
