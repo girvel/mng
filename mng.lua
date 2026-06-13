@@ -24,6 +24,18 @@ local string_split = function(str, pat, plain)
   end
 end
 
+--- @param arr string[]
+--- @param sep string
+--- @return string
+local string_join = function(arr, sep)
+  if #arr == 0 then return "" end
+  local result = arr[1]
+  for i = 2, #arr do
+    result = result.." "..arr[i]
+  end
+  return result
+end
+
 local string_strip = function(str)
   return str:gsub("^%s+", ""):gsub("%s+$", "")
 end
@@ -68,18 +80,18 @@ local cli_help = function(hide_description)
   if cli_seen[1].type == "cli" then
     local data = table.remove(cli_seen, 1)
     if not hide_description then print(data.description) end
-    io.stdout:write("USAGE: "..data.name)
+    io.write("USAGE: "..data.name)
   else
-    io.stdout:write("USAGE: <FILENAME>")
+    io.write("USAGE: <FILENAME>")
   end
 
   local was_prev_flag = false
   for _, param in ipairs(cli_seen) do
     if param.type == "command" then
-      io.stdout:write(" <command>")
+      io.write(" <command>")
     elseif param.type == "flag" then
       if not was_prev_flag then
-        io.stdout:write(" <flags>")
+        io.write(" <flags>")
       end
     end
 
@@ -135,20 +147,21 @@ end
 
 local cli_finish = function(args)
   if #args == 0 then return end
-  io.stdout:write("Unexpected args:")
+  io.write("Unexpected args:")
   for _, arg in ipairs(args) do
-    io.stdout:write(" "..arg)
+    io.write(" "..arg)
   end
-  io.stdout:write("\n\n")
+  io.write("\n\n")
   cli_help(true)
   os.exit(1)
 end
 
+local cli_args
+local finish_subs = {}
+
 ----------------------------------------------------------------------------------------------------
 -- [SECTION] API
 ----------------------------------------------------------------------------------------------------
-
-local cli_args
 
 --- @param ... string CLI args
 mng.start = function(...)
@@ -162,6 +175,12 @@ mng.start = function(...)
     os.exit(0)
   end
   cli_finish(args)
+end
+
+mng.finish = function()
+  for sub in pairs(finish_subs) do
+    sub()
+  end
 end
 
 --- @type string?
@@ -190,8 +209,54 @@ mng.cmd_quote = function(expr)
   return ("'%s'"):format(expr:gsub("'", "'\\''"))
 end
 
+local all_packages = {
+  ["LuaJIT"] = true,
+  ["base-system"] = true,
+  ["grub-x86_64-efi"] = true,
+  ["linux-headers"] = true,
+}
+
+local package_cleaning = function()
+  io.write("PACKAGES ")
+  io.flush()
+
+  local installed_packages = string_split(string_strip(mng.cmd_read("xbps-query -m")), "\n")
+  local redundant_packages = {}
+  for _, pkg in ipairs(installed_packages) do
+    local name = pkg:match("^(.*)-[^-]+")
+    if not all_packages[name] then
+      table.insert(redundant_packages, name)
+    end
+  end
+
+  if #redundant_packages == 0 then
+    print("+")
+    return
+  else
+    print(":")
+  end
+
+  print("Found redundant packages:")
+  for _, pkg in ipairs(redundant_packages) do
+    print("- "..pkg)
+  end
+  io.write("\nRemove? [y/n] ")
+  local response = io.read("*l"):lower()
+  if response == "y" or response == "yes" then
+    mng.cmd("xbps-remove -y %s", string_join(redundant_packages, " "))
+  end
+end
+
 mng.package = function(packages)
+  if cli_args.clean then
+    finish_subs[package_cleaning] = true
+  end
+
   for _, pkg in ipairs(tokenize(packages)) do
+    if cli_args.clean then
+      all_packages[pkg] = true
+    end
+
     if not mng.package_is_installed(pkg) then
       mng.package_install(pkg)
     end

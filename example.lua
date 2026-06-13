@@ -92,3 +92,5 @@ mng.as_user("girvel", function()
     "['firefox.desktop', 'autoproxy_1.desktop', 'com.mitchellh.ghostty.desktop', 'ldtk.desktop', 'audacity.desktop', 'telegram.desktop', 'com.obsproject.Studio.desktop', 'org.kde.kdenlive.desktop']"
   )
 end)
+
+mng.finish()
