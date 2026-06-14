@@ -1,7 +1,11 @@
-spawn-at-startup "pipewire"
-spawn-at-startup "pipewire-pulse"
-spawn-at-startup "wireplumber"
-spawn-at-startup "waybar"
+spawn-sh-at-startup "pidof pipewire || pipewire"
+spawn-sh-at-startup "pidof wireplumber || {sleep 1 && wireplumber}"
+spawn-sh-at-startup "pidof pipewire-pulse || {sleep 1 && pipewire-pulse}"
+spawn-sh-at-startup "sleep 2 && waybar"
+
+xwayland-satellite {
+    
+}
 
 input {
     keyboard {

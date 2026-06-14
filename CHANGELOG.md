@@ -7,18 +7,20 @@
 
 ## Queue
 
+- [ ] the cursor is ugly & unchanging
 - [ ] JB Mono nerd font
-- [ ] set up audio
-- [ ] fix ghostty
 - [ ] should fail or warn on invalid symlinks
-- [ ] mng clean
 - [ ] Custom loading screen
-- [ ] Try wayland compositors
+- [ ] fix ghostty
 - [ ] Modules
     A pluggable script; errors are isolated, assets are grouped into the same folder
-- [ ] RU keyboard layout
-- [ ] aseprite
-- [ ] autoproxy
+- [ ] Apps:
+    - [ ] aseprite
+    - [ ] autoproxy
+- [x] RU keyboard layout
+- [x] set up audio
+- [x] mng clean
+- [x] niri
 - [x] Real physical installation
 - [x] Retest from scratch
 - [x] right dock

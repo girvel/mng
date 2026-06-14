@@ -31,7 +31,10 @@ local use_gnome = function()
 end
 
 local use_niri = function()
-  mng.package("dbus elogind niri fuzzel Waybar wl-clipboard pipewire wireplumber font-awesome")
+  mng.package(
+    "dbus elogind niri fuzzel Waybar wl-clipboard pipewire wireplumber font-awesome pavucontrol"
+    .." alsa-utils xclip xwayland-satellite"
+  )
   mng.service_on("dbus", "elogind")  -- TODO unify syntax with mng.package
   mng.as_user("girvel", function()
     mng.symlink("~/.config/niri/config.kdl", "./example/assets/niri_config.kdl")
