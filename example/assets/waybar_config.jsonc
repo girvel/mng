@@ -2,6 +2,7 @@
 {
     // "layer": "top", // Waybar at top layer
     // "width": 1280, // Waybar width
+    "height": "auto",
     "spacing": 15, // Gaps between modules (4px)
     "modules-left": [
         "niri/window",
@@ -22,7 +23,7 @@
         // "custom/power"
     ],
     "niri/window": {
-        "format": "  {}",
+        "format": " {} ",
     },
     "niri/language": {
         "format-en": "EN",
@@ -69,11 +70,11 @@
         "format": "{:%a, %b %d %H:%M}",
     },
     "cpu": {
-        "format": "{usage}% ",
+        "format": "{usage}%  ",
         "tooltip": false
     },
     "memory": {
-        "format": "{}% "
+        "format": "{}%  "
     },
     "temperature": {
         // "thermal-zone": 2,

@@ -1,5 +1,5 @@
 #waybar {
-  background-color: #222222;
+  background-color: rgba(0, 0, 0, 0);
 }
 
 * {
@@ -7,9 +7,12 @@
   font-family: 'JetBrainsMono Nerd Font', 'Ubuntu Mono', FontAwesome;
 }
 
-label.module {
+label.module, #window {
   border-radius: 10px;
-  padding: 3px;
+  padding-top: 3px;
+  padding-bottom: 3px;
+  padding-left: 5px;
+  padding-right: 5px;
   margin: 2px;
 }
 

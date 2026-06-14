@@ -7,7 +7,8 @@
 
 ## Queue
 
-- [ ] JB Mono nerd font
+- [ ] screenshots
+- [ ] background
 - [ ] should fail or warn on invalid symlinks
 - [ ] Custom loading screen
 - [ ] fix ghostty
@@ -16,6 +17,7 @@
 - [ ] Apps:
     - [ ] aseprite
     - [ ] autoproxy
+- [x] JB Mono nerd font
 - [x] the cursor is ugly & unchanging
 - [x] RU keyboard layout
 - [x] set up audio

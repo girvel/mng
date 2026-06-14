@@ -41,6 +41,7 @@ local use_niri = function()
     mng.symlink("~/.config/waybar/config.jsonc", "./example/assets/waybar_config.jsonc")
     mng.symlink("~/.config/waybar/style.css", "./example/assets/waybar_style.css")
     mng.symlink("~/.local/share/icons/Vimix", "./example/assets/Vimix")
+    mng.symlink("~/Pictures/wallpapers/bastion.png", "./example/assets/bastion.png")
   end)
 end
 
@@ -67,7 +68,7 @@ end
 mng.package [[
   xdg-utils fuse
   zsh git stow curl wget neovim ripgrep eza github-cli love htop tree jq redsocks
-  ghostty firefox vlc obs kdenlive audacity ttf-ubuntu-font-family dejavu-fonts-ttf zip unzip
+  ghostty firefox vlc obs kdenlive audacity ttf-ubuntu-font-family dejavu-fonts-ttf zip unzip wbg
 ]]
 
 -- use_gnome()

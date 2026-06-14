@@ -1,6 +1,7 @@
 spawn-sh-at-startup "pidof pipewire || pipewire"
 spawn-sh-at-startup "pidof wireplumber || {sleep 1 && wireplumber}"
 spawn-sh-at-startup "pidof pipewire-pulse || {sleep 1 && pipewire-pulse}"
+spawn-sh-at-startup "pidof wbg || wbg ~/Pictures/wallpapers/bastion.png"
 spawn-sh-at-startup "sleep 2 && waybar"
 
 xwayland-satellite {
@@ -591,7 +592,7 @@ binds {
     // Mod+Space       { switch-layout "next"; }
     // Mod+Shift+Space { switch-layout "prev"; }
 
-    Print { screenshot; }
+    Mod+Shift+S { screenshot; }
     Ctrl+Print { screenshot-screen; }
     Alt+Print { screenshot-window; }
 
