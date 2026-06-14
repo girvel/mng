@@ -2,9 +2,50 @@ local mng = require("mng")
 local gnome = require("mng.gnome")
 
 
-if os.getenv("USER") ~= "root" then
-  error("Expected $USER to be root; please run with sudo.")
+--- @diagnostic disable-next-line:unused-function
+local use_gnome = function()
+  gnome.on()
+
+  mng.as_user("girvel", function()
+    gnome.gsettings("org.gnome.desktop.interface", "clock-show-weekday", "true")
+    gnome.gsettings("org.gnome.desktop.interface", "color-scheme", "'prefer-dark'")
+    gnome.gsettings("org.gnome.shell.keybindings", "show-screenshot-ui", "['<Super><Shift>s']")
+    gnome.shortcut("custom0", "Open Ghostty", "ghostty", "<Ctrl><Alt>t")
+
+    gnome.extension("dash-to-dock@micxgx.gmail.com")
+      :gsettings("dock-position", "'LEFT'")
+      :gsettings("extend-height", "true")
+      :gsettings("dock-fixed", "true")
+      :gsettings("dash-max-icon-size", "40")
+      :gsettings("custom-theme-shrink", "true")
+      :gsettings("custom-background-color", "true")
+      :gsettings("background-color", "'#111111'")
+      :gsettings("transparency-mode", "'FIXED'")
+      :gsettings("background-opacity", "0.9")
+
+    gnome.gsettings(
+      "org.gnome.shell", "favorite-apps",
+      "['firefox.desktop', 'autoproxy_1.desktop', 'com.mitchellh.ghostty.desktop', 'ldtk.desktop', 'audacity.desktop', 'telegram.desktop', 'com.obsproject.Studio.desktop', 'org.kde.kdenlive.desktop']"
+    )
+  end)
 end
+
+local use_niri = function()
+  mng.package(
+    "dbus elogind niri fuzzel Waybar wl-clipboard pipewire wireplumber font-awesome pavucontrol"
+    .." alsa-utils xclip xwayland-satellite"
+  )
+  mng.service_on("dbus", "elogind")  -- TODO unify syntax with mng.package
+  mng.as_user("girvel", function()
+    mng.symlink("~/.config/niri/config.kdl", "./example/assets/niri_config.kdl")
+    mng.symlink("~/.config/waybar/config.jsonc", "./example/assets/waybar_config.jsonc")
+    mng.symlink("~/.config/waybar/style.css", "./example/assets/waybar_style.css")
+    mng.symlink("~/.local/share/icons/Vimix", "./example/assets/Vimix")
+    mng.symlink("~/Pictures/wallpapers/bastion.png", "./example/assets/bastion.png")
+  end)
+end
+
+mng.start(...)
 
 local hostname = mng.hostname_get()
 if hostname == "sovngard1" then
@@ -20,19 +61,20 @@ end
 if hostname ~= "sovngard1" then
   mng.package("keyd")
   mng.dir("/etc/keyd")
-  mng.symlink("/etc/keyd/remap.conf", "./example/remap.conf")
+  mng.symlink("/etc/keyd/remap.conf", "./example/assets/remap.conf")
   mng.service_on("keyd")
 end
 
-gnome.on()
 mng.package [[
   xdg-utils fuse
   zsh git stow curl wget neovim ripgrep eza github-cli love htop tree jq redsocks
-  ghostty firefox vlc obs kdenlive audacity
+  ghostty firefox vlc obs kdenlive audacity ttf-ubuntu-font-family dejavu-fonts-ttf zip unzip wbg
 ]]
 
-mng.service_off("dhcpcd", "wpa_supplicant")
-mng.service_on("dbus", "NetworkManager", "gdm", "redsocks")
+-- use_gnome()
+use_niri()
+
+mng.service_on("redsocks")
 
 local ldtk = "/usr/local/bin/ldtk"
 if not mng.file_exists(ldtk) then
@@ -41,10 +83,18 @@ if not mng.file_exists(ldtk) then
   mng.cmd("mv LDtk*.AppImage %s", ldtk)
   mng.cmd("chmod +x %s", ldtk)
 end
-mng.symlink("/usr/share/applications/ldtk.desktop", "./example/ldtk.desktop")
-mng.symlink("/usr/share/icons/hicolor/512x512/apps/ldtk.png", "./example/ldtk.png")
-mng.cmd("update-desktop-database /usr/share/applications")
-mng.cmd("gtk-update-icon-cache /usr/share/icons/hicolor")
+mng.desktop_file("./example/assets/ldtk.desktop")
+mng.icon("./example/assets/ldtk.png")
+
+local _, exit_code = mng.cmd_read("ls /usr/share/fonts/JetBrainsMono* 2>/dev/null")
+if exit_code ~= 0 then
+  mng.cmd("rm -rf /tmp/jbmono.zip")
+  mng.cmd("wget https://github.com/ryanoasis/nerd-fonts/releases/download/v3.4.0/JetBrainsMono.zip -O /tmp/jbmono.zip")
+  mng.cmd("rm -rf /tmp/jbmono")
+  mng.dir("/tmp/jbmono")
+  mng.cmd("unzip /tmp/jbmono.zip -d /tmp/jbmono")
+  mng.cmd("mv /tmp/jbmono/JetBrainsMono* /usr/share/fonts/")
+end
 
 mng.as_user("girvel", function()
   mng.shell("/usr/bin/zsh")
@@ -60,29 +110,14 @@ mng.as_user("girvel", function()
   mng.dir("~/.local/bin")
   mng.git_repo("https://github.com/girvel/dotfiles", "~/dotfiles", true)
   mng.stow("~/dotfiles", "~")
-  mng.file_set("~/.zshrc", mng.file_get("./example/.zshrc"))
-
-  gnome.gsettings("org.gnome.desktop.interface", "clock-show-weekday", "true")
-  gnome.gsettings("org.gnome.desktop.interface", "color-scheme", "'prefer-dark'")
-  gnome.gsettings("org.gnome.shell.keybindings", "show-screenshot-ui", "['<Super><Shift>s']")
-  gnome.shortcut("custom0", "Open Ghostty", "ghostty", "<Ctrl><Alt>t")
-
-  gnome.extension("dash-to-dock@micxgx.gmail.com")
-    :gsettings("dock-position", "'LEFT'")
-    :gsettings("extend-height", "true")
-    :gsettings("dock-fixed", "true")
-    :gsettings("dash-max-icon-size", "40")
-    :gsettings("custom-theme-shrink", "true")
-    :gsettings("custom-background-color", "true")
-    :gsettings("background-color", "'#111111'")
-    :gsettings("transparency-mode", "'FIXED'")
-    :gsettings("background-opacity", "0.9")
-
-  gnome.gsettings(
-    "org.gnome.shell", "favorite-apps",
-    "['firefox.desktop', 'com.mitchellh.ghostty.desktop', 'ldtk.desktop', 'audacity.desktop', 'telegram.desktop', 'com.obsproject.Studio.desktop', 'org.kde.kdenlive.desktop']"
-  )
+  mng.file_set("~/.zshrc", mng.file_get("./example/assets/.zshrc"))
 
   mng.git_repo("https://github.com/girvel/autoproxy", "~/workshop/autoproxy")
-  -- mng.symlink()
+  mng.as_user(nil, function()
+    mng.symlink("/etc/redsocks.conf", "~/workshop/autoproxy/redsocks.conf")
+  end)
+  mng.desktop_file("./example/assets/autoproxy_1")
+  mng.desktop_file("./example/assets/autoproxy_2")
 end)
+
+mng.finish()

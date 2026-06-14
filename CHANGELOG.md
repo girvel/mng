@@ -7,9 +7,22 @@
 
 ## Queue
 
-- [ ] RU keyboard layout
-- [ ] aseprite
-- [ ] autoproxy
+- [ ] screenshots
+- [ ] background
+- [ ] should fail or warn on invalid symlinks
+- [ ] Custom loading screen
+- [ ] fix ghostty
+- [ ] Modules
+    A pluggable script; errors are isolated, assets are grouped into the same folder
+- [ ] Apps:
+    - [ ] aseprite
+    - [ ] autoproxy
+- [x] JB Mono nerd font
+- [x] the cursor is ugly & unchanging
+- [x] RU keyboard layout
+- [x] set up audio
+- [x] mng clean
+- [x] niri
 - [x] Real physical installation
 - [x] Retest from scratch
 - [x] right dock

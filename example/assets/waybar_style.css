@@ -1,0 +1,24 @@
+#waybar {
+  background-color: rgba(0, 0, 0, 0);
+}
+
+* {
+  color: #f7f1ff;
+  font-family: 'JetBrainsMono Nerd Font', 'Ubuntu Mono', FontAwesome;
+}
+
+label.module, #window {
+  border-radius: 10px;
+  padding-top: 3px;
+  padding-bottom: 3px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 2px;
+}
+
+#pulseaudio:hover,
+#network:hover,
+#clock:hover {
+  background-color: #fcba03;
+  color: #222222;
+}

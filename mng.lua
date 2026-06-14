@@ -24,8 +24,24 @@ local string_split = function(str, pat, plain)
   end
 end
 
+--- @param arr string[]
+--- @param sep string
+--- @return string
+local string_join = function(arr, sep)
+  if #arr == 0 then return "" end
+  local result = arr[1]
+  for i = 2, #arr do
+    result = result.." "..arr[i]
+  end
+  return result
+end
+
 local string_strip = function(str)
   return str:gsub("^%s+", ""):gsub("%s+$", "")
+end
+
+local string_endswith = function(str, substr)
+  return str:sub(-#substr) == substr
 end
 
 local cmd_fmt = function(fmt, ...)
@@ -42,9 +58,140 @@ local tokenize = function(str)
   return string_split(string_strip(str), "%s+")
 end
 
+--- @param t table
+--- @param item any
+--- @return integer?
+local table_first_index = function(t, item)
+  for i, e in ipairs(t) do
+    if e == item then return i end
+  end
+end
+
+local cli_seen = {}
+
+local cli = function(name, description)
+  if #cli_seen > 0 then
+    error("cli() call should come first")
+  end
+  table.insert(cli_seen, {type = "cli", name = name, description = description})
+end
+
+local cli_help = function(hide_description)
+  if cli_seen[1].type == "cli" then
+    local data = table.remove(cli_seen, 1)
+    if not hide_description then print(data.description) end
+    io.write("USAGE: "..data.name)
+  else
+    io.write("USAGE: <FILENAME>")
+  end
+
+  local was_prev_flag = false
+  for _, param in ipairs(cli_seen) do
+    if param.type == "command" then
+      io.write(" <command>")
+    elseif param.type == "flag" then
+      if not was_prev_flag then
+        io.write(" <flags>")
+      end
+    end
+
+    was_prev_flag = param.type == "flag"
+  end
+  print()
+
+  was_prev_flag = false
+  for _, param in ipairs(cli_seen) do
+    if param.type == "command" then
+      print()
+      print("COMMAND:")
+      for v, desc in pairs(param.possible_values) do
+        print("  "..v..": "..desc);
+      end
+    elseif param.type == "flag" then
+      if not was_prev_flag then
+        print()
+        print("FLAGS:")
+      end
+      print("  "..param.flag..": "..param.description)
+    end
+    was_prev_flag = param.type == "flag"
+  end
+end
+
+-- TODO move internals to mng.utils
+--- @param args string[]
+--- @param possible_values table<string, string>
+--- @param default string?
+--- @return string?
+local cli_command = function(args, possible_values, default)
+  table.insert(cli_seen, {
+    type = "command",
+    possible_values = possible_values,
+    default = default
+  })
+
+  if possible_values[args[1]] then
+    return table.remove(args, 1)
+  end
+  return default
+end
+
+local cli_flag = function(args, flag, description)
+  table.insert(cli_seen, {type = "flag", flag = flag, description = description})
+  local i = table_first_index(args, flag)
+  if i then
+    table.remove(args, i)
+  end
+  return not not i
+end
+
+local cli_finish = function(args)
+  if #args == 0 then return end
+  io.write("Unexpected args:")
+  for _, arg in ipairs(args) do
+    io.write(" "..arg)
+  end
+  io.write("\n\n")
+  cli_help(true)
+  os.exit(1)
+end
+
+local request_yes = function(phrase)
+  io.write("\n"..phrase.." [y/n] ")
+  local response = io.read("*l"):lower()
+  return response == "y" or response == "yes"
+end
+
+local cli_args
+local run_at_finish = {}  -- TODO rename, expose as advanced
+
 ----------------------------------------------------------------------------------------------------
 -- [SECTION] API
 ----------------------------------------------------------------------------------------------------
+
+--- @param ... string CLI args
+mng.start = function(...)
+  if os.getenv("USER") ~= "root" then
+    error("Expected $USER to be root; please run with sudo.")
+  end
+
+  local args = {...}
+  cli("<MNG FILE>", "mng is a tool for procedural OS configuration")
+  cli_args = {
+    clean = cli_flag(args, "--clean", "Also clean the garbage"),
+  }
+  if cli_flag(args, "--help", "Display help") then
+    cli_help()
+    os.exit(0)
+  end
+  cli_finish(args)
+end
+
+mng.finish = function()
+  for sub in pairs(run_at_finish) do
+    sub()
+  end
+end
 
 --- @type string?
 mng.user = nil
@@ -72,8 +219,49 @@ mng.cmd_quote = function(expr)
   return ("'%s'"):format(expr:gsub("'", "'\\''"))
 end
 
+local all_packages = {
+  ["LuaJIT"] = true,
+  ["base-system"] = true,
+  ["grub-x86_64-efi"] = true,
+  ["linux-headers"] = true,
+}
+
+local clean_packages = function()
+  print("PACKAGES")
+
+  local installed_packages = string_split(string_strip(mng.cmd_read("xbps-query -m")), "\n")
+  local redundant_packages = {}
+  for _, pkg in ipairs(installed_packages) do
+    local name = pkg:match("^(.*)-[^-]+")
+    if not all_packages[name] then
+      table.insert(redundant_packages, name)
+    end
+  end
+
+  if #redundant_packages > 0 then
+    print("Found redundant packages:")
+    for _, pkg in ipairs(redundant_packages) do
+      print("- "..pkg)
+    end
+
+    if request_yes("Remove?") then
+      mng.cmd("xbps-remove -y %s", string_join(redundant_packages, " "))
+    end
+  end
+
+  mng.cmd("xbps-remove -o")
+end
+
 mng.package = function(packages)
+  if cli_args.clean then
+    run_at_finish[clean_packages] = true
+  end
+
   for _, pkg in ipairs(tokenize(packages)) do
+    if cli_args.clean then
+      all_packages[pkg] = true
+    end
+
     if not mng.package_is_installed(pkg) then
       mng.package_install(pkg)
     end
@@ -177,13 +365,16 @@ end
 
 mng.symlink = function(path, value)
   value = mng.cmd_read("realpath -s %s", value)
+  local base_dir = path:match("^(.*)/[^/]+$")
+  if base_dir then mng.dir(base_dir) end
   if mng.symlink_exists(path) then
     if mng.symlink_get(path) == value then
-      return
+      return false
     end
     mng.file_remove(path)
   end
   mng.symlink_set(path, value)
+  return true
 end
 
 mng.symlink_exists = function(path)
@@ -198,17 +389,131 @@ mng.symlink_set = function(path, value)
   mng.cmd("ln -sfn %s %s", value, path)
 end
 
+local service_state = {
+  ["agetty-tty1"] = true,
+  ["agetty-tty2"] = true,
+  ["agetty-tty3"] = true,
+  ["agetty-tty4"] = true,
+  ["agetty-tty5"] = true,
+  ["agetty-tty6"] = true,
+  ["dhcpcd"] = true,
+  ["wpa_supplicant"] = true,
+}
+
+local clean_services = function()
+  print("SERVICES")
+
+  local services_real = string_split(string_strip(mng.cmd_read("ls /var/service")), "%s+")
+  local services_to_off = {}
+  for _, service in ipairs(services_real) do
+    if not service_state[service] then
+      table.insert(services_to_off, service)
+    end
+  end
+
+  local services_to_on = {}
+  for service, v in pairs(service_state) do
+    if v and not table_first_index(services_real, service) then
+      table.insert(services_to_on, service)
+    end
+  end
+
+  if #services_to_off > 0 then
+    print("Found redundant services:")
+    for _, service in ipairs(services_to_off) do
+      print("- "..service)
+    end
+
+    if request_yes("Disable?") then
+      mng.service_off(unpack(services_to_off))
+    end
+  end
+
+  if #services_to_on > 0 then
+    print("Found missing services:")
+    for _, service in ipairs(services_to_on) do
+      print("- "..service)
+    end
+
+    if request_yes("Enable?") then
+      mng.service_on(unpack(services_to_on))
+    end
+  end
+end
+
 mng.service_on = function(...)
+  if cli_args.clean then
+    run_at_finish[clean_services] = true
+  end
+
   for i = 1, select("#", ...) do
     local name = select(i, ...)
+    if cli_args.clean then
+      service_state[name] = true
+    end
     mng.symlink("/var/service/"..name, "/etc/sv/"..name)
   end
 end
 
 mng.service_off = function(...)
+  if cli_args.clean then
+    run_at_finish[clean_services] = true
+  end
+
   for i = 1, select("#", ...) do
     local name = select(i, ...)
+    if cli_args.clean then
+      service_state[name] = false
+    end
     mng.file_remove("/var/service/"..name)
+  end
+end
+
+local update_desktop_db_dirs = {}
+local update_desktop_db = function()
+  for dir in pairs(update_desktop_db_dirs) do
+    mng.cmd("update-desktop-database "..dir)
+  end
+end
+
+mng.desktop_file = function(path)
+  local target_dir
+  if mng.user then
+    target_dir = "/home/"..mng.user.."/.local/share/applications/"
+  else
+    target_dir = "/usr/share/applications/"
+  end
+
+  local shortname = path:match("[^/]+$")
+  if mng.symlink(target_dir..shortname, path) then
+    run_at_finish[update_desktop_db] = true
+    update_desktop_db_dirs[target_dir] = true
+  end
+end
+
+local update_icon_cache = function()
+  if mng.cmd_read("command -v gtk-update-icon-cache") ~= "" then
+    mng.cmd("gtk-update-icon-cache -f -t /usr/share/icons/hicolor")
+  end
+end
+
+mng.icon = function(path)
+  local shortname = path:match("[^/]+$")
+  local resolution
+  if string_endswith(path, ".svg") then
+    resolution = "scalable"
+  else
+    local info = mng.cmd_read("file -b %s", mng.cmd_quote(path))
+    local w, h = info:match("(%d+)%s*x%s*(%d+)")
+    if not w or not h then
+      error("Could not determine resolution for icon "..path)
+    end
+    resolution = w.."x"..h
+  end
+  local target_dir = "/usr/share/icons/hicolor"..resolution.."/apps"
+  mng.dir(target_dir)
+  if mng.symlink(target_dir.."/"..shortname, path) then
+    run_at_finish[update_icon_cache] = true
   end
 end
 
