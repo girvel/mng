@@ -40,6 +40,7 @@ local use_niri = function()
     mng.symlink("~/.config/niri/config.kdl", "./example/assets/niri_config.kdl")
     mng.symlink("~/.config/waybar/config.jsonc", "./example/assets/waybar_config.jsonc")
     mng.symlink("~/.config/waybar/style.css", "./example/assets/waybar_style.css")
+    mng.symlink("~/.local/share/icons/Vimix", "./example/assets/Vimix")
   end)
 end
 

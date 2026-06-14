@@ -7,7 +7,7 @@
 
 ## Queue
 
-- [ ] the cursor is ugly & unchanging
+- [ ] niri workspaces
 - [ ] JB Mono nerd font
 - [ ] should fail or warn on invalid symlinks
 - [ ] Custom loading screen
@@ -17,6 +17,7 @@
 - [ ] Apps:
     - [ ] aseprite
     - [ ] autoproxy
+- [x] the cursor is ugly & unchanging
 - [x] RU keyboard layout
 - [x] set up audio
 - [x] mng clean
