@@ -7,7 +7,10 @@
 
 ## Queue
 
-- [ ] should fail on invalid symlinks
+- [ ] JB Mono nerd font
+- [ ] set up audio
+- [ ] fix ghostty
+- [ ] should fail or warn on invalid symlinks
 - [ ] mng clean
 - [ ] Custom loading screen
 - [ ] Try wayland compositors

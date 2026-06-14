@@ -365,6 +365,8 @@ end
 
 mng.symlink = function(path, value)
   value = mng.cmd_read("realpath -s %s", value)
+  local base_dir = path:match("^(.*)/[^/]+$")
+  if base_dir then mng.dir(base_dir) end
   if mng.symlink_exists(path) then
     if mng.symlink_get(path) == value then
       return false

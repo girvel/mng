@@ -1,0 +1,14 @@
+#waybar {
+  background-color: #222222;
+}
+
+* {
+  color: #f7f1ff;
+  font-family: 'JetBrainsMono Nerd Font', 'Ubuntu Mono', FontAwesome;
+}
+
+label.module {
+  border-radius: 10px;
+  padding: 3px;
+  margin: 2px;
+}

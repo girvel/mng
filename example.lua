@@ -2,6 +2,7 @@ local mng = require("mng")
 local gnome = require("mng.gnome")
 
 
+--- @diagnostic disable-next-line:unused-function
 local use_gnome = function()
   gnome.on()
 
@@ -30,10 +31,12 @@ local use_gnome = function()
 end
 
 local use_niri = function()
-  mng.package("dbus elogind niri fuzzel")
+  mng.package("dbus elogind niri fuzzel Waybar wl-clipboard pipewire wireplumber font-awesome")
   mng.service_on("dbus", "elogind")  -- TODO unify syntax with mng.package
   mng.as_user("girvel", function()
     mng.symlink("~/.config/niri/config.kdl", "./example/assets/niri_config.kdl")
+    mng.symlink("~/.config/waybar/config.jsonc", "./example/assets/waybar_config.jsonc")
+    mng.symlink("~/.config/waybar/style.css", "./example/assets/waybar_style.css")
   end)
 end
 
@@ -60,7 +63,7 @@ end
 mng.package [[
   xdg-utils fuse
   zsh git stow curl wget neovim ripgrep eza github-cli love htop tree jq redsocks
-  ghostty firefox vlc obs kdenlive audacity
+  ghostty firefox vlc obs kdenlive audacity ttf-ubuntu-font-family dejavu-fonts-ttf
 ]]
 
 -- use_gnome()
