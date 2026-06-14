@@ -7,7 +7,6 @@
 
 ## Queue
 
-- [ ] niri workspaces
 - [ ] JB Mono nerd font
 - [ ] should fail or warn on invalid symlinks
 - [ ] Custom loading screen

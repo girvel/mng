@@ -67,7 +67,7 @@ end
 mng.package [[
   xdg-utils fuse
   zsh git stow curl wget neovim ripgrep eza github-cli love htop tree jq redsocks
-  ghostty firefox vlc obs kdenlive audacity ttf-ubuntu-font-family dejavu-fonts-ttf
+  ghostty firefox vlc obs kdenlive audacity ttf-ubuntu-font-family dejavu-fonts-ttf zip unzip
 ]]
 
 -- use_gnome()
@@ -84,6 +84,16 @@ if not mng.file_exists(ldtk) then
 end
 mng.desktop_file("./example/assets/ldtk.desktop")
 mng.icon("./example/assets/ldtk.png")
+
+local _, exit_code = mng.cmd_read("ls /usr/share/fonts/JetBrainsMono* 2>/dev/null")
+if exit_code ~= 0 then
+  mng.cmd("rm -rf /tmp/jbmono.zip")
+  mng.cmd("wget https://github.com/ryanoasis/nerd-fonts/releases/download/v3.4.0/JetBrainsMono.zip -O /tmp/jbmono.zip")
+  mng.cmd("rm -rf /tmp/jbmono")
+  mng.dir("/tmp/jbmono")
+  mng.cmd("unzip /tmp/jbmono.zip -d /tmp/jbmono")
+  mng.cmd("mv /tmp/jbmono/JetBrainsMono* /usr/share/fonts/")
+end
 
 mng.as_user("girvel", function()
   mng.shell("/usr/bin/zsh")
