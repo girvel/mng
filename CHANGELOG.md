@@ -7,6 +7,8 @@
 
 ## Queue
 
+- [ ] caps lock remap is broken
+- [ ] if manual installation came before the automatic one, --clean wants to remove it
 - [ ] move example.lua to example/ anyway, mess with package.path or something
 - [ ] fstab: connect disks
 - [ ] background

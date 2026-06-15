@@ -16,9 +16,9 @@
         "temperature",
         "network",
         "battery",
-        "niri/language",
+        "niri/language"
         // "mpd",
-        "pulseaudio"
+        // "pulseaudio"
         // "tray",
         // "custom/power"
     ],

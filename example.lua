@@ -65,11 +65,10 @@ if hostname ~= "sovngard1" then
   mng.package("keyd")
   mng.dir("/etc/keyd")
   mng.symlink("/etc/keyd/remap.conf", "./example/assets/remap.conf")
-  mng.service_on("keyd")
 end
 
 mng.package [[
-  xdg-utils fuse mesa-dri
+  xdg-utils fuse mesa-dri man-pages-posix man-pages-devel
   zsh git stow curl wget neovim ripgrep eza github-cli love htop tree jq redsocks
   ghostty firefox vlc obs kdenlive audacity ttf-ubuntu-font-family dejavu-fonts-ttf zip unzip wbg
 ]]

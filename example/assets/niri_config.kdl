@@ -2,6 +2,7 @@ spawn-sh-at-startup "pidof pipewire || pipewire"
 spawn-sh-at-startup "pidof wireplumber || {sleep 1 && wireplumber}"
 spawn-sh-at-startup "pidof pipewire-pulse || {sleep 1 && pipewire-pulse}"
 spawn-sh-at-startup "pidof wbg || wbg ~/Pictures/wallpapers/bastion.png"
+spawn-sh-at-startup "pidof keyd || keyd"
 spawn-sh-at-startup "sleep 2 && waybar"
 
 xwayland-satellite {
@@ -130,7 +131,7 @@ layout {
     // preset-window-heights { }
 
     // You can change the default width of the new windows.
-    default-column-width { proportion 0.5; }
+    default-column-width { proportion 0.333333; }
     // If you leave the brackets empty, the windows themselves will decide their initial width.
     // default-column-width {}
 
