@@ -49,11 +49,14 @@ mng.start(...)
 
 local hostname = mng.hostname_get()
 if hostname == "sovngard1" then
-  mng.package("mesa-dri virtualbox-ose-guest virtualbox-ose-guest virtualbox-ose-guest-dkms")
+  mng.package("virtualbox-ose-guest virtualbox-ose-guest virtualbox-ose-guest-dkms")
   mng.service_on("vboxservice")
 elseif hostname == "valholl" then
   mng.package("void-repo-nonfree")
   mng.package("nvidia")
+  if mng.file("/etc/modprobe.d/nvidia_drm.conf", "options nvidia_drm modeset=1\n") then
+    mng.cmd("xbps-reconfigure -a")
+  end
 else
   error("No machine-specific configuration for "..hostname)
 end
@@ -66,7 +69,7 @@ if hostname ~= "sovngard1" then
 end
 
 mng.package [[
-  xdg-utils fuse
+  xdg-utils fuse mesa-dri
   zsh git stow curl wget neovim ripgrep eza github-cli love htop tree jq redsocks
   ghostty firefox vlc obs kdenlive audacity ttf-ubuntu-font-family dejavu-fonts-ttf zip unzip wbg
 ]]

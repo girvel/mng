@@ -156,10 +156,19 @@ local cli_finish = function(args)
   os.exit(1)
 end
 
-local request_yes = function(phrase)
-  io.write("\n"..phrase.." [y/n] ")
+local request_yes = function(phrase, yes_is_default)
+  io.write("\n"..phrase)
+  if yes_is_default then
+    io.write(" [Y/n] ")
+  else
+    io.write(" [y/N] ")
+  end
   local response = io.read("*l"):lower()
-  return response == "y" or response == "yes"
+  if yes_is_default then
+    return response == "n" or response == "no"
+  else
+    return response == "y" or response == "yes"
+  end
 end
 
 local cli_args
@@ -319,6 +328,16 @@ mng.file_exists = function(path)
   return true
 end
 
+--- Ensure exact file content
+--- @return boolean was_updated
+mng.file = function(path, content)
+  local will_be_updated = mng.file_get(path) ~= content
+  if will_be_updated then
+    mng.file_set(path, content)
+  end
+  return will_be_updated
+end
+
 mng.file_set = function(path, content)
   path = mng.cmd_read("echo %s", path)
   mng.cmd("touch %s", path)
@@ -327,9 +346,10 @@ mng.file_set = function(path, content)
   f:close()
 end
 
---- @return string
-mng.file_get = function(path, content)
-  local f = assert(io.open(path, "r"))
+--- @return string?
+mng.file_get = function(path)
+  local f = io.open(path, "r")
+  if not f then return end
   local result = f:read("*a")
   f:close()
   return result
@@ -363,6 +383,7 @@ mng.hostname_get = function()
   return string_strip(mng.file_get("/etc/hostname"))
 end
 
+--- @return boolean was_updated
 mng.symlink = function(path, value)
   value = mng.cmd_read("realpath -s %s", value)
   local base_dir = path:match("^(.*)/[^/]+$")

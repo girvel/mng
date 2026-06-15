@@ -7,7 +7,8 @@
 
 ## Queue
 
-- [ ] screenshots
+- [ ] move example.lua to example/ anyway, mess with package.path or something
+- [ ] fstab: connect disks
 - [ ] background
 - [ ] should fail or warn on invalid symlinks
 - [ ] Custom loading screen
@@ -17,6 +18,7 @@
 - [ ] Apps:
     - [ ] aseprite
     - [ ] autoproxy
+- [x] screenshots
 - [x] JB Mono nerd font
 - [x] the cursor is ugly & unchanging
 - [x] RU keyboard layout
