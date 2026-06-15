@@ -33,9 +33,9 @@ end
 local use_niri = function()
   mng.package(
     "dbus elogind niri fuzzel Waybar wl-clipboard pipewire wireplumber font-awesome pavucontrol"
-    .." alsa-utils xclip xwayland-satellite bluez blueman xdg-terminal-exec"
+    .." alsa-utils xclip xwayland-satellite bluez blueman"
   )
-  mng.service_on("dbus", "elogind", "bluetoothd")  -- TODO unify syntax with mng.package
+  mng.service_on("dbus", "bluetoothd")  -- TODO unify syntax with mng.package
 
   if mng.package("xdg-user-dirs") then
     mng.as_user("girvel", function()
@@ -78,6 +78,7 @@ if hostname ~= "sovngard1" then
   mng.file("/etc/rc.conf", "HARDWARECLOCK=localtime")
 end
 
+mng.xbps_mirror("https://repo-de.voidlinux.org/current")
 mng.package [[
   xdg-utils fuse mesa-dri man-pages-posix man-pages-devel telegram-desktop
   zsh git stow curl wget neovim ripgrep eza github-cli love htop tree jq redsocks

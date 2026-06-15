@@ -287,8 +287,19 @@ mng.package_is_installed = function(pkg)
   return mng.cmd_read("xbps-query %s -p state", pkg) == "installed"
 end
 
+local xbps_synced = false
 mng.package_install = function(pkg)
-  mng.cmd("xbps-install -yS "..pkg)
+  if not xbps_synced then
+    xbps_synced = true
+    mng.cmd("xbps-install -S")
+  end
+  mng.cmd("xbps-install -y "..pkg)
+end
+
+mng.xbps_mirror = function(mirror)
+  mng.file("/etc/xbps.d/00-repository-main.conf", "repository="..mirror)
+  xbps_synced = true
+  mng.cmd("xbps-install -S")
 end
 
 mng.as_user = function(new_user, f)

@@ -7,6 +7,7 @@
 
 ## Queue
 
+- [ ] thunar
 - [ ] bluetooth autostart (or autoenable or whatever) -> here
 - [x] Telegram
 - [ ] fix time
