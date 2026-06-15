@@ -7,6 +7,9 @@
 
 ## Queue
 
+- [ ] bluetooth autostart (or autoenable or whatever) -> here
+- [x] Telegram
+- [ ] fix time
 - [ ] if manual installation came before the automatic one, --clean wants to remove it
 - [ ] move example.lua to example/ anyway, mess with package.path or something
 - [ ] fstab: connect disks

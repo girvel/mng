@@ -33,13 +33,21 @@ end
 local use_niri = function()
   mng.package(
     "dbus elogind niri fuzzel Waybar wl-clipboard pipewire wireplumber font-awesome pavucontrol"
-    .." alsa-utils xclip xwayland-satellite"
+    .." alsa-utils xclip xwayland-satellite bluez blueman xdg-terminal-exec"
   )
-  mng.service_on("dbus", "elogind")  -- TODO unify syntax with mng.package
+  mng.service_on("dbus", "elogind", "bluetoothd")  -- TODO unify syntax with mng.package
+
+  if mng.package("xdg-user-dirs") then
+    mng.as_user("girvel", function()
+      mng.cmd("xdg-user-dirs-update")
+    end)
+  end
+
   mng.as_user("girvel", function()
     mng.symlink("~/.config/niri/config.kdl", "./example/assets/niri_config.kdl")
     mng.symlink("~/.config/waybar/config.jsonc", "./example/assets/waybar_config.jsonc")
     mng.symlink("~/.config/waybar/style.css", "./example/assets/waybar_style.css")
+    mng.symlink("~/.config/pulse/client.conf", "./example/assets/pulse_config_client.conf")
     mng.symlink("~/.local/share/icons/Vimix", "./example/assets/Vimix")
     mng.symlink("~/Pictures/wallpapers/bastion.png", "./example/assets/bastion.png")
   end)
@@ -67,12 +75,13 @@ if hostname ~= "sovngard1" then
   mng.service_on("keyd")
   mng.file("/etc/sv/keyd/run", "#!/bin/sh\nexec keyd 2>&1")  -- or else it crashes
   mng.symlink("/etc/keyd/remap.conf", "./example/assets/remap.conf")
+  mng.file("/etc/rc.conf", "HARDWARECLOCK=localtime")
 end
 
 mng.package [[
-  xdg-utils fuse mesa-dri man-pages-posix man-pages-devel
+  xdg-utils fuse mesa-dri man-pages-posix man-pages-devel telegram-desktop
   zsh git stow curl wget neovim ripgrep eza github-cli love htop tree jq redsocks
-  ghostty firefox vlc obs kdenlive audacity ttf-ubuntu-font-family dejavu-fonts-ttf zip unzip wbg
+  ghostty firefox vlc obs kdenlive audacity ttf-ubuntu-font-family dejavu-fonts-ttf zip unzip awww
 ]]
 
 -- use_gnome()
@@ -100,6 +109,7 @@ if exit_code ~= 0 then
   mng.cmd("mv /tmp/jbmono/JetBrainsMono* /usr/share/fonts/")
 end
 
+mng.cmd("usermod -aG bluetooth girvel")
 mng.as_user("girvel", function()
   mng.shell("/usr/bin/zsh")
   if not mng.dir_exists("~/.oh-my-zsh") then

@@ -9,4 +9,4 @@ keybind = ctrl+shift+e=unbind
 keybind = f11=toggle_fullscreen
 
 gtk-wide-tabs = false
-
+font-family = JetBrainsMono Nerd Font

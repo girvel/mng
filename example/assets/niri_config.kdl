@@ -1,7 +1,8 @@
 spawn-sh-at-startup "pidof pipewire || pipewire"
-spawn-sh-at-startup "pidof wireplumber || {sleep 1 && wireplumber}"
-spawn-sh-at-startup "pidof pipewire-pulse || {sleep 1 && pipewire-pulse}"
-spawn-sh-at-startup "pidof wbg || wbg ~/Pictures/wallpapers/bastion.png"
+spawn-sh-at-startup "pidof wireplumber || (sleep 1; exec wireplumber)"
+spawn-sh-at-startup "pidof pipewire-pulse || (sleep 1; exec pipewire-pulse)"
+spawn-sh-at-startup "pidof awww || awww-daemon"
+spawn-sh-at-startup "sleep 1 && awww img  ~/Pictures/wallpapers/bastion.png"
 spawn-sh-at-startup "pidof keyd || keyd"
 spawn-sh-at-startup "sleep 2 && waybar"
 
@@ -208,7 +209,7 @@ layout {
     // You can enable drop shadows for windows.
     shadow {
         // Uncomment the next line to enable shadows.
-        // on
+        on
 
         // By default, the shadow draws only around its window, and not behind it.
         // Uncomment this setting to make the shadow draw behind its window.
@@ -268,7 +269,7 @@ hotkey-overlay {
 // Additionally, clients will be informed that they are tiled, removing some client-side rounded corners.
 // This option will also fix border/focus ring drawing behind some semitransparent windows.
 // After enabling or disabling this, you need to restart the apps for this to take effect.
-// prefer-no-csd
+prefer-no-csd
 
 // You can change the path where screenshots are saved.
 // A ~ at the front will be expanded to the home directory.
@@ -326,7 +327,7 @@ window-rule {
 
 // Example: enable rounded corners for all windows.
 // (This example rule is commented out with a "/-" in front.)
-/-window-rule {
+window-rule {
     geometry-corner-radius 12
     clip-to-geometry true
 }

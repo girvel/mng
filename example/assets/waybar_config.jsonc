@@ -16,10 +16,10 @@
         "temperature",
         "network",
         "battery",
-        "niri/language"
+        "niri/language",
         // "mpd",
-        // "pulseaudio"
-        // "tray",
+        "pulseaudio",
+        "tray"
         // "custom/power"
     ],
     "niri/window": {
@@ -55,14 +55,13 @@
     //     "tooltip-format": "MPD (connected)",
     //     "tooltip-format-disconnected": "MPD (disconnected)"
     // },
-    // "tray": {
-    //     // "icon-size": 21,
-    //     "spacing": 10,
-    //     // "icons": {
-    //     //   "blueman": "bluetooth",
-    //     //   "TelegramDesktop": "$HOME/.local/share/icons/hicolor/16x16/apps/telegram.png"
-    //     // }
-    // },
+    "tray": {
+        // "icon-size": 21,
+        "spacing": 10,
+        "icons": {
+          "blueman": "bluetooth",
+        }
+    },
     "clock": {
         // "timezone": "America/New_York",
         "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",

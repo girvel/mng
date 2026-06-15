@@ -261,20 +261,25 @@ local clean_packages = function()
   mng.cmd("xbps-remove -o")
 end
 
+--- @return boolean was_updated
 mng.package = function(packages)
   if cli_args.clean then
     run_at_finish[clean_packages] = true
   end
 
+  local was_updated = false
   for _, pkg in ipairs(tokenize(packages)) do
     if cli_args.clean then
       all_packages[pkg] = true
     end
 
     if not mng.package_is_installed(pkg) then
+      was_updated = true
       mng.package_install(pkg)
     end
   end
+
+  return was_updated
 end
 
 mng.package_is_installed = function(pkg)
