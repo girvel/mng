@@ -7,9 +7,8 @@
 
 ## Queue
 
+- [ ] set all packages listed in mng.package as manual when --clean
 - [ ] bluetooth autostart (or autoenable or whatever) -> here
-- [ ] fix time
-- [ ] if manual installation came before the automatic one, --clean wants to remove it
 - [ ] move example.lua to example/ anyway, mess with package.path or something
 - [ ] fstab: connect disks:
     UUID=46A2F9BEA2F9B313 /mnt/c ntfs-3g defaults,uid=1000,gid=1000,dmask=022,fmask=133,noatime,windows_names 0 0
@@ -21,10 +20,12 @@
     A pluggable script; errors are isolated, assets are grouped into the same folder
 - [ ] Apps:
     - [ ] thunar
-    - [ ] qdirstat
     - [ ] aseprite
     - [ ] autoproxy
 - [ ] different backgrounds for different workspaces
+- [x] fix time
+- [x] if manual installation came before the automatic one, --clean wants to remove it
+- [x] qdirstat
 - [x] background
 - [x] Telegram
 - [x] fix ghostty
