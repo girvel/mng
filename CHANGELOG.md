@@ -7,19 +7,19 @@
 
 ## Queue
 
-- [ ] caps lock remap is broken
 - [ ] if manual installation came before the automatic one, --clean wants to remove it
 - [ ] move example.lua to example/ anyway, mess with package.path or something
 - [ ] fstab: connect disks
 - [ ] background
 - [ ] should fail or warn on invalid symlinks
 - [ ] Custom loading screen
-- [ ] fix ghostty
 - [ ] Modules
     A pluggable script; errors are isolated, assets are grouped into the same folder
 - [ ] Apps:
     - [ ] aseprite
     - [ ] autoproxy
+- [x] fix ghostty
+- [x] caps lock remap is broken
 - [x] screenshots
 - [x] JB Mono nerd font
 - [x] the cursor is ugly & unchanging

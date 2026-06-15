@@ -375,6 +375,12 @@ mng.git_repo = function(repo_path, destination, update)
   end
 end
 
+mng.manual_stow = function(source, target, symlinks)
+  for _, file in ipairs(symlinks) do
+    mng.symlink(target.."/"..file, source.."/"..file)
+  end
+end
+
 mng.stow = function(source, target)
   mng.cmd("stow -d "..source.." -t "..target.." .")
 end

@@ -64,6 +64,8 @@ end
 if hostname ~= "sovngard1" then
   mng.package("keyd")
   mng.dir("/etc/keyd")
+  mng.service_on("keyd")
+  mng.file("/etc/sv/keyd/run", "#!/bin/sh\nexec keyd 2>&1")  -- or else it crashes
   mng.symlink("/etc/keyd/remap.conf", "./example/assets/remap.conf")
 end
 
@@ -111,8 +113,17 @@ mng.as_user("girvel", function()
   mng.dir("~/.config")
   mng.dir("~/.local/bin")
   mng.git_repo("https://github.com/girvel/dotfiles", "~/dotfiles", true)
-  mng.stow("~/dotfiles", "~")
+  mng.manual_stow("~/dotfiles", "~", {
+    ".config/alacritty",
+    ".config/nvim",
+    ".config/zsh",
+    ".local/bin/cb",
+    ".mozilla/firefox/girvel/chrome",
+    ".mozilla/firefox/girvel/user.js",
+    ".gitconfig",
+  })
   mng.file_set("~/.zshrc", mng.file_get("./example/assets/.zshrc"))
+  mng.symlink("~/.config/ghostty/config", "./example/assets/ghostty_config")
 
   mng.git_repo("https://github.com/girvel/autoproxy", "~/workshop/autoproxy")
   mng.as_user(nil, function()
