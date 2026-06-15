@@ -33,7 +33,7 @@ end
 local use_niri = function()
   mng.package(
     "dbus elogind niri fuzzel Waybar wl-clipboard pipewire wireplumber font-awesome pavucontrol"
-    .." alsa-utils xclip xwayland-satellite bluez blueman"
+    .." alsa-utils xclip xwayland-satellite bluez blueman libspa-bluetooth qdirstat"
   )
   mng.service_on("dbus", "bluetoothd")  -- TODO unify syntax with mng.package
 

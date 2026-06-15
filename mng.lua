@@ -253,9 +253,7 @@ local clean_packages = function()
       print("- "..pkg)
     end
 
-    if request_yes("Remove?") then
-      mng.cmd("xbps-remove -y %s", string_join(redundant_packages, " "))
-    end
+    mng.cmd("xbps-pkgdb -m auto %s", string_join(redundant_packages, " "))
   end
 
   mng.cmd("xbps-remove -o")

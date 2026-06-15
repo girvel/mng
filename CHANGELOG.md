@@ -7,21 +7,26 @@
 
 ## Queue
 
-- [ ] thunar
 - [ ] bluetooth autostart (or autoenable or whatever) -> here
-- [x] Telegram
 - [ ] fix time
 - [ ] if manual installation came before the automatic one, --clean wants to remove it
 - [ ] move example.lua to example/ anyway, mess with package.path or something
-- [ ] fstab: connect disks
-- [ ] background
+- [ ] fstab: connect disks:
+    UUID=46A2F9BEA2F9B313 /mnt/c ntfs-3g defaults,uid=1000,gid=1000,dmask=022,fmask=133,noatime,windows_names 0 0
+    UUID=444E1E754E1E604A /mnt/d ntfs-3g defaults,uid=1000,gid=1000,dmask=022,fmask=133,noatime,windows_names 0 0
+    LABEL=vault /mnt/vault btrfs defaults,nofail 0 0
 - [ ] should fail or warn on invalid symlinks
 - [ ] Custom loading screen
 - [ ] Modules
     A pluggable script; errors are isolated, assets are grouped into the same folder
 - [ ] Apps:
+    - [ ] thunar
+    - [ ] qdirstat
     - [ ] aseprite
     - [ ] autoproxy
+- [ ] different backgrounds for different workspaces
+- [x] background
+- [x] Telegram
 - [x] fix ghostty
 - [x] caps lock remap is broken
 - [x] screenshots
