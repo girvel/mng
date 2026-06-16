@@ -31,10 +31,10 @@ local use_gnome = function()
 end
 
 local use_niri = function()
-  mng.package(
-    "dbus elogind niri fuzzel Waybar wl-clipboard pipewire wireplumber font-awesome pavucontrol"
-    .." alsa-utils xclip xwayland-satellite bluez blueman libspa-bluetooth qdirstat"
-  )
+  mng.package [[
+    dbus elogind niri fuzzel Waybar wl-clipboard pipewire wireplumber font-awesome pavucontrol
+    alsa-utils xclip xwayland-satellite bluez blueman libspa-bluetooth qdirstat
+  ]]
   mng.service_on("dbus", "bluetoothd")  -- TODO unify syntax with mng.package
 
   if mng.package("xdg-user-dirs") then
@@ -70,6 +70,10 @@ elseif hostname == "valholl" then
   if mng.file("/etc/modprobe.d/nvidia_drm.conf", "options nvidia_drm modeset=1\n") then
     mng.cmd("xbps-reconfigure -a")
   end
+  mng.dir("/mnt/c")  -- TODO common syntax with mng.package
+  mng.dir("/mnt/d")
+  mng.dir("/mnt/vault")
+  mng.file_sync("/etc/fstab", "./example/assets/fstab")
 else
   error("No machine-specific configuration for "..hostname)
 end
@@ -80,12 +84,12 @@ if hostname ~= "sovngard1" then
   mng.service_on("keyd")
   mng.file("/etc/sv/keyd/run", "#!/bin/sh\nexec keyd 2>&1")  -- or else it crashes
   mng.symlink("/etc/keyd/remap.conf", "./example/assets/remap.conf")
-  mng.file("/etc/rc.conf", "HARDWARECLOCK=localtime")
+  mng.file("/etc/rc.conf", "HARDWARECLOCK=localtime\nTIMEZONE=Asia/Yekaterinburg")
 end
 
 mng.xbps_mirror("https://repo-de.voidlinux.org/current")
 mng.package [[
-  xdg-utils fuse mesa-dri man-pages-devel telegram-desktop
+  xdg-utils fuse mesa-dri man-pages-devel telegram-desktop transmission
   zsh git stow curl wget neovim ripgrep eza github-cli love htop tree jq redsocks
   ghostty firefox vlc obs kdenlive audacity ttf-ubuntu-font-family dejavu-fonts-ttf zip unzip awww
 ]]

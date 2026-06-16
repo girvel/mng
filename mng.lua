@@ -352,6 +352,17 @@ mng.file = function(path, content)
   return will_be_updated
 end
 
+--- Ensure target's content matches source's
+--- @return boolean was_updated
+mng.file_sync = function(target, source)
+  local expected = assert(mng.file_get(source))
+  local will_be_updated = mng.file_get(target) ~= expected
+  if will_be_updated then
+    mng.file_set(target, expected)
+  end
+  return will_be_updated
+end
+
 mng.file_set = function(path, content)
   path = mng.cmd_read("echo %s", path)
   mng.cmd("touch %s", path)

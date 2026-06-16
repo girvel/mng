@@ -1,0 +1,11 @@
+#
+# See fstab(5).
+#
+# <file system>	<dir>	<type>	<options>		<dump>	<pass>
+tmpfs		/tmp	tmpfs	defaults,nosuid,nodev   0       0
+UUID="2c0e6f9d-8433-43ff-8e5a-4034703701a2"	/	ext4	defaults	0	1
+UUID="7A2E-49E4"	/boot/efi	vfat	defaults	0	1
+
+UUID=46A2F9BEA2F9B313 /mnt/c ntfs3 defaults,uid=1000,gid=1000,dmask=022,fmask=133,noatime,windows_names 0 0
+UUID=444E1E754E1E604A /mnt/d ntfs3 defaults,uid=1000,gid=1000,dmask=022,fmask=133,noatime,windows_names 0 0
+LABEL=vault /mnt/vault btrfs defaults,nofail 0 0
