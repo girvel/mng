@@ -36,6 +36,7 @@ local use_niri = function()
     alsa-utils xclip xwayland-satellite bluez blueman libspa-bluetooth qdirstat
   ]]
   mng.service_on("dbus", "bluetoothd")  -- TODO unify syntax with mng.package
+  mng.cmd("usermod -aG bluetooth girvel")
 
   if mng.package("xdg-user-dirs") then
     mng.as_user("girvel", function()
@@ -55,6 +56,7 @@ local use_niri = function()
     mng.symlink("~/.config/pulse/client.conf", "./example/assets/pulse_config_client.conf")
     mng.symlink("~/.local/share/icons/Vimix", "./example/assets/Vimix")
     mng.symlink("~/Pictures/wallpapers", "./example/assets/wallpapers")
+    gnome.gsettings("org.blueman.general", "plugin-list", "['!AutoConnect', '!ConnectionNotifier']")
   end)
 end
 
@@ -137,7 +139,6 @@ if exit_code ~= 0 then
   mng.cmd("mv /tmp/jbmono/JetBrainsMono* /usr/share/fonts/")
 end
 
-mng.cmd("usermod -aG bluetooth girvel")
 mng.as_user("girvel", function()
   mng.shell("/usr/bin/zsh")
   if not mng.dir_exists("~/.oh-my-zsh") then
