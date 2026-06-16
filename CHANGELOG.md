@@ -24,10 +24,11 @@
 - [ ] Apps:
     - [ ] thunar
     - [ ] aseprite
+        - [ ] resize aether.png
     - [ ] autoproxy
-- [x] bluetooth icons
 - [ ] different backgrounds for different workspaces
 - [ ] bluetooth autostart (or autoenable or whatever) -> here
+- [x] bluetooth icons
 - [x] fix time
 - [x] if manual installation came before the automatic one, --clean wants to remove it
 - [x] qdirstat

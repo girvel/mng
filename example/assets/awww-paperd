@@ -1,0 +1,24 @@
+#!/usr/bin/env luajit
+local cjson = require("cjson")
+
+local WALLPAPERS = {
+  "bastion.png",
+  "aether.png",
+  "aether.png"
+}
+
+local f = assert(io.popen("niri msg --json event-stream", "r"))
+
+while true do
+  local msg = cjson.decode(f:read("*l"))
+  local activation = msg.WorkspaceActivated
+  if not activation then goto continue end
+
+  local wallpaper = WALLPAPERS[activation.id]
+  if not wallpaper then goto continue end
+
+  print("Switch to "..wallpaper)
+  os.execute("awww img -t fade --transition-duration=0.1 ~/Pictures/wallpapers/"..wallpaper)
+
+  ::continue::
+end

@@ -427,7 +427,7 @@ mng.symlink_get = function(path)
 end
 
 mng.symlink_set = function(path, value)
-  mng.cmd("ln -sfn %s %s", value, path)
+  mng.cmd("ln -sfnT %s %s", value, path)
 end
 
 local service_state = {

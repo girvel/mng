@@ -43,13 +43,18 @@ local use_niri = function()
     end)
   end
 
+  mng.package("lua51-cjson")
+  mng.as_user("girvel", function()
+    mng.symlink("~/.local/bin/awww-paperd", "./example/assets/awww-paperd")
+  end)
+
   mng.as_user("girvel", function()
     mng.symlink("~/.config/niri/config.kdl", "./example/assets/niri_config.kdl")
     mng.symlink("~/.config/waybar/config.jsonc", "./example/assets/waybar_config.jsonc")
     mng.symlink("~/.config/waybar/style.css", "./example/assets/waybar_style.css")
     mng.symlink("~/.config/pulse/client.conf", "./example/assets/pulse_config_client.conf")
     mng.symlink("~/.local/share/icons/Vimix", "./example/assets/Vimix")
-    mng.symlink("~/Pictures/wallpapers/bastion.png", "./example/assets/bastion.png")
+    mng.symlink("~/Pictures/wallpapers", "./example/assets/wallpapers")
   end)
 end
 
@@ -133,7 +138,7 @@ mng.as_user("girvel", function()
     ".mozilla/firefox/girvel/user.js",
     ".gitconfig",
   })
-  mng.file_set("~/.zshrc", mng.file_get("./example/assets/.zshrc"))
+  mng.symlink("~/.zshrc", "./example/assets/.zshrc")
   mng.symlink("~/.config/ghostty/config", "./example/assets/ghostty_config")
 
   mng.git_repo("https://github.com/girvel/autoproxy", "~/workshop/autoproxy")
