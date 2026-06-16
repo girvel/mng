@@ -19,6 +19,7 @@
 - [ ] Apps:
     - [ ] thunar
     - [ ] autoproxy
+- [x] set all packages listed in mng.package as manual when --clean
 - [x] should fail or warn on invalid symlinks
 - [x] fstab: connect disks
 - [x] bluetooth icons
@@ -51,7 +52,6 @@
 
 ## Never
 
-- [ ] set all packages listed in mng.package as manual when --clean
 - [ ] move example.lua to example/ anyway, mess with package.path or something
 - [ ] Modules
     A pluggable script; errors are isolated, assets are grouped into the same folder

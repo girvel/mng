@@ -247,16 +247,40 @@ local all_packages = {
   ["linux-headers"] = true,
 }
 
+local builtin_packages = {
+  ["base-system"] = true,
+  ["grub-x86_64-efi"] = true,
+  ["linux-headers"] = true,
+}
+
 local clean_packages = function()
   print("PACKAGES")
 
-  local installed_packages = string_split(string_strip(mng.cmd_read("xbps-query -m")), "\n")
+  local manual_packages_raw = string_split(string_strip(mng.cmd_read("xbps-query -m")), "\n")
   local redundant_packages = {}
-  for _, pkg in ipairs(installed_packages) do
+  local manual_packages = {}
+  for _, pkg in ipairs(manual_packages_raw) do
     local name = pkg:match("^(.*)-[^-]+")
+    manual_packages[name] = true
     if not all_packages[name] then
       table.insert(redundant_packages, name)
     end
+  end
+
+  local unmarked_packages = {}
+  for pkg in pairs(all_packages) do
+    if not manual_packages[pkg] and not builtin_packages[pkg] then
+      table.insert(unmarked_packages, pkg)
+    end
+  end
+
+  if #unmarked_packages > 0 then
+    print("Found packages not marked as manual:")
+    for _, pkg in ipairs(unmarked_packages) do
+      print("- "..pkg)
+    end
+
+    mng.cmd("xbps-pkgdb -m manual "..string_join(unmarked_packages, " "))
   end
 
   if #redundant_packages > 0 then
@@ -265,7 +289,7 @@ local clean_packages = function()
       print("- "..pkg)
     end
 
-    mng.cmd("xbps-pkgdb -m auto %s", string_join(redundant_packages, " "))
+    mng.cmd("xbps-pkgdb -m auto "..string_join(redundant_packages, " "))
   end
 
   mng.cmd("xbps-remove -o")
