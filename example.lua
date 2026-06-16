@@ -129,6 +129,14 @@ end
 mng.desktop_file("./example/assets/ldtk.desktop")
 mng.icon("./example/assets/ldtk.png")
 
+if mng.dir_exists("/opt/aseprite") then
+  mng.symlink("/usr/local/bin/aseprite", "/opt/aseprite/aseprite")
+else
+  print("[WARN] /opt/aseprite is missing (build it from source)")
+end
+mng.desktop_file("./example/assets/aseprite.desktop")
+mng.icon("./example/assets/aseprite.png")
+
 local _, exit_code = mng.cmd_read("ls /usr/share/fonts/JetBrainsMono* 2>/dev/null")
 if exit_code ~= 0 then
   mng.cmd("rm -rf /tmp/jbmono.zip")

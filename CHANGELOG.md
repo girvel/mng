@@ -7,6 +7,8 @@
 
 ## Queue
 
+- [ ] Cool stuff: physical USB with binaries, like aseprite
+- [ ] Theme for Win+D launcher
 - [ ] https://github.com/PolpOnline/gpu-usage-waybar
 - [ ] Custom loading screen
 - [ ] resize aether.png

@@ -581,7 +581,7 @@ mng.icon = function(path)
     end
     resolution = w.."x"..h
   end
-  local target_dir = "/usr/share/icons/hicolor"..resolution.."/apps"
+  local target_dir = "/usr/share/icons/hicolor/"..resolution.."/apps"
   mng.dir(target_dir)
   if mng.symlink(target_dir.."/"..shortname, path) then
     run_at_finish[update_icon_cache] = true
