@@ -107,13 +107,13 @@ mng.package [[
   xdg-utils fuse mesa-dri man-pages-devel telegram-desktop transmission
   zsh git stow curl wget neovim tree-sitter-cli ripgrep eza github-cli love htop tree jq redsocks
   ghostty firefox vlc obs kdenlive audacity ttf-ubuntu-font-family dejavu-fonts-ttf zip unzip awww
-  socklog-void
+  socklog-void chrony
 ]]
 
 -- use_gnome()
 use_niri()
 
-mng.service_on("redsocks", "socklog-unix", "nanoklogd")
+mng.service_on("redsocks", "socklog-unix", "nanoklogd", "chronyd")
 
 mng.file("/etc/sysctl.d/20-quiet-console.conf", "kernel.printk = 3 4 1 3\n")  -- stop TTY spam
 
