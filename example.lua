@@ -80,7 +80,7 @@ end
 
 mng.xbps_mirror("https://repo-de.voidlinux.org/current")
 mng.package [[
-  xdg-utils fuse mesa-dri man-pages-posix man-pages-devel telegram-desktop
+  xdg-utils fuse mesa-dri man-pages-devel telegram-desktop
   zsh git stow curl wget neovim ripgrep eza github-cli love htop tree jq redsocks
   ghostty firefox vlc obs kdenlive audacity ttf-ubuntu-font-family dejavu-fonts-ttf zip unzip awww
 ]]

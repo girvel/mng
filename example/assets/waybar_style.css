@@ -18,8 +18,10 @@ label.module, #window {
 }
 
 #pulseaudio:hover,
-#network:hover,
-#clock:hover {
+#clock:hover,
+#bluetooth:hover,
+#cpu:hover,
+#memory:hover {
   background-color: #fcba03;
   color: #222222;
 }

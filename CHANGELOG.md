@@ -7,8 +7,11 @@
 
 ## Queue
 
+- [ ] https://github.com/PolpOnline/gpu-usage-waybar
+- [ ] blueman notifications are annoying af
+- [ ] it keeps reconnecting to my airpods infinitely and annoyingly
 - [ ] set all packages listed in mng.package as manual when --clean
-- [ ] bluetooth autostart (or autoenable or whatever) -> here
+- [ ] nvim monokai theme is broken
 - [ ] move example.lua to example/ anyway, mess with package.path or something
 - [ ] fstab: connect disks:
     UUID=46A2F9BEA2F9B313 /mnt/c ntfs-3g defaults,uid=1000,gid=1000,dmask=022,fmask=133,noatime,windows_names 0 0
@@ -22,7 +25,9 @@
     - [ ] thunar
     - [ ] aseprite
     - [ ] autoproxy
+- [x] bluetooth icons
 - [ ] different backgrounds for different workspaces
+- [ ] bluetooth autostart (or autoenable or whatever) -> here
 - [x] fix time
 - [x] if manual installation came before the automatic one, --clean wants to remove it
 - [x] qdirstat
