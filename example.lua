@@ -81,10 +81,14 @@ elseif hostname == "valholl" then
     mng.cmd("xbps-reconfigure -a")
   end
 
+  -- TODO mng.fstab instead?
   mng.dir("/mnt/c")  -- TODO common syntax with mng.package
   mng.dir("/mnt/d")
   mng.dir("/mnt/vault")
-  mng.file_sync("/etc/fstab", "./example/assets/fstab")
+  mng.dir("/mnt/ubuntu")
+  if mng.file_sync("/etc/fstab", "./example/assets/fstab") then
+    mng.cmd("mount -a")
+  end
 else
   error("No machine-specific configuration for "..hostname)
 end
