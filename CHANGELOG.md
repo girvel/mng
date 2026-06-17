@@ -7,6 +7,8 @@
 
 ## Queue
 
+- [ ] Display manager
+- [ ] nvim.desktop
 - [ ] Cool stuff: physical USB with binaries, like aseprite
 - [ ] Theme for Win+D launcher
 - [ ] https://github.com/PolpOnline/gpu-usage-waybar

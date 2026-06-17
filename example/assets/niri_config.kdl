@@ -16,6 +16,12 @@ cursor {
     xcursor-theme "Vimix"
 }
 
+gestures {
+    hot-corners {
+        off
+    }
+}
+
 input {
     keyboard {
         xkb {

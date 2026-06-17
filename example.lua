@@ -54,6 +54,7 @@ local use_niri = function()
     mng.symlink("~/.config/waybar/config.jsonc", "./example/assets/waybar_config.jsonc")
     mng.symlink("~/.config/waybar/style.css", "./example/assets/waybar_style.css")
     mng.symlink("~/.config/pulse/client.conf", "./example/assets/pulse_config_client.conf")
+    mng.symlink("~/.config/xdg-terminals.list", "xdg-terminals.list")
     mng.symlink("~/.local/share/icons/Vimix", "./example/assets/Vimix")
     mng.symlink("~/Pictures/wallpapers", "./example/assets/wallpapers")
     gnome.gsettings("org.blueman.general", "plugin-list", "['!AutoConnect', '!ConnectionNotifier']")
@@ -68,7 +69,7 @@ if hostname == "sovngard1" then
   mng.service_on("vboxservice")
 elseif hostname == "valholl" then
   mng.package("void-repo-nonfree")
-  mng.package("nvidia")
+  mng.package("nvidia nvidia-vaapi-driver")
 
   -- fixes boot hangs
   local was_drm_updated = mng.file(
@@ -108,8 +109,8 @@ mng.xbps_mirror("https://repo-de.voidlinux.org/current")
 mng.package [[
   xdg-utils fuse mesa-dri man-pages-devel telegram-desktop transmission-gtk clang cmake
   zsh git stow curl wget neovim tree-sitter-cli ripgrep eza github-cli love htop tree jq redsocks
-  ghostty firefox vlc obs kdenlive audacity ttf-ubuntu-font-family dejavu-fonts-ttf zip unzip awww
-  socklog-void chrony fzf qimgv
+  ghostty firefox obs kdenlive audacity ttf-ubuntu-font-family dejavu-fonts-ttf zip unzip awww
+  socklog-void chrony fzf qimgv Thunar vlc ffmpeg qt5-wayland gedit
 ]]
 
 -- use_gnome()
@@ -176,6 +177,8 @@ mng.as_user("girvel", function()
   end)
   mng.desktop_file("./example/assets/autoproxy_1")
   mng.desktop_file("./example/assets/autoproxy_2")
+
+  mng.file("~/.config/xfce4/helpers.rc", "TerminalEmulator=ghostty")
 end)
 
 mng.finish()
