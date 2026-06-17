@@ -9,18 +9,18 @@
 
 - [ ] Display manager
 - [ ] nvim.desktop
-- [ ] Cool stuff: physical USB with binaries, like aseprite
 - [ ] Theme for Win+D launcher
 - [ ] https://github.com/PolpOnline/gpu-usage-waybar
 - [ ] Custom loading screen
-- [ ] resize aether.png
-- [ ] Fixes:
-    - [ ] blueman notifications are annoying af
-    - [ ] it keeps reconnecting to my airpods infinitely and annoyingly
+- Fixes:
     - [ ] nvim monokai theme is broken
-- [ ] Apps:
-    - [ ] thunar
+- Apps:
     - [ ] autoproxy
+- [x] move example.lua to example/ anyway, mess with package.path or something
+- [x] blueman notifications are annoying af
+- [x] it keeps reconnecting to my airpods infinitely and annoyingly
+- [x] thunar
+- [x] resize aether.png
 - [x] set all packages listed in mng.package as manual when --clean
 - [x] should fail or warn on invalid symlinks
 - [x] fstab: connect disks
@@ -54,7 +54,6 @@
 
 ## Never
 
-- [ ] move example.lua to example/ anyway, mess with package.path or something
 - [ ] Modules
     A pluggable script; errors are isolated, assets are grouped into the same folder
 - [ ] different backgrounds for different workspaces

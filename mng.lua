@@ -398,7 +398,11 @@ end
 --- Ensure target's content matches source's
 --- @return boolean was_updated
 mng.file_sync = function(target, source)
-  local expected = assert(mng.file_get(source))
+  local expected = mng.file_get(source)
+  if not expected then
+    error(("source file %q is missing"):format(source))
+  end
+
   local will_be_updated = mng.file_get(target) ~= expected
   if will_be_updated then
     mng.file_set(target, expected)
