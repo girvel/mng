@@ -147,10 +147,8 @@ mng.as_user("girvel", function()
     ]]
   end
   mng.dir("~/workshop")
-  mng.dir("~/.mozilla/firefox/girvel")
-  mng.dir("~/.config")
-  mng.dir("~/.local/bin")
   mng.git_repo("https://github.com/girvel/dotfiles", "~/dotfiles", true)
+  mng.symlink("~/workshop/dotfiles", "~/dotfiles")
   mng.manual_stow("~/dotfiles", "~", {
     ".config/alacritty",
     ".config/nvim",
