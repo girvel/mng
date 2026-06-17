@@ -68,7 +68,11 @@ elseif hostname == "valholl" then
   mng.package("void-repo-nonfree")
   mng.package("nvidia")
 
-  local was_drm_updated = mng.file("/etc/modprobe.d/nvidia_drm.conf", "options nvidia_drm modeset=1\n")
+  -- fixes boot hangs
+  local was_drm_updated = mng.file(
+    "/etc/modprobe.d/nvidia_drm.conf",
+    "options nvidia_drm modeset=1 fbdev=1\n"
+  )
   local was_dracut_updated = mng.file(
     "/etc/dracut.conf.d/10-early-kms.conf",
     'force_drivers+=" nvidia nvidia_modeset nvidia_uvm nvidia_drm "\n'
