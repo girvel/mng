@@ -112,7 +112,11 @@ local cli_help = function(hide_description)
         print()
         print("FLAGS:")
       end
-      print("  "..param.flag..": "..param.description)
+      if param.description then
+        print("  "..param.flag..": "..param.description)
+      else
+        print("  "..param.flag)
+      end
     end
     was_prev_flag = param.type == "flag"
   end
@@ -204,7 +208,7 @@ mng.start = function(...)
   cli("<MNG FILE>", "mng is a tool for procedural OS configuration")
   cli_args = {
     clean = cli_flag(args, "--clean", "Also clean the garbage"),
-    verbose = cli_flag(args, "--verbose", ""),
+    verbose = cli_flag(args, "--verbose", nil),
   }
   if cli_flag(args, "--help", "Display help") then
     cli_help()
