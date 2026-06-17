@@ -171,6 +171,18 @@ local request_yes = function(phrase, yes_is_default)
   end
 end
 
+--- @param path string
+--- @return string?
+local dir_base = function(path)
+  return path:match("^(.*)/[^/]+$")
+end
+
+--- @param path string
+--- @return string
+local dir_head = function(path)
+  return path:match("([^/]+)/*$")
+end
+
 local cli_args
 local run_at_finish = {}  -- TODO rename, expose as advanced
 
@@ -323,8 +335,14 @@ mng.shell_set = function(path)
   mng.cmd("chsh -s %s", path)
 end
 
+--- @param path string
+--- @return boolean was_updated
 mng.dir = function(path)
-  mng.cmd("mkdir -p "..path)
+  local will_be_updated = not mng.dir_exists(path)
+  if will_be_updated then
+    mng.cmd("mkdir -p "..path)
+  end
+  return will_be_updated
 end
 
 mng.dir_exists = function(path)
@@ -345,7 +363,8 @@ end
 --- Ensure exact file content
 --- @return boolean was_updated
 mng.file = function(path, content)
-  local will_be_updated = mng.file_get(path) ~= content
+  local base_dir = dir_base(path)
+  local will_be_updated = base_dir and mng.dir(base_dir) or mng.file_get(path) ~= content
   if will_be_updated then
     mng.file_set(path, content)
   end
@@ -417,7 +436,7 @@ end
 --- @return boolean was_updated
 mng.symlink = function(path, value)
   value = mng.cmd_read("realpath -s %s", value)
-  local base_dir = path:match("^(.*)/[^/]+$")
+  local base_dir = dir_base(path)
   if base_dir then mng.dir(base_dir) end
   if mng.symlink_exists(path) then
     if mng.symlink_get(path) == value then
@@ -536,7 +555,7 @@ mng.desktop_file = function(path)
     target_dir = "/usr/share/applications/"
   end
 
-  local shortname = path:match("[^/]+$")
+  local shortname = dir_head(path)
   if mng.symlink(target_dir..shortname, path) then
     run_at_finish[update_desktop_db] = true
     update_desktop_db_dirs[target_dir] = true
@@ -550,7 +569,7 @@ local update_icon_cache = function()
 end
 
 mng.icon = function(path)
-  local shortname = path:match("[^/]+$")
+  local shortname = dir_head(path)
   local resolution
   if string_endswith(path, ".svg") then
     resolution = "scalable"

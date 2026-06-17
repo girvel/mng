@@ -67,9 +67,16 @@ if hostname == "sovngard1" then
 elseif hostname == "valholl" then
   mng.package("void-repo-nonfree")
   mng.package("nvidia")
-  if mng.file("/etc/modprobe.d/nvidia_drm.conf", "options nvidia_drm modeset=1\n") then
+
+  local was_drm_updated = mng.file("/etc/modprobe.d/nvidia_drm.conf", "options nvidia_drm modeset=1\n")
+  local was_dracut_updated = mng.file(
+    "/etc/dracut.conf.d/10-early-kms.conf",
+    'force_drivers+=" nvidia nvidia_modeset nvidia_uvm nvidia_drm "\n'
+  )
+  if was_drm_updated or was_dracut_updated then
     mng.cmd("xbps-reconfigure -a")
   end
+
   mng.dir("/mnt/c")  -- TODO common syntax with mng.package
   mng.dir("/mnt/d")
   mng.dir("/mnt/vault")
