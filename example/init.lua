@@ -152,6 +152,7 @@ mng.as_user("girvel", function()
   mng.desktop_file("./assets/autoproxy_2")
 
   mng.file("~/.config/xfce4/helpers.rc", "TerminalEmulator=ghostty")
+  mng.symlink("~/.config/mimeapps.list", "./assets/mimeapps.list")
 end)
 
 mng.finish()

@@ -183,6 +183,10 @@ local dir_head = function(path)
   return path:match("([^/]+)/*$")
 end
 
+--- @class cli_args
+--- @field clean boolean
+--- @field verbose boolean
+--- @type cli_args
 local cli_args
 local run_at_finish = {}  -- TODO rename, expose as advanced
 
@@ -200,6 +204,7 @@ mng.start = function(...)
   cli("<MNG FILE>", "mng is a tool for procedural OS configuration")
   cli_args = {
     clean = cli_flag(args, "--clean", "Also clean the garbage"),
+    verbose = cli_flag(args, "--verbose", ""),
   }
   if cli_flag(args, "--help", "Display help") then
     cli_help()
@@ -219,7 +224,13 @@ mng.user = nil
 
 mng.cmd = function(command, ...)
   command = cmd_fmt(command, ...)
-  os.execute(command)
+  if cli_args.verbose then
+    print("[CMD] "..command)
+  end
+  local _, _, code = os.execute(command)
+  if cli_args.verbose then
+    print("[RET] "..code)
+  end
 end
 
 --- @param command string
@@ -227,11 +238,18 @@ end
 --- @return integer?
 mng.cmd_read = function(command, ...)
   command = cmd_fmt(command, ...)
+  if cli_args.verbose then
+    print("[CMD] "..command)
+  end
   local f = assert(io.popen(command, "r"))
   local result = f:read("*a")
   local _, _, code = f:close()
   if result:sub(-1, -1) == "\n" then
     result = result:sub(1, -2)
+  end
+  if cli_args.verbose then
+    print(("[RES] %q"):format(result))
+    print("[RET] "..code)
   end
   return result, code
 end
