@@ -2,8 +2,8 @@ local mng = require("mng")
 
 
 mng.package [[
-  mesa-dri telegram-desktop transmission-gtk love redsocks
-  ghostty firefox obs kdenlive audacity ttf-ubuntu-font-family dejavu-fonts-ttf vlc ffmpeg
+  mesa-dri telegram-desktop transmission-gtk love redsocks ghostty firefox
+  obs kdenlive audacity ttf-ubuntu-font-family dejavu-fonts-ttf vlc ffmpeg qt5-wayland 
 ]]
 
 mng.service_on("redsocks")
