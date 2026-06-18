@@ -7,6 +7,7 @@
 
 ## Queue
 
+- [ ] --update
 - [ ] Display manager
 - [ ] nvim.desktop
 - [ ] Theme for Win+D launcher
