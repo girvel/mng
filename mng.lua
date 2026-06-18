@@ -190,6 +190,7 @@ end
 --- @class cli_args
 --- @field clean boolean
 --- @field verbose boolean
+--- @field no_update boolean
 --- @type cli_args
 local cli_args
 local run_at_finish = {}  -- TODO rename, expose as advanced
@@ -207,7 +208,8 @@ mng.start = function(...)
   local args = {...}
   cli("<MNG FILE>", "mng is a tool for procedural OS configuration")
   cli_args = {
-    clean = cli_flag(args, "--clean", "Also clean the garbage"),
+    clean = cli_flag(args, "--clean", "Clean the garbage, s.a. redundant packages & services"),
+    no_update = cli_flag(args, "--no-update", "Don't trigger updates, s.a. xbps-install -S"),
     verbose = cli_flag(args, "--verbose", nil),
   }
   if cli_flag(args, "--help", "Display help") then
@@ -345,7 +347,7 @@ end
 
 local xbps_synced = false
 mng.package_install = function(pkg)
-  if not xbps_synced then
+  if not xbps_synced and not cli_args.no_update then
     xbps_synced = true
     mng.cmd("xbps-install -S")
   end
@@ -354,8 +356,12 @@ end
 
 mng.xbps_mirror = function(mirror)
   mng.file("/etc/xbps.d/00-repository-main.conf", "repository="..mirror)
-  xbps_synced = true
-  mng.cmd("xbps-install -S")
+  if cli_args.no_update then
+    xbps_synced = false
+  else
+    xbps_synced = true
+    mng.cmd("xbps-install -S")
+  end
 end
 
 mng.as_user = function(new_user, f)

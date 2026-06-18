@@ -4,10 +4,11 @@
 - [ ] Document API thoroughly
 - [ ] Maybe format API into an .md thing?
 - [ ] Write a very minimal example
+- [ ] Make API consistent: one order for (source, target) args, multi-component strings everywhere
 
 ## Queue
 
-- [ ] --update
+- [ ] Short flags
 - [ ] Display manager
 - [ ] nvim.desktop
 - [ ] Theme for Win+D launcher
@@ -17,6 +18,7 @@
     - [ ] nvim monokai theme is broken
 - Apps:
     - [ ] autoproxy
+- [x] --no-update
 - [x] move example.lua to example/ anyway, mess with package.path or something
 - [x] blueman notifications are annoying af
 - [x] it keeps reconnecting to my airpods infinitely and annoyingly
