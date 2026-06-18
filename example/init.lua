@@ -6,12 +6,7 @@ local gnome = require("mng.gnome")
 mng.start(...)
 mng.xbps_mirror("https://repo-de.voidlinux.org/current")
 
--- local ok, hardware = pcall(dofile, "./example/hardware/init.lua")
--- if not ok then
---   error("mng example should be run with example/ as a working directory")
--- end
-
-dofile("./hardware/init.lua")
+mng.module("hardware")
 
 local use_niri = function()
   mng.package [[

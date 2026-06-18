@@ -667,4 +667,23 @@ mng.icon = function(path)
   end
 end
 
+mng.module = function(folder_path)
+  if not mng.dir_exists(folder_path) then
+    error("No module directory at "..folder_path)
+  end
+
+  local filepath = folder_path.."/init.lua"
+  if not mng.file_exists(filepath) then
+    error("Module is expected to have its logic defined in init.lua file")
+  end
+
+  local ok, err = xpcall(dofile, debug.traceback, filepath)
+  if not ok then
+    print(("[ERR] Error while executing module %s: \n%s"):format(
+      folder_path,
+      err or "(no message provided)"
+    ))
+  end
+end
+
 return mng

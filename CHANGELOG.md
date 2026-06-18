@@ -5,6 +5,7 @@
 - [ ] Maybe format API into an .md thing?
 - [ ] Write a very minimal example
 - [ ] Make API consistent: one order for (source, target) args, multi-component strings everywhere
+- [ ] Review w/ AI
 
 ## Queue
 
@@ -57,6 +58,8 @@
 
 ## Never
 
+- [ ] Optimize with a profiler
+- [ ] Use execve instead of a shell
 - [ ] Modules
     A pluggable script; errors are isolated, assets are grouped into the same folder
 - [ ] different backgrounds for different workspaces

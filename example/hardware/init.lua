@@ -42,4 +42,3 @@ if hostname ~= "sovngard1" then
   mng.symlink("/etc/keyd/remap.conf", "./hardware/remap.conf")
   mng.file("/etc/rc.conf", "HARDWARECLOCK=localtime\nTIMEZONE=Asia/Yekaterinburg")
 end
-
