@@ -9,6 +9,10 @@
 
 ## Queue
 
+- [ ] Load bg faster
+- [ ] Configure gedit to use a better theme
+- [ ] Set dark mode (thunar, gedit, bluetooth, ...)
+- [ ] Mail app
 - [ ] Display manager (probably ly)
 - [ ] nvim.desktop
 - [ ] Theme for Win+D launcher

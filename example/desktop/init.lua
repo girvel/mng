@@ -5,7 +5,7 @@ local mng = require("mng")
 mng.package [[
   dbus elogind niri fuzzel Waybar wl-clipboard pipewire wireplumber font-awesome pavucontrol
   alsa-utils xclip xwayland-satellite bluez blueman libspa-bluetooth qdirstat xdg-utils
-  qimgv Thunar gedit awww
+  qimgv Thunar tumbler ffmpegthumbnailer gedit awww
 ]]
 mng.service_on("dbus", "bluetoothd")  -- TODO unify syntax with mng.package
 mng.cmd("usermod -aG bluetooth girvel")
