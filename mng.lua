@@ -213,7 +213,7 @@ end
 --- @class cli_args
 --- @field clean boolean
 --- @field verbose boolean
---- @field no_update boolean
+--- @field no_sync boolean
 --- @type cli_args
 local cli_args
 local run_at_finish = {}  -- TODO rename, expose as advanced
@@ -232,7 +232,7 @@ mng.start = function(...)
   cli("sudo luajit init.lua", "mng is a tool for procedural OS configuration")
   cli_args = {
     clean = cli_flag(args, "-c --clean", "Clean the garbage, s.a. redundant packages & services"),
-    no_update = cli_flag(args, "-U --no-update", "Don't trigger updates, s.a. xbps-install -S"),
+    no_sync = cli_flag(args, "-S --no-sync", "Do not sync with remote repository"),
     verbose = cli_flag(args, "-v --verbose", nil),
   }
   if cli_flag(args, "-h --help", "Display help") then
@@ -370,7 +370,7 @@ end
 
 local xbps_synced = false
 mng.package_install = function(pkg)
-  if not xbps_synced and not cli_args.no_update then
+  if not xbps_synced and not cli_args.no_sync then
     xbps_synced = true
     mng.cmd("xbps-install -S")
   end
@@ -379,7 +379,7 @@ end
 
 mng.xbps_mirror = function(mirror)
   mng.file("/etc/xbps.d/00-repository-main.conf", "repository="..mirror)
-  if cli_args.no_update then
+  if cli_args.no_sync then
     xbps_synced = false
   else
     xbps_synced = true
