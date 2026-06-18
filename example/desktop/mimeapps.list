@@ -1,6 +1,8 @@
 [Default Applications]
 inode/directory=thunar.desktop
 
+x-scheme-handler/tg=org.telegram.desktop.desktop
+
 text/cache-manifest=org.gnome.gedit.desktop
 text/calendar=org.gnome.gedit.desktop
 text/css=org.gnome.gedit.desktop

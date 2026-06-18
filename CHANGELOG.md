@@ -14,7 +14,7 @@
 - [ ] Set dark mode (thunar, gedit, bluetooth, ...)
 - [ ] Mail app
 - [ ] Display manager (probably ly)
-- [ ] nvim.desktop
+- [ ] nvim-ghostty.desktop
 - [ ] Theme for Win+D launcher
 - [ ] https://github.com/PolpOnline/gpu-usage-waybar
 - [ ] Custom loading screen
