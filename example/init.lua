@@ -6,18 +6,15 @@ mng.start(...)
 mng.xbps_mirror("https://repo-de.voidlinux.org/current")
 
 mng.module("hardware")
+mng.module("console")
 mng.module("desktop")
 
 mng.package [[
-  fuse mesa-dri man-pages-devel telegram-desktop transmission-gtk clang cmake
-  zsh git stow curl wget neovim tree-sitter-cli ripgrep eza github-cli love htop tree jq redsocks
-  ghostty firefox obs kdenlive audacity ttf-ubuntu-font-family dejavu-fonts-ttf zip unzip
-  socklog-void chrony fzf vlc ffmpeg
+  mesa-dri telegram-desktop transmission-gtk love redsocks
+  ghostty firefox obs kdenlive audacity ttf-ubuntu-font-family dejavu-fonts-ttf vlc ffmpeg
 ]]
 
-mng.service_on("redsocks", "socklog-unix", "nanoklogd", "chronyd")
-
-mng.file("/etc/sysctl.d/20-quiet-console.conf", "kernel.printk = 3 4 1 3\n")  -- stop TTY spam
+mng.service_on("redsocks")
 
 local ldtk = "/usr/local/bin/ldtk"
 if not mng.file_exists(ldtk) then
@@ -48,26 +45,6 @@ if exit_code ~= 0 then
 end
 
 mng.as_user("girvel", function()
-  mng.shell("/usr/bin/zsh")
-  if not mng.dir_exists("~/.oh-my-zsh") then
-    mng.cmd [[
-      sh -c \
-        "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-    ]]
-  end
-  mng.dir("~/workshop")
-  mng.git_repo("https://github.com/girvel/dotfiles", "~/dotfiles", true)
-  mng.symlink("~/workshop/dotfiles", "~/dotfiles")
-  mng.manual_stow("~/dotfiles", "~", {
-    ".config/alacritty",
-    ".config/nvim",
-    ".config/zsh",
-    ".local/bin/cb",
-    ".mozilla/firefox/girvel/chrome",
-    ".mozilla/firefox/girvel/user.js",
-    ".gitconfig",
-  })
-  mng.symlink("~/.zshrc", "./assets/.zshrc")
   mng.symlink("~/.config/ghostty/config", "./assets/ghostty_config")
 
   mng.git_repo("https://github.com/girvel/autoproxy", "~/workshop/autoproxy")
