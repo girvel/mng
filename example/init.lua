@@ -1,53 +1,19 @@
 package.path = package.path..";../?.lua"
 local mng = require("mng")
-local gnome = require("mng.gnome")
 
 
 mng.start(...)
 mng.xbps_mirror("https://repo-de.voidlinux.org/current")
 
 mng.module("hardware")
-
-local use_niri = function()
-  mng.package [[
-    dbus elogind niri fuzzel Waybar wl-clipboard pipewire wireplumber font-awesome pavucontrol
-    alsa-utils xclip xwayland-satellite bluez blueman libspa-bluetooth qdirstat
-  ]]
-  mng.service_on("dbus", "bluetoothd")  -- TODO unify syntax with mng.package
-  mng.cmd("usermod -aG bluetooth girvel")
-
-  if mng.package("xdg-user-dirs") then
-    mng.as_user("girvel", function()
-      mng.cmd("xdg-user-dirs-update")
-    end)
-  end
-
-  mng.package("lua51-cjson")
-  mng.as_user("girvel", function()
-    mng.symlink("~/.local/bin/awww-paperd", "./assets/awww-paperd")
-  end)
-
-  mng.as_user("girvel", function()
-    mng.symlink("~/.config/niri/config.kdl", "./assets/niri_config.kdl")
-    mng.symlink("~/.config/waybar/config.jsonc", "./assets/waybar_config.jsonc")
-    mng.symlink("~/.config/waybar/style.css", "./assets/waybar_style.css")
-    mng.symlink("~/.config/pulse/client.conf", "./assets/pulse_config_client.conf")
-    mng.symlink("~/.config/xdg-terminals.list", "xdg-terminals.list")
-    mng.symlink("~/.local/share/icons/Vimix", "./assets/Vimix")
-    mng.symlink("~/Pictures/wallpapers", "./assets/wallpapers")
-    gnome.gsettings("org.blueman.general", "plugin-list", "['!AutoConnect', '!ConnectionNotifier']")
-  end)
-end
+mng.module("desktop")
 
 mng.package [[
-  xdg-utils fuse mesa-dri man-pages-devel telegram-desktop transmission-gtk clang cmake
+  fuse mesa-dri man-pages-devel telegram-desktop transmission-gtk clang cmake
   zsh git stow curl wget neovim tree-sitter-cli ripgrep eza github-cli love htop tree jq redsocks
-  ghostty firefox obs kdenlive audacity ttf-ubuntu-font-family dejavu-fonts-ttf zip unzip awww
-  socklog-void chrony fzf qimgv Thunar vlc ffmpeg qt5-wayland gedit
+  ghostty firefox obs kdenlive audacity ttf-ubuntu-font-family dejavu-fonts-ttf zip unzip
+  socklog-void chrony fzf vlc ffmpeg
 ]]
-
--- use_gnome()
-use_niri()
 
 mng.service_on("redsocks", "socklog-unix", "nanoklogd", "chronyd")
 
@@ -110,9 +76,6 @@ mng.as_user("girvel", function()
   end)
   mng.desktop_file("./assets/autoproxy_1")
   mng.desktop_file("./assets/autoproxy_2")
-
-  mng.file("~/.config/xfce4/helpers.rc", "TerminalEmulator=ghostty")
-  mng.symlink("~/.config/mimeapps.list", "./assets/mimeapps.list")
 end)
 
 mng.finish()
