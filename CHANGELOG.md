@@ -9,7 +9,7 @@
 
 ## Queue
 
-- [ ] Display manager
+- [ ] Display manager (probably ly)
 - [ ] nvim.desktop
 - [ ] Theme for Win+D launcher
 - [ ] https://github.com/PolpOnline/gpu-usage-waybar
@@ -18,6 +18,9 @@
     - [ ] nvim monokai theme is broken
 - Apps:
     - [ ] autoproxy
+- [x] different backgrounds for different workspaces
+- [x] Modules
+    A pluggable script; errors are isolated, assets are grouped into the same folder
 - [x] Short flags
 - [x] --no-update
 - [x] move example.lua to example/ anyway, mess with package.path or something
@@ -60,7 +63,4 @@
 
 - [ ] Optimize with a profiler
 - [ ] Use execve instead of a shell
-- [ ] Modules
-    A pluggable script; errors are isolated, assets are grouped into the same folder
-- [ ] different backgrounds for different workspaces
 - [ ] bluetooth autostart (or autoenable or whatever) -> here
