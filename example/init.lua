@@ -3,6 +3,16 @@ local mng = require("mng")
 local gnome = require("mng.gnome")
 
 
+mng.start(...)
+mng.xbps_mirror("https://repo-de.voidlinux.org/current")
+
+-- local ok, hardware = pcall(dofile, "./example/hardware/init.lua")
+-- if not ok then
+--   error("mng example should be run with example/ as a working directory")
+-- end
+
+dofile("./hardware/init.lua")
+
 local use_niri = function()
   mng.package [[
     dbus elogind niri fuzzel Waybar wl-clipboard pipewire wireplumber font-awesome pavucontrol
@@ -34,9 +44,6 @@ local use_niri = function()
   end)
 end
 
-mng.start(...)
-
-mng.xbps_mirror("https://repo-de.voidlinux.org/current")
 mng.package [[
   xdg-utils fuse mesa-dri man-pages-devel telegram-desktop transmission-gtk clang cmake
   zsh git stow curl wget neovim tree-sitter-cli ripgrep eza github-cli love htop tree jq redsocks

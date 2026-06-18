@@ -40,7 +40,11 @@ local string_strip = function(str)
   return str:gsub("^%s+", ""):gsub("%s+$", "")
 end
 
-local string_endswith = function(str, substr)
+local string_starts_with = function(str, prefix)
+  return str:sub(1, #prefix) == prefix
+end
+
+local string_ends_with = function(str, substr)
   return str:sub(-#substr) == substr
 end
 
@@ -141,12 +145,31 @@ local cli_command = function(args, possible_values, default)
 end
 
 local cli_flag = function(args, flag, description)
+  flag = string_strip(flag)
+  local flags = string_split(flag, "%s+")
   table.insert(cli_seen, {type = "flag", flag = flag, description = description})
-  local i = table_first_index(args, flag)
-  if i then
-    table.remove(args, i)
+
+  for i, arg in ipairs(args) do
+    if string_starts_with(arg, "--") then
+      if table_first_index(flags, arg) then
+        table.remove(args, i)
+        return true
+      end
+    elseif string_starts_with(arg, "-") then
+      for j = 1, #arg do
+        local char = arg:sub(j, j)
+        if table_first_index(flags, "-"..char) then
+          if #arg == 2 then
+            table.remove(args, i)
+          else
+            args[i] = arg:sub(1, j - 1) .. arg:sub(j + 1)
+          end
+          return true
+        end
+      end
+    end
   end
-  return not not i
+  return false
 end
 
 local cli_finish = function(args)
@@ -206,13 +229,13 @@ mng.start = function(...)
   end
 
   local args = {...}
-  cli("<MNG FILE>", "mng is a tool for procedural OS configuration")
+  cli("sudo luajit init.lua", "mng is a tool for procedural OS configuration")
   cli_args = {
-    clean = cli_flag(args, "--clean", "Clean the garbage, s.a. redundant packages & services"),
-    no_update = cli_flag(args, "--no-update", "Don't trigger updates, s.a. xbps-install -S"),
-    verbose = cli_flag(args, "--verbose", nil),
+    clean = cli_flag(args, "-c --clean", "Clean the garbage, s.a. redundant packages & services"),
+    no_update = cli_flag(args, "-U --no-update", "Don't trigger updates, s.a. xbps-install -S"),
+    verbose = cli_flag(args, "-v --verbose", nil),
   }
-  if cli_flag(args, "--help", "Display help") then
+  if cli_flag(args, "-h --help", "Display help") then
     cli_help()
     os.exit(0)
   end
@@ -627,7 +650,7 @@ end
 mng.icon = function(path)
   local shortname = dir_head(path)
   local resolution
-  if string_endswith(path, ".svg") then
+  if string_ends_with(path, ".svg") then
     resolution = "scalable"
   else
     local info = mng.cmd_read("file -b %s", mng.cmd_quote(path))
