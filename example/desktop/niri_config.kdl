@@ -1,3 +1,4 @@
+spawn-sh-at-startup "dbus-update-activation-environment WAYLAND_DISPLAY DISPLAY XDG_CURRENT_DESKTOP"
 spawn-sh-at-startup "pidof pipewire || pipewire"
 spawn-sh-at-startup "pidof wireplumber || (sleep 1; exec wireplumber)"
 spawn-sh-at-startup "pidof pipewire-pulse || (sleep 1; exec pipewire-pulse)"
