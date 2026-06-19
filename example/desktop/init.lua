@@ -7,7 +7,7 @@ mng.package [[
   alsa-utils xclip xwayland-satellite bluez blueman libspa-bluetooth qdirstat xdg-utils
   qimgv Thunar tumbler ffmpegthumbnailer gedit awww
 ]]
-mng.service_on("dbus", "bluetoothd")  -- TODO unify syntax with mng.package
+mng.service_on("dbus", "bluetoothd")
 mng.cmd("usermod -aG bluetooth girvel")
 
 if mng.package("xdg-user-dirs") then

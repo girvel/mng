@@ -4,7 +4,7 @@
 - [ ] Document API thoroughly
 - [ ] Maybe format API into an .md thing?
 - [ ] Write a very minimal example
-- [ ] Make API consistent: one order for (source, target) args, multi-component strings everywhere
+- [ ] Make API consistent: one order for (source, target) args, multi-component strings everywhere (or not?)
 - [ ] Review w/ AI
 - [ ] TODOs
 
@@ -12,7 +12,6 @@
 
 - [ ] Load bg faster
 - [ ] Configure gedit to use a better theme
-- [ ] Set dark mode (thunar, gedit, bluetooth, ...)
 - [ ] Mail app
 - [ ] Display manager (probably ly)
 - [ ] nvim-ghostty.desktop
@@ -23,6 +22,7 @@
     - [ ] nvim monokai theme is broken
 - Apps:
     - [ ] autoproxy
+- [x] Set dark mode (thunar, gedit, bluetooth, ...)
 - [x] different backgrounds for different workspaces
 - [x] Modules
     A pluggable script; errors are isolated, assets are grouped into the same folder
