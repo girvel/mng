@@ -2,7 +2,7 @@ local mng = require("mng")
 
 
 mng.package [[
-  fuse man-pages-devel clang cmake zip unzip socklog-void chrony fzf tar xz
+  fuse man-pages-devel clang cmake zip unzip socklog-void chrony fzf tar xz nodejs
   zsh git curl wget neovim tree-sitter-cli ripgrep eza github-cli htop tree jq
 ]]
 mng.service_on("socklog-unix", "nanoklogd", "chronyd")
