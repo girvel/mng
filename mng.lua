@@ -478,8 +478,15 @@ mng.file_get = function(path)
   return result
 end
 
+mng.recursive_remove = function(...)
+  for i = 1, select("#", ...) do
+    local path = select(i, ...)
+    mng.cmd("rm -rf %s", mng.cmd_quote(path))
+  end
+end
+
 mng.file_remove = function(path)
-  mng.cmd("rm -f %s", path)
+  mng.cmd("rm -f %s", mng.cmd_quote(path))
 end
 
 mng.git_repo = function(repo_path, destination, update)
@@ -487,7 +494,7 @@ mng.git_repo = function(repo_path, destination, update)
     if mng.cmd_read("cd %s; git remote get-url origin", destination) == repo_path then
       goto update
     end
-    mng.dir_remove(destination)
+    mng.recursive_remove(destination)
   end
   mng.cmd("git clone "..repo_path.." "..destination.." --recurse-submodules")
 
@@ -684,6 +691,42 @@ mng.module = function(folder_path)
       err or "(no message provided)"
     ))
   end
+end
+
+mng.curl_proxy = nil
+mng.curl_file = function(filepath, url)
+  local cmd = ("curl %s -o %s"):format(
+    mng.cmd_quote(url),
+    mng.cmd_quote(filepath)
+  )
+  if mng.curl_proxy then
+    cmd = cmd.." --preproxy="..mng.cmd_quote(mng.curl_proxy)
+  end
+  mng.cmd(cmd)
+end
+
+--- @return boolean was_updated
+mng.theme_installed = function(name, url)
+  -- TODO use tar or unzip
+  -- TODO fix additional folder conflict
+
+  local themes_dir = mng.user
+    and ("/home/"..mng.user.."/.local/share/themes")
+    or "/usr/share/themes"
+
+  if mng.dir_exists(themes_dir.."/"..name) then return false end
+  mng.dir(themes_dir)
+
+  local tmp_archive = "/tmp/theme.tar.gz"
+  local tmp_folder = "/tmp/theme"
+  mng.recursive_remove(tmp_archive, tmp_folder)
+  mng.dir(tmp_folder)
+
+  mng.curl_file(tmp_archive, url)
+  mng.cmd("tar -xf %s -C %s", tmp_archive, tmp_folder)
+  mng.cmd("mv %s/**/Dark-Olympic %s/", tmp_folder, themes_dir)
+  mng.recursive_remove(tmp_archive, tmp_folder)
+  return true
 end
 
 return mng

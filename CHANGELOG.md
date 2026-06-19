@@ -6,6 +6,7 @@
 - [ ] Write a very minimal example
 - [ ] Make API consistent: one order for (source, target) args, multi-component strings everywhere
 - [ ] Review w/ AI
+- [ ] TODOs
 
 ## Queue
 

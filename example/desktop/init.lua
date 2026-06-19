@@ -33,4 +33,8 @@ mng.as_user("girvel", function()
   mng.symlink("~/.local/share/icons/Vimix", "./desktop/Vimix")
   mng.symlink("~/Pictures/wallpapers", "./desktop/wallpapers")
   gnome.gsettings("org.blueman.general", "plugin-list", "['!AutoConnect', '!ConnectionNotifier']")
+
+  gnome.gsettings("org.gnome.desktop.interface", "color-scheme", "'prefer-dark'")
+  mng.theme_installed("Dark-Olympic", "https://mxrepo.com/mx/repo/pool/main/d/dark-olympic-gtk-theme/dark-olympic-gtk-theme_1.2.2.orig.tar.xz")
+  mng.symlink("~/.config/gtk-3.0/settings.ini", "./desktop/gtk-settings.ini")
 end)

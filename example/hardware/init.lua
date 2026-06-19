@@ -1,6 +1,9 @@
 local mng = require("mng")
 
 
+-- TODO /etc/hosts
+mng.curl_proxy = "socks5://192.168.0.240"
+
 local hostname = mng.hostname_get()
 if hostname == "sovngard1" then
   mng.package("virtualbox-ose-guest virtualbox-ose-guest virtualbox-ose-guest-dkms")
