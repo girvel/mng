@@ -35,6 +35,11 @@ mng.as_user("girvel", function()
   gnome.gsettings("org.blueman.general", "plugin-list", "['!AutoConnect', '!ConnectionNotifier']")
 
   gnome.gsettings("org.gnome.desktop.interface", "color-scheme", "'prefer-dark'")
+  gnome.gsettings("org.gnome.desktop.interface", "monospace-font-name", "'JetBrainsMono Nerd Font'")
   mng.theme_installed("Dark-Olympic", "https://mxrepo.com/mx/repo/pool/main/d/dark-olympic-gtk-theme/dark-olympic-gtk-theme_1.2.2.orig.tar.xz")
   mng.symlink("~/.config/gtk-3.0/settings.ini", "./desktop/gtk-settings.ini")
+
+  gnome.gsettings("org.gnome.gedit.preferences.editor", "use-default-font", "true")
+  gnome.gsettings("org.gnome.gedit.preferences.editor", "tabs-size", "4")
+  gnome.gsettings("org.gnome.gedit.preferences.editor", "insert-spaces", "true")
 end)
