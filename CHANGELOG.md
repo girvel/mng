@@ -10,18 +10,19 @@
 
 ## Queue
 
-- [ ] Load bg faster
-- [ ] Configure gedit to use a better theme
 - [ ] Mail app
 - [ ] Display manager (probably ly)
 - [ ] nvim-ghostty.desktop
 - [ ] Theme for Win+D launcher
 - [ ] https://github.com/PolpOnline/gpu-usage-waybar
 - [ ] Custom loading screen
+- [ ] Normal multi-bg instead of paperd
 - Fixes:
     - [ ] nvim monokai theme is broken
 - Apps:
     - [ ] autoproxy
+- [x] Load bg faster
+- [x] Configure gedit to use a better theme
 - [x] Set dark mode (thunar, gedit, bluetooth, ...)
 - [x] different backgrounds for different workspaces
 - [x] Modules
