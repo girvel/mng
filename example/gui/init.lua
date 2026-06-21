@@ -1,3 +1,4 @@
+local flatpak = require("mng.flatpak")
 local mng = require("mng")
 
 
@@ -5,6 +6,7 @@ mng.package [[
   mesa-dri telegram-desktop transmission-gtk love redsocks ghostty firefox
   obs kdenlive audacity ttf-ubuntu-font-family dejavu-fonts-ttf vlc ffmpeg qt5-wayland 
 ]]
+flatpak.on("girvel")
 
 mng.service_on("redsocks")
 
@@ -39,11 +41,12 @@ end
 mng.as_user("girvel", function()
   mng.symlink("~/.config/ghostty/config", "./gui/ghostty_config")
 
+  flatpak.package("com.google.Chrome")
   mng.git_repo("https://github.com/girvel/autoproxy", "~/workshop/autoproxy")
   mng.as_user(nil, function()
     mng.symlink("/etc/redsocks.conf", "~/workshop/autoproxy/redsocks.conf")
   end)
-  mng.desktop_file("./gui/autoproxy_1")
-  mng.desktop_file("./gui/autoproxy_2")
+  mng.desktop_file("~/workshop/autoproxy/autoproxy_1.desktop")
+  mng.desktop_file("~/workshop/autoproxy/autoproxy_2.desktop")
 end)
 

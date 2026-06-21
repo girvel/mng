@@ -10,6 +10,8 @@
 
 ## Queue
 
+- [ ] Wi-Fi GUI
+- [ ] poweroff, reboot buttons
 - [ ] Mail app
 - [ ] Display manager (probably ly)
 - [ ] nvim-ghostty.desktop

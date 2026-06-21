@@ -56,12 +56,6 @@ local cmd_fmt = function(fmt, ...)
   return fmt
 end
 
---- @param str string
---- @return string[]
-local tokenize = function(str)
-  return string_split(string_strip(str), "%s+")
-end
-
 --- @param t table
 --- @param item any
 --- @return integer?
@@ -349,7 +343,7 @@ mng.package = function(packages)
   end
 
   local was_updated = false
-  for _, pkg in ipairs(tokenize(packages)) do
+  for _, pkg in ipairs(mng.tokenize(packages)) do
     if cli_args.clean then
       all_packages[pkg] = true
     end
@@ -727,6 +721,12 @@ mng.theme_installed = function(name, url)
   mng.cmd("mv %s/**/Dark-Olympic %s/", tmp_folder, themes_dir)
   mng.recursive_remove(tmp_archive, tmp_folder)
   return true
+end
+
+--- @param str string
+--- @return string[]
+mng.tokenize = function(str)
+  return string_split(string_strip(str), "%s+")
 end
 
 return mng
