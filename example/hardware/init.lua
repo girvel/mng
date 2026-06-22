@@ -22,7 +22,8 @@ elseif hostname == "valholl" then
     'force_drivers+=" nvidia nvidia_modeset nvidia_uvm nvidia_drm "\n'
   )
   if was_drm_updated or was_dracut_updated then
-    mng.cmd("xbps-reconfigure -a")
+    local version = mng.cmd_read("uname -r"):match("^%d+%.%d+")
+    mng.cmd("xbps-reconfigure -f linux"..version)
   end
 
   -- TODO mng.fstab instead?
