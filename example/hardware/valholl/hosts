@@ -1,0 +1,5 @@
+127.0.0.1		localhost.localdomain	localhost
+::1			localhost.localdomain	localhost ip6-localhost
+
+192.168.0.240   thor1
+185.167.234.186 vps

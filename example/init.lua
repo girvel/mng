@@ -10,7 +10,7 @@ mng.module("console")
 mng.module("desktop")
 mng.module("gui")
 
-mng.package("docker")
+mng.package("docker docker-buildx")
 mng.service_on("docker")
 mng.cmd("usermod -aG docker girvel")
 

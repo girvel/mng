@@ -34,6 +34,8 @@ elseif hostname == "valholl" then
   if mng.file_sync("/etc/fstab", "./hardware/valholl/fstab") then
     mng.cmd("mount -a")
   end
+
+  mng.symlink("/etc/hosts", "./hardware/valholl/hosts")
 else
   error("No machine-specific configuration for "..hostname)
 end
