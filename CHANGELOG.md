@@ -10,6 +10,8 @@
 
 ## Queue
 
+- [ ] --heavy (or --light) -- client-side flag to further hide heavy computations
+- [ ] --module to rebuild only a single module; incompatible with --clean
 - [ ] Grub fix -> mng
 - [ ] Wi-Fi GUI
 - [ ] poweroff, reboot buttons

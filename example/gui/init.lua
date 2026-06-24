@@ -3,8 +3,9 @@ local mng = require("mng")
 
 
 mng.package [[
-  mesa-dri telegram-desktop transmission-gtk love redsocks ghostty firefox
-  obs kdenlive audacity ttf-ubuntu-font-family dejavu-fonts-ttf vlc ffmpeg qt5-wayland libreoffice
+  mesa-dri vulkan-loader ttf-ubuntu-font-family dejavu-fonts-ttf
+  telegram-desktop transmission-gtk love redsocks ghostty firefox
+  obs kdenlive audacity vlc ffmpeg qt5-wayland libreoffice
 ]]
 flatpak.on("girvel")
 

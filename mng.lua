@@ -223,9 +223,13 @@ mng.start = function(...)
   end
 
   local args = {...}
-  cli("sudo luajit init.lua", "mng is a tool for procedural OS configuration")
+  cli("sudo luajit init.lua", "mng is a tool for centralized imperative Void Linux configuration")
   cli_args = {
-    clean = cli_flag(args, "-c --clean", "Clean the garbage, s.a. redundant packages & services"),
+    clean = cli_flag(
+      args,
+      "-c --clean",
+      "Clean the garbage, s.a. redundant packages & services (asks permission)"
+    ),
     no_sync = cli_flag(args, "-S --no-sync", "Do not sync with remote repository"),
     verbose = cli_flag(args, "-v --verbose", nil),
   }
@@ -379,6 +383,14 @@ mng.xbps_mirror = function(mirror)
     xbps_synced = true
     mng.cmd("xbps-install -S")
   end
+end
+
+mng.repo = function(package_list)
+  local was_updated = mng.package(package_list)
+  if was_updated then
+    mng.cmd("xbps-install -u")
+  end
+  return was_updated
 end
 
 mng.as_user = function(new_user, f)

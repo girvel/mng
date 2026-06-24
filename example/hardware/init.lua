@@ -6,11 +6,10 @@ mng.curl_proxy = "socks5://192.168.0.240"
 
 local hostname = mng.hostname_get()
 if hostname == "sovngard1" then
-  mng.package("virtualbox-ose-guest virtualbox-ose-guest virtualbox-ose-guest-dkms")
+  mng.package("virtualbox-ose-guest virtualbox-ose-guest-dkms")
   mng.service_on("vboxservice")
 elseif hostname == "valholl" then
-  mng.package("void-repo-nonfree")
-  mng.package("nvidia nvidia-vaapi-driver grub-x86_64-efi")
+  mng.package("nvidia nvidia-vaapi-driver nvidia-libs-32bit grub-x86_64-efi")
 
   -- fixes boot hangs (maybe)
   local was_drm_updated = mng.file(
