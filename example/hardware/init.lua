@@ -10,7 +10,7 @@ if hostname == "sovngard1" then
   mng.service_on("vboxservice")
 elseif hostname == "valholl" then
   mng.package("void-repo-nonfree")
-  mng.package("nvidia nvidia-vaapi-driver")
+  mng.package("nvidia nvidia-vaapi-driver grub-x86_64-efi")
 
   -- fixes boot hangs (maybe)
   local was_drm_updated = mng.file(

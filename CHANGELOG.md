@@ -10,6 +10,7 @@
 
 ## Queue
 
+- [ ] Grub fix -> mng
 - [ ] Wi-Fi GUI
 - [ ] poweroff, reboot buttons
 - [ ] Mail app

@@ -10,4 +10,8 @@ mng.module("console")
 mng.module("desktop")
 mng.module("gui")
 
+mng.package("docker")
+mng.service_on("docker")
+mng.cmd("usermod -aG docker girvel")
+
 mng.finish()
