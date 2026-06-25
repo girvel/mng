@@ -204,12 +204,6 @@ local dir_head = function(path)
   return path:match("([^/]+)/*$")
 end
 
---- @class cli_args
---- @field clean boolean
---- @field verbose boolean
---- @field no_sync boolean
---- @type cli_args
-local cli_args
 local run_at_finish = {}  -- TODO rename, expose as advanced
 
 ----------------------------------------------------------------------------------------------------
@@ -224,11 +218,14 @@ mng.start = function(...)
 
   local args = {...}
   cli("sudo luajit init.lua", "mng is a tool for centralized imperative Void Linux configuration")
-  cli_args = {
+  mng.cli_args = {
     clean = cli_flag(
-      args,
-      "-c --clean",
+      args, "-c --clean",
       "Clean the garbage, s.a. redundant packages & services (asks permission)"
+    ),
+    light = cli_flag(
+      args, "-l --light",
+      "Allows not to run performance-heavy code marked with `if not mng.cli_args.light`"
     ),
     no_sync = cli_flag(args, "-S --no-sync", "Do not sync with remote repository"),
     verbose = cli_flag(args, "-v --verbose", nil),
@@ -246,16 +243,13 @@ mng.finish = function()
   end
 end
 
---- @type string?
-mng.user = nil
-
 mng.cmd = function(command, ...)
   command = cmd_fmt(command, ...)
-  if cli_args.verbose then
+  if mng.cli_args.verbose then
     print("[CMD] "..command)
   end
   local _, _, code = os.execute(command)
-  if cli_args.verbose then
+  if mng.cli_args.verbose then
     print("[RET] "..code)
   end
 end
@@ -265,7 +259,7 @@ end
 --- @return integer?
 mng.cmd_read = function(command, ...)
   command = cmd_fmt(command, ...)
-  if cli_args.verbose then
+  if mng.cli_args.verbose then
     print("[CMD] "..command)
   end
   local f = assert(io.popen(command, "r"))
@@ -274,7 +268,7 @@ mng.cmd_read = function(command, ...)
   if result:sub(-1, -1) == "\n" then
     result = result:sub(1, -2)
   end
-  if cli_args.verbose then
+  if mng.cli_args.verbose then
     print(("[RES] %q"):format(result))
     print("[RET] "..code)
   end
@@ -342,13 +336,13 @@ end
 
 --- @return boolean was_updated
 mng.package = function(packages)
-  if cli_args.clean then
+  if mng.cli_args.clean then
     run_at_finish[clean_packages] = true
   end
 
   local was_updated = false
   for _, pkg in ipairs(mng.tokenize(packages)) do
-    if cli_args.clean then
+    if mng.cli_args.clean then
       all_packages[pkg] = true
     end
 
@@ -368,7 +362,7 @@ end
 
 local xbps_synced = false
 mng.package_install = function(pkg)
-  if not xbps_synced and not cli_args.no_sync then
+  if not xbps_synced and not mng.cli_args.no_sync then
     xbps_synced = true
     mng.cmd("xbps-install -S")
   end
@@ -377,7 +371,7 @@ end
 
 mng.xbps_mirror = function(mirror)
   mng.file("/etc/xbps.d/00-repository-main.conf", "repository="..mirror)
-  if cli_args.no_sync then
+  if mng.cli_args.no_sync then
     xbps_synced = false
   else
     xbps_synced = true
@@ -605,13 +599,13 @@ local clean_services = function()
 end
 
 mng.service_on = function(...)
-  if cli_args.clean then
+  if mng.cli_args.clean then
     run_at_finish[clean_services] = true
   end
 
   for i = 1, select("#", ...) do
     local name = select(i, ...)
-    if cli_args.clean then
+    if mng.cli_args.clean then
       service_state[name] = true
     end
     mng.symlink("/var/service/"..name, "/etc/sv/"..name)
@@ -619,13 +613,13 @@ mng.service_on = function(...)
 end
 
 mng.service_off = function(...)
-  if cli_args.clean then
+  if mng.cli_args.clean then
     run_at_finish[clean_services] = true
   end
 
   for i = 1, select("#", ...) do
     local name = select(i, ...)
-    if cli_args.clean then
+    if mng.cli_args.clean then
       service_state[name] = false
     end
     mng.file_remove("/var/service/"..name)
@@ -740,5 +734,16 @@ end
 mng.tokenize = function(str)
   return string_split(string_strip(str), "%s+")
 end
+
+--- @class cli_args
+--- @field clean boolean
+--- @field light boolean
+--- @field verbose boolean
+--- @field no_sync boolean
+--- @type cli_args
+mng.cli_args = nil
+
+--- @type string?
+mng.user = nil
 
 return mng

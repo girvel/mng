@@ -10,7 +10,6 @@
 
 ## Queue
 
-- [ ] --heavy (or --light) -- client-side flag to further hide heavy computations
 - [ ] --module to rebuild only a single module; incompatible with --clean
 - [ ] Grub fix -> mng
 - [ ] Wi-Fi GUI
@@ -26,6 +25,7 @@
     - [ ] nvim monokai theme is broken
 - Apps:
     - [ ] autoproxy
+- [x] --heavy (or --light) -- client-side flag to further hide heavy computations
 - [x] Load bg faster
 - [x] Configure gedit to use a better theme
 - [x] Set dark mode (thunar, gedit, bluetooth, ...)
