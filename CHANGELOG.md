@@ -10,7 +10,6 @@
 
 ## Queue
 
-- [ ] --module to rebuild only a single module; incompatible with --clean
 - [ ] Grub fix -> mng
 - [ ] Wi-Fi GUI
 - [ ] poweroff, reboot buttons
@@ -25,6 +24,7 @@
     - [ ] nvim monokai theme is broken
 - Apps:
     - [ ] autoproxy
+- [x] --module to rebuild only a single module; incompatible with --clean
 - [x] --heavy (or --light) -- client-side flag to further hide heavy computations
 - [x] Load bg faster
 - [x] Configure gedit to use a better theme
@@ -75,3 +75,4 @@
 - [ ] Optimize with a profiler
 - [ ] Use execve instead of a shell
 - [ ] bluetooth autostart (or autoenable or whatever) -> here
+- [ ] utf8 for cli & string libs

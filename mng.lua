@@ -48,6 +48,14 @@ local string_ends_with = function(str, substr)
   return str:sub(-#substr) == substr
 end
 
+--- @param str string
+--- @param i integer
+--- @return string
+--- @nodiscard
+local string_char = function(str, i)
+  return str:sub(i, i)
+end
+
 local cmd_fmt = function(fmt, ...)
   if select("#", ...) > 0 then fmt = fmt:format(...) end
   if mng.user ~= nil then
@@ -65,39 +73,36 @@ local table_first_index = function(t, item)
   end
 end
 
+local cli_name
+local cli_description
 local cli_seen = {}
 
 local cli = function(name, description)
-  if #cli_seen > 0 then
-    error("cli() call should come first")
-  end
-  table.insert(cli_seen, {type = "cli", name = name, description = description})
+  cli_name = name
+  cli_description = description
 end
 
 local cli_help = function(hide_description)
-  if cli_seen[1].type == "cli" then
-    local data = table.remove(cli_seen, 1)
-    if not hide_description then print(data.description) end
-    io.write("USAGE: "..data.name)
+  if cli_name then
+    if not hide_description then print(cli_description) end
+    io.write("USAGE: "..cli_name)
   else
     io.write("USAGE: <FILENAME>")
   end
 
-  local was_prev_flag = false
+  local prev_type
   for _, param in ipairs(cli_seen) do
     if param.type == "command" then
       io.write(" <command>")
-    elseif param.type == "flag" then
-      if not was_prev_flag then
-        io.write(" <flags>")
-      end
+    elseif param.type ~= prev_type then
+      io.write(" <"..param.type.."s>")
     end
 
-    was_prev_flag = param.type == "flag"
+    prev_type = param.type
   end
   print()
 
-  was_prev_flag = false
+  prev_type = nil
   for _, param in ipairs(cli_seen) do
     if param.type == "command" then
       print()
@@ -105,18 +110,19 @@ local cli_help = function(hide_description)
       for v, desc in pairs(param.possible_values) do
         print("  "..v..": "..desc);
       end
-    elseif param.type == "flag" then
-      if not was_prev_flag then
+    else
+      if param.type ~= prev_type then
         print()
-        print("FLAGS:")
+        print(param.type:upper().."S:")
       end
+
       if param.description then
-        print("  "..param.flag..": "..param.description)
+        print("  "..param.notation..": "..param.description)
       else
-        print("  "..param.flag)
+        print("  "..param.notation)
       end
     end
-    was_prev_flag = param.type == "flag"
+    prev_type = param.type
   end
 end
 
@@ -138,21 +144,21 @@ local cli_command = function(args, possible_values, default)
   return default
 end
 
-local cli_flag = function(args, flag, description)
-  flag = string_strip(flag)
-  local flags = string_split(flag, "%s+")
-  table.insert(cli_seen, {type = "flag", flag = flag, description = description})
+local cli_flag = function(args, notation, description)
+  notation = string_strip(notation)
+  local notations = string_split(notation, "%s+")
+  table.insert(cli_seen, {type = "flag", notation = notation, description = description})
 
   for i, arg in ipairs(args) do
     if string_starts_with(arg, "--") then
-      if table_first_index(flags, arg) then
+      if table_first_index(notations, arg) then
         table.remove(args, i)
         return true
       end
     elseif string_starts_with(arg, "-") then
       for j = 1, #arg do
         local char = arg:sub(j, j)
-        if table_first_index(flags, "-"..char) then
+        if table_first_index(notations, "-"..char) then
           if #arg == 2 then
             table.remove(args, i)
           else
@@ -166,7 +172,43 @@ local cli_flag = function(args, flag, description)
   return false
 end
 
-local cli_finish = function(args)
+--- @return string? value
+local cli_option = function(args, notation, description)
+  notation = string_strip(notation)
+  local notations = string_split(notation, "%s+")
+  table.insert(cli_seen, {type = "option", notation = notation, description = description})
+
+  for _, this_notation in ipairs(notations) do
+    local is_short = not not this_notation:match("^-[^-]")
+    for i, arg in ipairs(args) do
+      if not string_starts_with(arg, this_notation) then goto continue end
+      if string_char(arg, #this_notation + 1) == "=" then
+        table.remove(args, i)
+        return arg:sub(#this_notation + 2)
+      end
+
+      if #arg == #this_notation then
+        table.remove(args, i)
+        local result = table.remove(args, i)
+        if not result then
+          print("Missing value for the option "..arg)
+          os.exit(1)
+        end
+        return result
+      end
+
+      if is_short then
+        table.remove(args, i)
+        return arg:sub(#this_notation + 1)
+      end
+
+      ::continue::
+    end
+  end
+  return nil
+end
+
+local cli_check_remainder = function(args)
   if #args == 0 then return end
   io.write("Unexpected args:")
   for _, arg in ipairs(args) do
@@ -218,7 +260,12 @@ mng.start = function(...)
 
   local args = {...}
   cli("sudo luajit init.lua", "mng is a tool for centralized imperative Void Linux configuration")
+
   mng.cli_args = {
+    module = cli_option(
+      args, "-m --module",
+      "Run only the given module"
+    ),
     clean = cli_flag(
       args, "-c --clean",
       "Clean the garbage, s.a. redundant packages & services (asks permission)"
@@ -230,17 +277,24 @@ mng.start = function(...)
     no_sync = cli_flag(args, "-S --no-sync", "Do not sync with remote repository"),
     verbose = cli_flag(args, "-v --verbose", nil),
   }
+
+  if mng.cli_args.module and mng.cli_args.clean then
+    print("[ERR] --module and --clean are incompatible")
+    os.exit(1)
+  end
+
   if cli_flag(args, "-h --help", "Display help") then
     cli_help()
     os.exit(0)
   end
-  cli_finish(args)
+  cli_check_remainder(args)
 end
 
 mng.finish = function()
   for sub in pairs(run_at_finish) do
     sub()
   end
+  os.exit(mng.exit_code)
 end
 
 mng.cmd = function(command, ...)
@@ -293,7 +347,7 @@ local builtin_packages = {
 }
 
 local clean_packages = function()
-  print("PACKAGES")
+  print("[CLN] Packages")
 
   local manual_packages_raw = string_split(string_strip(mng.cmd_read("xbps-query -m")), "\n")
   local redundant_packages = {}
@@ -558,7 +612,7 @@ local service_state = {
 }
 
 local clean_services = function()
-  print("SERVICES")
+  print("[CLN] Services")
 
   local services_real = string_split(string_strip(mng.cmd_read("ls /var/service")), "%s+")
   local services_to_off = {}
@@ -674,7 +728,25 @@ mng.icon = function(path)
   end
 end
 
+local last_module_to_run
+local all_modules = {}
+local check_some_module_ran = function()
+  if last_module_to_run then return end
+
+  mng.exit_code = 1
+  print("[ERR] Unknown module "..mng.cli_args.module)
+  if #all_modules == 0 then
+    print("No modules defined.")
+  else
+    print("Available modules:")
+    for _, mod in ipairs(all_modules) do
+      print("- "..mod)
+    end
+  end
+end
+
 mng.module = function(folder_path)
+  table.insert(all_modules, folder_path)
   if not mng.dir_exists(folder_path) then
     error("No module directory at "..folder_path)
   end
@@ -682,6 +754,19 @@ mng.module = function(folder_path)
   local filepath = folder_path.."/init.lua"
   if not mng.file_exists(filepath) then
     error("Module is expected to have its logic defined in init.lua file")
+  end
+
+  if mng.cli_args.module and mng.cli_args.module ~= folder_path then
+    run_at_finish[check_some_module_ran] = true
+    if mng.cli_args.verbose then
+      print("[INF] Skipping module "..folder_path)
+    end
+    return
+  end
+  last_module_to_run = folder_path
+
+  if mng.cli_args.verbose then
+    print("[MOD] "..folder_path)
   end
 
   local ok, err = xpcall(dofile, debug.traceback, filepath)
@@ -738,6 +823,7 @@ end
 --- @class cli_args
 --- @field clean boolean
 --- @field light boolean
+--- @field module string?
 --- @field verbose boolean
 --- @field no_sync boolean
 --- @type cli_args
@@ -745,5 +831,7 @@ mng.cli_args = nil
 
 --- @type string?
 mng.user = nil
+
+mng.exit_code = 0
 
 return mng
