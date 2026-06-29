@@ -10,6 +10,8 @@
 
 ## Queue
 
+- [ ] Fix VLC loading very long
+- [ ] Display load of the most used CPU core
 - [ ] Grub fix -> mng
 - [ ] Wi-Fi GUI
 - [ ] poweroff, reboot buttons
