@@ -3,6 +3,11 @@ inode/directory=thunar.desktop
 x-scheme-handler/tg=org.telegram.desktop.desktop
 application/x-bittorrent=transmission-qt.desktop
 
+x-scheme-handler/http=firefox.desktop
+x-scheme-handler/https=firefox.desktop
+text/html=firefox.desktop
+application/pdf=firefox.desktop
+
 text/cache-manifest=org.gnome.gedit.desktop
 text/calendar=org.gnome.gedit.desktop
 text/css=org.gnome.gedit.desktop
