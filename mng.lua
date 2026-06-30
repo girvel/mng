@@ -1,60 +1,11 @@
+local stringx = require("mng.lib.stringx")
+
+
 local mng = {}
 
 ----------------------------------------------------------------------------------------------------
 -- [SECTION] Internal tools
 ----------------------------------------------------------------------------------------------------
-
---- @param str string
---- @param pat string
---- @param plain boolean?
---- @return string[]
-local string_split = function(str, pat, plain)
-  local t = {}
-
-  while true do
-    local pos1, pos2 = str:find(pat, 1, plain or false)
-
-    if not pos1 or pos1 > pos2 then
-      t[#t + 1] = str
-      return t
-    end
-
-    t[#t + 1] = str:sub(1, pos1 - 1)
-    str = str:sub(pos2 + 1)
-  end
-end
-
---- @param arr string[]
---- @param sep string
---- @return string
-local string_join = function(arr, sep)
-  if #arr == 0 then return "" end
-  local result = arr[1]
-  for i = 2, #arr do
-    result = result.." "..arr[i]
-  end
-  return result
-end
-
-local string_strip = function(str)
-  return str:gsub("^%s+", ""):gsub("%s+$", "")
-end
-
-local string_starts_with = function(str, prefix)
-  return str:sub(1, #prefix) == prefix
-end
-
-local string_ends_with = function(str, substr)
-  return str:sub(-#substr) == substr
-end
-
---- @param str string
---- @param i integer
---- @return string
---- @nodiscard
-local string_char = function(str, i)
-  return str:sub(i, i)
-end
 
 local cmd_fmt = function(fmt, ...)
   if select("#", ...) > 0 then fmt = fmt:format(...) end
@@ -145,17 +96,17 @@ local cli_command = function(args, possible_values, default)
 end
 
 local cli_flag = function(args, notation, description)
-  notation = string_strip(notation)
-  local notations = string_split(notation, "%s+")
+  notation = stringx.strip(notation)
+  local notations = stringx.split(notation, "%s+")
   table.insert(cli_seen, {type = "flag", notation = notation, description = description})
 
   for i, arg in ipairs(args) do
-    if string_starts_with(arg, "--") then
+    if stringx.starts_with(arg, "--") then
       if table_first_index(notations, arg) then
         table.remove(args, i)
         return true
       end
-    elseif string_starts_with(arg, "-") then
+    elseif stringx.starts_with(arg, "-") then
       for j = 1, #arg do
         local char = arg:sub(j, j)
         if table_first_index(notations, "-"..char) then
@@ -174,15 +125,15 @@ end
 
 --- @return string? value
 local cli_option = function(args, notation, description)
-  notation = string_strip(notation)
-  local notations = string_split(notation, "%s+")
+  notation = stringx.strip(notation)
+  local notations = stringx.split(notation, "%s+")
   table.insert(cli_seen, {type = "option", notation = notation, description = description})
 
   for _, this_notation in ipairs(notations) do
     local is_short = not not this_notation:match("^-[^-]")
     for i, arg in ipairs(args) do
-      if not string_starts_with(arg, this_notation) then goto continue end
-      if string_char(arg, #this_notation + 1) == "=" then
+      if not stringx.starts_with(arg, this_notation) then goto continue end
+      if stringx.char(arg, #this_notation + 1) == "=" then
         table.remove(args, i)
         return arg:sub(#this_notation + 2)
       end
@@ -349,7 +300,7 @@ local builtin_packages = {
 local clean_packages = function()
   print("[CLN] Packages")
 
-  local manual_packages_raw = string_split(string_strip(mng.cmd_read("xbps-query -m")), "\n")
+  local manual_packages_raw = stringx.split(stringx.strip(mng.cmd_read("xbps-query -m")), "\n")
   local redundant_packages = {}
   local manual_packages = {}
   for _, pkg in ipairs(manual_packages_raw) do
@@ -373,7 +324,7 @@ local clean_packages = function()
       print("- "..pkg)
     end
 
-    mng.cmd("xbps-pkgdb -m manual "..string_join(unmarked_packages, " "))
+    mng.cmd("xbps-pkgdb -m manual "..stringx.join(unmarked_packages, " "))
   end
 
   if #redundant_packages > 0 then
@@ -382,7 +333,7 @@ local clean_packages = function()
       print("- "..pkg)
     end
 
-    mng.cmd("xbps-pkgdb -m auto "..string_join(redundant_packages, " "))
+    mng.cmd("xbps-pkgdb -m auto "..stringx.join(redundant_packages, " "))
   end
 
   mng.cmd("xbps-remove -o")
@@ -457,7 +408,7 @@ end
 
 mng.shell_get = function(this_user)
   this_user = this_user or mng.user
-  return string_split(mng.cmd_read("getent passwd %s", this_user), ":")[7]
+  return stringx.split(mng.cmd_read("getent passwd %s", this_user), ":")[7]
 end
 
 mng.shell_set = function(path)
@@ -570,7 +521,7 @@ mng.stow = function(source, target)
 end
 
 mng.hostname_get = function()
-  return string_strip(mng.file_get("/etc/hostname"))
+  return stringx.strip(assert(mng.file_get("/etc/hostname")))
 end
 
 --- @return boolean was_updated
@@ -614,7 +565,7 @@ local service_state = {
 local clean_services = function()
   print("[CLN] Services")
 
-  local services_real = string_split(string_strip(mng.cmd_read("ls /var/service")), "%s+")
+  local services_real = stringx.split(stringx.strip(mng.cmd_read("ls /var/service")), "%s+")
   local services_to_off = {}
   for _, service in ipairs(services_real) do
     if not service_state[service] then
@@ -711,7 +662,7 @@ end
 mng.icon = function(path)
   local shortname = dir_head(path)
   local resolution
-  if string_ends_with(path, ".svg") then
+  if stringx.ends_with(path, ".svg") then
     resolution = "scalable"
   else
     local info = mng.cmd_read("file -b %s", mng.cmd_quote(path))
@@ -817,7 +768,7 @@ end
 --- @param str string
 --- @return string[]
 mng.tokenize = function(str)
-  return string_split(string_strip(str), "%s+")
+  return stringx.split(stringx.strip(str), "%s+")
 end
 
 --- @class cli_args
