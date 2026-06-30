@@ -7,6 +7,6 @@ UUID="2c0e6f9d-8433-43ff-8e5a-4034703701a2"	/	ext4	defaults	0	1
 UUID="7A2E-49E4"	/boot/efi	vfat	defaults	0	1
 
 UUID=46A2F9BEA2F9B313 /mnt/c ntfs3 defaults,uid=1000,gid=1000,dmask=022,fmask=133,noatime,windows_names,nofail,force 0 0
-UUID=444E1E754E1E604A /mnt/d ntfs3 defaults,uid=1000,gid=1000,dmask=022,fmask=133,noatime,windows_names,nofail 0 0
+UUID=444E1E754E1E604A /mnt/d ntfs3 defaults,uid=1000,gid=1000,dmask=022,fmask=133,noatime,windows_names,nofail,force 0 0
 LABEL=vault /mnt/vault btrfs defaults,nofail 0 0
 UUID="b3b4cc75-4ee0-4a02-9811-58b7a01287d5" /mnt/ubuntu ext4 defaults,nofail 0 0

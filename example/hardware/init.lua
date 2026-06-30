@@ -30,7 +30,7 @@ elseif hostname == "valholl" then
   mng.dir("/mnt/d")
   mng.dir("/mnt/vault")
   mng.dir("/mnt/ubuntu")
-  if mng.file_sync("/etc/fstab", "./hardware/valholl/fstab") then
+  if mng.symlink("/etc/fstab", "./hardware/valholl/fstab") then
     mng.cmd("mount -a")
   end
 
