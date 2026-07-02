@@ -200,7 +200,7 @@ mng.package = function(packages)
 
     if not mng.package_is_installed(pkg) then
       was_updated = true
-      mng.package_install(pkg)
+      mng.package_install(pkg)  -- TODO install in bulk?
     end
   end
 
@@ -281,6 +281,7 @@ mng.dir_exists = function(path)
 end
 
 mng.file_exists = function(path)
+  path = mng.cmd_read("echo %s", path)
   local f = io.open(path, "r")
   if not f then return false end
   f:close()
@@ -380,6 +381,8 @@ mng.symlink = function(path, value)
     if mng.symlink_get(path) == value then
       return false
     end
+    mng.file_remove(path)
+  elseif mng.file_exists(path) then
     mng.file_remove(path)
   end
   mng.symlink_set(path, value)
@@ -543,7 +546,9 @@ local check_some_module_ran = function()
   end
 end
 
-mng.module = function(folder_path)
+--- @param folder_path string
+--- @param cannot_fail? boolean
+mng.module = function(folder_path, cannot_fail)
   table.insert(all_modules, folder_path)
   if not mng.dir_exists(folder_path) then
     error("No module directory at "..folder_path)
@@ -573,6 +578,9 @@ mng.module = function(folder_path)
       folder_path,
       err or "(no message provided)"
     ))
+    if cannot_fail then
+      os.exit(1)
+    end
   end
 end
 

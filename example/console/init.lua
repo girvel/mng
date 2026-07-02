@@ -28,5 +28,10 @@ mng.as_user("girvel", function()
     ".mozilla/firefox/girvel/user.js",
     ".gitconfig",
   })
-  mng.symlink("~/.zshrc", "./console/.zshrc")
+
+  if mng.hostname_get() == "gjoll" then
+    mng.symlink("~/.zshrc", "./console/.zshrc-typewriter")
+  else
+    mng.symlink("~/.zshrc", "./console/.zshrc")
+  end
 end)

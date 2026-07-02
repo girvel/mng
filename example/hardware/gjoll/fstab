@@ -1,0 +1,2 @@
+UUID=1aa6232e-10a4-43fe-9eb8-8b3e86d5e200 / ext4 defaults 0 1
+tmpfs /tmp tmpfs defaults,nosuid,nodev 0 0

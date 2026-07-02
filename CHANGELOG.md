@@ -10,6 +10,7 @@
 
 ## Queue
 
+- [ ] `file_remove` uses single quotes => does not expand ~
 - [ ] Fix VLC loading very long
 - [ ] Display load of the most used CPU core
 - [ ] Grub fix -> mng
