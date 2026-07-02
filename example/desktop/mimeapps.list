@@ -8,6 +8,23 @@ x-scheme-handler/https=firefox.desktop
 text/html=firefox.desktop
 application/pdf=firefox.desktop
 
+image/bmp=qimgv.desktop
+image/gif=qimgv.desktop
+image/jpeg=qimgv.desktop
+image/jpg=qimgv.desktop
+image/pjpeg=qimgv.desktop
+image/png=qimgv.desktop
+image/tiff=qimgv.desktop
+image/webp=qimgv.desktop
+image/x-bmp=qimgv.desktop
+image/x-pcx=qimgv.desktop
+image/x-png=qimgv.desktop
+image/x-portable-anymap=qimgv.desktop
+image/x-portable-bitmap=qimgv.desktop
+image/x-portable-graymap=qimgv.desktop
+image/x-portable-pixmap=qimgv.desktop
+image/x-tga=qimgv.desktop
+
 text/cache-manifest=org.gnome.gedit.desktop
 text/calendar=org.gnome.gedit.desktop
 text/css=org.gnome.gedit.desktop
