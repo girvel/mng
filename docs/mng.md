@@ -1,14 +1,15 @@
 # mng
 
-## Internal tools
-
-## API
-
 ### `mng.start`
 
 ```lua
 mng.start(...: string)
 ```
+
+Ensures that the $USER is root, parses CLI args
+
+#### Args
+- `...`: `string` — CLI args; pass `...` here
 
 ### `mng.finish`
 
@@ -16,11 +17,102 @@ mng.start(...: string)
 mng.finish()
 ```
 
+Runs finalizers, s.a. cleaning with --clean
+
+### `mng.as_user`
+
+```lua
+mng.as_user(new_user: string, f: fun())
+```
+
+Runs code as a given user
+
+### `mng.package`
+
+```lua
+mng.package(packages: string) -> was_updated: boolean
+```
+
+Ensures that the listed packages are installed
+
+#### Args
+- `packages`: `string` — space-separated list of packages
+
+### `mng.service_on`
+
+```lua
+mng.service_on(...: string)
+```
+
+Ensures services are turned on
+
+#### Args
+- `...`: `string` — service names
+
+### `mng.service_off`
+
+```lua
+mng.service_off(...: string)
+```
+
+Ensures services are turned off
+
+#### Args
+- `...`: `string` — service names
+
+### `mng.dir`
+
+```lua
+mng.dir(path: string) -> was_updated: boolean
+```
+
+Ensures directory exists
+
+### `mng.file`
+
+```lua
+mng.file(path: string, content: string) -> was_updated: boolean
+```
+
+Ensures exact file content
+
+### `mng.symlink`
+
+```lua
+mng.symlink(path: string, value: string) -> was_updated: boolean
+```
+
+Ensures symlinks exists & points to the exact file
+
+#### Args
+- `path`: `string` — where the symlink should be- `value`: `string` — what the symlink should point to
+
+### `mng.shell`
+
+```lua
+mng.shell(path: string) -> was_updated: boolean
+```
+
+Ensures the current user's shell
+
+#### Args
+- `path`: `string` — Full path to the shell
+
+### `mng.hostname_get`
+
+```lua
+mng.hostname_get() -> hostname: string
+```
+
+Gets hostname from /etc/hostname
+
 ### `mng.cmd`
 
 ```lua
-mng.cmd(command, ...)
+mng.cmd(command: string, ...: string)
 ```
+
+Formats like a string.format; runs using shell; output goes to stdout; considers the current user
 
 ### `mng.cmd_read`
 
@@ -28,16 +120,12 @@ mng.cmd(command, ...)
 mng.cmd_read(command: string, ...) -> string, integer?
 ```
 
+Formats like a string.format; runs using shell; considers the current user
+
 ### `mng.cmd_quote`
 
 ```lua
 mng.cmd_quote(expr)
-```
-
-### `mng.package`
-
-```lua
-mng.package(packages) -> was_updated: boolean
 ```
 
 ### `mng.package_is_installed`
@@ -64,18 +152,6 @@ mng.xbps_mirror(mirror)
 mng.repo(package_list)
 ```
 
-### `mng.as_user`
-
-```lua
-mng.as_user(new_user, f)
-```
-
-### `mng.shell`
-
-```lua
-mng.shell(path)
-```
-
 ### `mng.shell_get`
 
 ```lua
@@ -86,12 +162,6 @@ mng.shell_get(this_user)
 
 ```lua
 mng.shell_set(path)
-```
-
-### `mng.dir`
-
-```lua
-mng.dir(path: string) -> was_updated: boolean
 ```
 
 ### `mng.dir_exists`
@@ -105,14 +175,6 @@ mng.dir_exists(path)
 ```lua
 mng.file_exists(path)
 ```
-
-### `mng.file`
-
-```lua
-mng.file(path, content) -> was_updated: boolean
-```
-
-Ensure exact file content
 
 ### `mng.file_sync`
 
@@ -164,18 +226,6 @@ mng.manual_stow(source, target, symlinks)
 mng.stow(source, target)
 ```
 
-### `mng.hostname_get`
-
-```lua
-mng.hostname_get()
-```
-
-### `mng.symlink`
-
-```lua
-mng.symlink(path, value) -> was_updated: boolean
-```
-
 ### `mng.symlink_exists`
 
 ```lua
@@ -192,18 +242,6 @@ mng.symlink_get(path)
 
 ```lua
 mng.symlink_set(path, value)
-```
-
-### `mng.service_on`
-
-```lua
-mng.service_on(...)
-```
-
-### `mng.service_off`
-
-```lua
-mng.service_off(...)
 ```
 
 ### `mng.desktop_file`
