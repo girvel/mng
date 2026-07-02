@@ -69,7 +69,11 @@ local parse_function = function(doc_lines, function_name, args)
     end
 
     if stringx.char(line, 1) ~= "@" then
-      function_desc = function_desc..line
+      if stringx.strip(line) == "" then
+        function_desc = function_desc.."\n\n"
+      else
+        function_desc = function_desc..line
+      end
       goto continue
     end
 
@@ -123,8 +127,14 @@ docreader.read_file = function(path)
       goto continue
     end
 
-    if stringx.starts_with(line, "-- [SECTION] ") then
-      table.insert(records, {type = "section", name = line:sub(14)})
+    -- TODO parse section descriptions
+    if stringx.starts_with(line, "--- [SECTION] ") then
+      local record = {type = "section", name = line:sub(15)}
+      if #records > 0 and records[#records].type == "section" then
+        records[#records] = record  -- to avoid empty sections
+      else
+        table.insert(records, record)
+      end
       goto reset
     end
 

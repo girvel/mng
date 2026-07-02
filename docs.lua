@@ -32,6 +32,32 @@ for _, record in ipairs(mod.records) do
     if record.desc then
       io.write("\n\n"..record.desc)
     end
+
+    local first_time = true
+    for _, arg in ipairs(record.args) do
+      if arg.desc then
+        if first_time then
+          io.write("\n\n#### Args\n")
+          first_time = false
+        end
+        io.write("- `"..arg.name.."`: `"..arg.type.."` — "..arg.desc)
+      end
+    end
+
+    first_time = true
+    for _, ret in ipairs(record.returns) do
+      if ret.desc then
+        if first_time then
+          io.write("\n\n#### Returns\n")
+          first_time = false
+        end
+        io.write("- `")
+        if ret.name then
+          io.write(ret.name.."`: `")
+        end
+        io.write(ret.type.."` — "..ret.desc)
+      end
+    end
   elseif record.type == "section" then
     --- @cast record record.section
     io.write("\n\n## "..record.name)
