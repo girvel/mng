@@ -6,7 +6,6 @@ local mod = docreader.read_file(...)
 io.write("# "..mod.name)
 for _, record in ipairs(mod.records) do
   if record.type == "function" then
-    --- @cast record record.function
     io.write("\n\n### `"..mod.name.."."..record.name.."`")
     io.write("\n\n```lua\n"..mod.name.."."..record.name.."(")
     for i, arg in ipairs(record.args) do
@@ -59,7 +58,8 @@ for _, record in ipairs(mod.records) do
       end
     end
   elseif record.type == "section" then
-    --- @cast record record.section
     io.write("\n\n## "..record.name)
+  elseif record.type == "text" then
+    io.write("\n\n"..record.text)
   end
 end

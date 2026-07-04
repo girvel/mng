@@ -1,10 +1,16 @@
 # mng
 
+## Essentials
+
+Essential functions you need to know before starting
+
 ### `mng.start`
 
 ```lua
 mng.start(...: string)
 ```
+
+Should be called in the beginning of the configuration file
 
 Ensures that the $USER is root, parses CLI args
 
@@ -17,6 +23,8 @@ Ensures that the $USER is root, parses CLI args
 mng.finish()
 ```
 
+Should be called in the end of the configuration file
+
 Runs finalizers, s.a. cleaning with --clean
 
 ### `mng.as_user`
@@ -26,6 +34,10 @@ mng.as_user(new_user: string, f: fun())
 ```
 
 Runs code as a given user
+
+## Core functionality
+
+Functions representing core features of mng: managing packages, services, files
 
 ### `mng.package`
 
@@ -112,6 +124,8 @@ Gets hostname from /etc/hostname
 mng.cmd(command: string, ...: string)
 ```
 
+Runs a command
+
 Formats like a string.format; runs using shell; output goes to stdout; considers the current user
 
 ### `mng.cmd_read`
@@ -120,7 +134,11 @@ Formats like a string.format; runs using shell; output goes to stdout; considers
 mng.cmd_read(command: string, ...) -> string, integer?
 ```
 
+Runs a command silently, returns stdout and exit code
+
 Formats like a string.format; runs using shell; considers the current user
+
+## Auxiliary
 
 ### `mng.cmd_quote`
 
@@ -279,3 +297,7 @@ mng.theme_installed(name, url) -> was_updated: boolean
 ```lua
 mng.tokenize(str: string) -> string[]
 ```
+
+@class cli_args @field clean boolean @field light boolean @field module string? @field verbose boolean @field no_sync boolean @type cli_args
+
+@type string?

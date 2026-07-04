@@ -98,7 +98,11 @@ end
 --- @field type "section"
 --- @field name string
 
---- @alias record record.function|record.section
+--- @class record.text
+--- @field type "text"
+--- @field text string
+
+--- @alias record record.function|record.section|record.text
 
 --- @class module
 --- @field name string
@@ -122,6 +126,20 @@ docreader.read_file = function(path)
   for _, line in ipairs(stringx.split(content, "\n")) do
     local function_name, args
 
+    if stringx.starts_with(line, "----") then
+      goto continue
+    end
+
+    if stringx.starts_with(line, "--- [SECTION] ") then
+      local record = {type = "section", name = line:sub(15)}
+      if #records > 0 and records[#records].type == "section" then
+        records[#records] = record  -- to avoid empty sections
+      else
+        table.insert(records, record)
+      end
+      goto reset
+    end
+
     if stringx.starts_with(line, "---") then
       if line == "---" then
         table.insert(doc_lines, "")
@@ -133,21 +151,29 @@ docreader.read_file = function(path)
       goto continue
     end
 
-    -- TODO parse section descriptions
-    if stringx.starts_with(line, "--- [SECTION] ") then
-      local record = {type = "section", name = line:sub(15)}
-      if #records > 0 and records[#records].type == "section" then
-        records[#records] = record  -- to avoid empty sections
-      else
-        table.insert(records, record)
-      end
-      goto reset
-    end
-
     function_name, args = line:match("^"..modname.."%.(%S+) = function%(([^)]*)%)")
     if function_name then
       table.insert(records, parse_function(doc_lines, function_name, args))
       goto reset
+    end
+
+    if stringx.starts_with(line, "local ") then
+      goto reset
+    end
+
+    if #doc_lines > 0 then
+      local text = ""
+      for i, doc_line in ipairs(doc_lines) do
+        local stripped = stringx.strip(doc_line)
+        if i == 1 then
+          text = stripped
+        elseif stripped == "" then
+          text = text.."\n\n"
+        else
+          text = text.." "..stripped
+        end
+      end
+      table.insert(records, {type = "text", text = text})
     end
 
     ::reset::

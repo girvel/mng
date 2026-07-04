@@ -41,7 +41,7 @@ local run_at_finish = {}  -- TODO rename, expose as advanced
 ----------------------------------------------------------------------------------------------------
 --- [SECTION] Essentials
 ----------------------------------------------------------------------------------------------------
---- What you need to know before starting
+--- Essential functions you need to know before starting
 ----------------------------------------------------------------------------------------------------
 
 --- Should be called in the beginning of the configuration file
@@ -120,6 +120,8 @@ end
 
 ----------------------------------------------------------------------------------------------------
 --- [SECTION] Core functionality
+----------------------------------------------------------------------------------------------------
+--- Functions representing core features of mng: managing packages, services, files
 ----------------------------------------------------------------------------------------------------
 
 local clean_packages = function()
