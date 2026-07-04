@@ -122,8 +122,14 @@ docreader.read_file = function(path)
   for _, line in ipairs(stringx.split(content, "\n")) do
     local function_name, args
 
-    if stringx.starts_with(line, "--- ") then
-      table.insert(doc_lines, line:sub(5))
+    if stringx.starts_with(line, "---") then
+      if line == "---" then
+        table.insert(doc_lines, "")
+      elseif stringx.char(line, 4) == " " then
+        table.insert(doc_lines, line:sub(5))
+      elseif stringx.char(line, 4) ~= "-" then
+        error("Invalid syntax in line \""..line.."\"")
+      end
       goto continue
     end
 
