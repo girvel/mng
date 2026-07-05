@@ -41,13 +41,13 @@ mng.as_user("girvel", function()
   mng.symlink("~/.config/ghostty/config", "./gui/ghostty_config")
 
   flatpak.package("com.google.Chrome")
-  mng.git_repo("https://github.com/girvel/autoproxy", "~/workshop/autoproxy")
+  mng.git_repo("github.com/girvel/autoproxy", "~/workshop/autoproxy")
   mng.desktop_file("~/workshop/autoproxy/autoproxy_1.desktop")
   mng.desktop_file("~/workshop/autoproxy/autoproxy_2.desktop")
 end)
 
 mng.symlink("/etc/redsocks.conf", "~/workshop/autoproxy/redsocks.conf")
--- TODO check before doing
-mng.cmd("groupadd -r redsocks")
-mng.cmd("useradd -r -g redsocks -s /bin/false -d /var/empty redsocks")
+-- TODO check before doing, do something like mng.group and mng.group_user
+pcall(mng.cmd, "groupadd -r redsocks")
+pcall(mng.cmd, "useradd -r -g redsocks -s /bin/false -d /var/empty redsocks")
 

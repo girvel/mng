@@ -1,3 +1,4 @@
+local ffi = require("ffi")
 --- The main module
 ---
 --- Contains universal functionality, s.a. essential functions, managing packages, files, services
@@ -288,6 +289,22 @@ mng.dir = function(path)
   return will_be_updated
 end
 
+ffi.cdef [[
+  int chdir(const char *path);
+  char *get_current_dir_name(void);
+]]
+
+--- Runs the function f with given working directory
+--- @param path string
+--- @param f fun()
+mng.dir_in = function(path, f)
+  local path_expanded = mng.cmd_read("echo "..path)
+  local prev_dir = ffi.C.get_current_dir_name()
+  ffi.C.chdir(path_expanded)
+  f()
+  ffi.C.chdir(prev_dir)
+end
+
 --- Ensures exact file content
 --- @param path string
 --- @param content string
@@ -297,6 +314,21 @@ mng.file = function(path, content)
   local will_be_updated = base_dir and mng.dir(base_dir) or mng.file_get(path) ~= content
   if will_be_updated then
     mng.file_set(path, content)
+  end
+  return will_be_updated
+end
+
+--- Ensure target's content matches source's
+--- @return boolean was_updated
+mng.file_sync = function(target, source)
+  local expected = mng.file_get(source)
+  if not expected then
+    error(("source file %q is missing"):format(source))
+  end
+
+  local will_be_updated = mng.file_get(target) ~= expected
+  if will_be_updated then
+    mng.file_set(target, expected)
   end
   return will_be_updated
 end
@@ -358,8 +390,9 @@ mng.cmd = function(command, ...)
     print("[CMD] "..command)
   end
   local _, _, code = os.execute(command)
-  if mng.cli_args.verbose then
-    print("[RET] "..code)
+
+  if code ~= 0 then
+    error("Command \""..command.."\" exited with code "..code)
   end
 end
 
@@ -452,21 +485,6 @@ mng.file_exists = function(path)
   return true
 end
 
---- Ensure target's content matches source's
---- @return boolean was_updated
-mng.file_sync = function(target, source)
-  local expected = mng.file_get(source)
-  if not expected then
-    error(("source file %q is missing"):format(source))
-  end
-
-  local will_be_updated = mng.file_get(target) ~= expected
-  if will_be_updated then
-    mng.file_set(target, expected)
-  end
-  return will_be_updated
-end
-
 mng.file_set = function(path, content)
   path = mng.cmd_read("echo %s", path)
   mng.cmd("touch %s", path)
@@ -495,20 +513,47 @@ mng.file_remove = function(path)
   mng.cmd("rm -f %s", mng.cmd_quote(path))
 end
 
+--- @param repo_path string if does not start with protocol, defaults to https
+--- @param destination string path of the destination folder
+--- @param update? boolean whether to keep git pull-ing 
+--- @return boolean was_updated
 mng.git_repo = function(repo_path, destination, update)
+  local was_updated = false
+
+  local repo_path_full
+  if repo_path:match("^%S+://") then
+    repo_path_full = repo_path
+  else
+    repo_path_full = "https://"..repo_path
+  end
+
   if mng.dir_exists(destination) then
-    if mng.cmd_read("cd %s; git remote get-url origin", destination) == repo_path then
+    if mng.cmd_read("cd %s; git remote get-url origin", destination) == repo_path_full then
       goto update
     end
     mng.recursive_remove(destination)
   end
-  mng.cmd("git clone "..repo_path.." "..destination.." --recurse-submodules")
+  mng.cmd("git clone "..repo_path_full.." "..destination.." --recurse-submodules")
+  was_updated = true
 
   ::update::
-  if update then
-    mng.cmd("cd "..destination.."; git pull -q")
-    mng.cmd("cd "..destination.."; git submodule update --init --recursive")
+  if update then  -- TODO hide update behind something like --light (or new --update thing)
+    mng.dir_in(destination, function()
+      local output
+
+      output = mng.cmd_read("git pull")
+      if not output:find("up to date") then
+        was_updated = true
+      end
+
+      output = mng.cmd_read("git submodule update --init --recursive")
+      if stringx.strip(output) ~= "" then
+        was_updated = true
+      end
+    end)
   end
+
+  return was_updated
 end
 
 mng.manual_stow = function(source, target, symlinks)

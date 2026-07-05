@@ -7,10 +7,7 @@ mng.curl_proxy = "socks5://192.168.0.240"
 mng.symlink("/etc/hosts", "./hardware/common/hosts")
 
 local hostname = mng.hostname_get()
-if hostname == "sovngard1" then
-  mng.package("virtualbox-ose-guest virtualbox-ose-guest-dkms")
-  mng.service_on("vboxservice")
-elseif hostname == "valholl" then
+if hostname == "valholl" then
   mng.package("nvidia nvidia-vaapi-driver nvidia-libs-32bit grub-x86_64-efi")
 
   -- fixes boot hangs (maybe)
@@ -44,11 +41,9 @@ else
   error("No machine-specific configuration for "..hostname)
 end
 
-if hostname ~= "sovngard1" then
-  mng.package("keyd")
-  mng.dir("/etc/keyd")
-  mng.service_on("keyd")
-  mng.file("/etc/sv/keyd/run", "#!/bin/sh\nexec keyd 2>&1")  -- or else it crashes
-  mng.symlink("/etc/keyd/remap.conf", "./hardware/common/remap.conf")
-  mng.file("/etc/rc.conf", "HARDWARECLOCK=localtime\nTIMEZONE=Asia/Yekaterinburg")
-end
+mng.package("keyd")
+mng.dir("/etc/keyd")
+mng.service_on("keyd")
+mng.file("/etc/sv/keyd/run", "#!/bin/sh\nexec keyd 2>&1")  -- or else it crashes
+mng.symlink("/etc/keyd/remap.conf", "./hardware/common/remap.conf")
+mng.file("/etc/rc.conf", "HARDWARECLOCK=localtime\nTIMEZONE=Asia/Yekaterinburg")
