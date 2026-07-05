@@ -1,3 +1,7 @@
+--- The main module
+---
+--- Contains universal functionality, s.a. essential functions, managing packages, files, services
+
 local cli = require("mng.lib.cli")
 local tablex = require("mng.lib.tablex")
 local stringx = require("mng.lib.stringx")
@@ -109,7 +113,7 @@ local builtin_packages = {
 }
 
 --- Runs code as a given user
---- @param new_user string
+--- @param new_user string? if nil, runs as root
 --- @param f fun()
 mng.as_user = function(new_user, f)
   local prev = mng.user

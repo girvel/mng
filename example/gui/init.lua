@@ -9,8 +9,6 @@ mng.package [[
 ]]
 flatpak.on("girvel")
 
-mng.service_on("redsocks")
-
 local ldtk = "/usr/local/bin/ldtk"
 if not mng.file_exists(ldtk) then
   mng.cmd("wget https://github.com/deepnight/ldtk/releases/download/v1.5.3/ubuntu-distribution.zip -O/tmp/ldtk.zip")
@@ -44,10 +42,12 @@ mng.as_user("girvel", function()
 
   flatpak.package("com.google.Chrome")
   mng.git_repo("https://github.com/girvel/autoproxy", "~/workshop/autoproxy")
-  mng.as_user(nil, function()
-    mng.symlink("/etc/redsocks.conf", "~/workshop/autoproxy/redsocks.conf")
-  end)
   mng.desktop_file("~/workshop/autoproxy/autoproxy_1.desktop")
   mng.desktop_file("~/workshop/autoproxy/autoproxy_2.desktop")
 end)
+
+mng.symlink("/etc/redsocks.conf", "~/workshop/autoproxy/redsocks.conf")
+-- TODO check before doing
+mng.cmd("groupadd -r redsocks")
+mng.cmd("useradd -r -g redsocks -s /bin/false -d /var/empty redsocks")
 
