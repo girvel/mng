@@ -4,10 +4,9 @@ local mng = require("mng")
 
 mng.package [[
   mesa-dri vulkan-loader ttf-ubuntu-font-family dejavu-fonts-ttf
-  telegram-desktop transmission-gtk love redsocks ghostty firefox
+  telegram-desktop transmission-gtk love ghostty firefox
   obs kdenlive audacity vlc ffmpeg qt5-wayland libreoffice
 ]]
-flatpak.on("girvel")
 
 local ldtk = "/usr/local/bin/ldtk"
 if not mng.file_exists(ldtk) then
@@ -39,15 +38,5 @@ end
 
 mng.as_user("girvel", function()
   mng.symlink("~/.config/ghostty/config", "./gui/ghostty_config")
-
-  flatpak.package("com.google.Chrome")
-  mng.git_repo("github.com/girvel/autoproxy", "~/workshop/autoproxy")
-  mng.desktop_file("~/workshop/autoproxy/autoproxy_1.desktop")
-  mng.desktop_file("~/workshop/autoproxy/autoproxy_2.desktop")
 end)
-
-mng.symlink("/etc/redsocks.conf", "~/workshop/autoproxy/redsocks.conf")
--- TODO check before doing, do something like mng.group and mng.group_user
-pcall(mng.cmd, "groupadd -r redsocks")
-pcall(mng.cmd, "useradd -r -g redsocks -s /bin/false -d /var/empty redsocks")
 

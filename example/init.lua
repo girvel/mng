@@ -16,6 +16,7 @@ if hostname == "valholl" then
   mng.module("gui")
   mng.module("virt")
   mng.module("apps/remote")
+  mng.module("apps/autoproxy")
 end
 
 mng.finish()
