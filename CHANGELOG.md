@@ -10,9 +10,11 @@
 
 ## Queue
 
+- [ ] Bugs !!!!
+    - [ ] Clipboard does not work if the source window is closed
+    - [ ] FIX VLC!!
+- [ ] Shortcuts for thunar, firefox
 - [ ] Allow double click/enter to select a file in a dialog
-- [ ] `file_remove` uses single quotes => does not expand ~
-- [ ] Fix VLC loading very long
 - [ ] Display load of the most used CPU core
 - [ ] Grub fix -> mng
 - [ ] Wi-Fi GUI

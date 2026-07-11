@@ -9,6 +9,10 @@ pcall(mng.cmd, "useradd -r -g redsocks -s /bin/false -d /var/empty redsocks")
 
 mng.as_user("girvel", function()
   flatpak.package("com.google.Chrome")
+  if not mng.cli_args.light then
+    mng.cmd("flatpak override --user --filesystem=home com.google.Chrome")
+  end
+
   mng.git_repo("github.com/girvel/autoproxy", "~/workshop/autoproxy")
   mng.dir_in("~/workshop/autoproxy", function()
     mng.desktop_file("autoproxy_1.desktop")

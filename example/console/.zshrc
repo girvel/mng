@@ -3,3 +3,5 @@ export WORKSHOP="$HOME/workshop"
 source $HOME/.config/zsh/config.zsh
 export TERMINAL="ghostty"
 export PATH=$PATH:"$HOME/.local/bin/"
+
+alias zig="zvm run 0.16.0"
