@@ -9,6 +9,10 @@ pcall(mng.cmd, "useradd -r -g redsocks -s /bin/false -d /var/empty redsocks")
 
 mng.as_user("girvel", function()
   flatpak.package("com.google.Chrome")
+  if not mng.cli_args.light then
+    mng.cmd("flatpak override --user --filesystem=home com.google.Chrome")
+  end
+
   mng.git_repo("github.com/girvel/autoproxy", "~/workshop/autoproxy")
   mng.dir_in("~/workshop/autoproxy", function()
     mng.desktop_file("autoproxy_1.desktop")
@@ -16,3 +20,10 @@ mng.as_user("girvel", function()
     mng.icon("autoproxy.png")
   end)
 end)
+
+mng.dir("/opt/autoproxy")
+mng.file_sync("/opt/autoproxy/up.sh", "/home/girvel/workshop/autoproxy/up.sh")
+mng.file_sync("/opt/autoproxy/down.sh", "/home/girvel/workshop/autoproxy/down.sh")
+mng.file_sync("/opt/autoproxy/cgroup_add.sh", "/home/girvel/workshop/autoproxy/cgroup_add.sh")
+mng.file_sync("/opt/autoproxy/redsocks.conf", "/home/girvel/workshop/autoproxy/redsocks.conf")
+mng.file_sync("/etc/sudoers.d/autoproxy", "./apps/autoproxy/sudoers_autoproxy")
