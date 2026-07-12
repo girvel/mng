@@ -10,6 +10,11 @@
 
 ## Queue
 
+- [ ] Maybe the root should own the folder & the repo => sudoers being a symlink
+- [ ] Functionality
+    - [ ] mng.fstab & maybe mng.fstab_symlink?
+    - [ ] mng.group & mng.group_user
+    - [ ] modules change directory
 - [ ] Bugs !!!!
     - [ ] Clipboard does not work if the source window is closed
     - [ ] FIX VLC!!

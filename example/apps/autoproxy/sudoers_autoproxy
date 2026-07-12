@@ -1,0 +1,1 @@
+girvel ALL=(root) NOPASSWD: /opt/autoproxy/up.sh, /opt/autoproxy/down.sh, /opt/autoproxy/cgroup_add.sh

@@ -326,11 +326,18 @@ mng.file_sync = function(target, source)
     error(("source file %q is missing"):format(source))
   end
 
-  local will_be_updated = mng.file_get(target) ~= expected
-  if will_be_updated then
+  local was_content_updated = mng.file_get(target) ~= expected
+  if was_content_updated then
     mng.file_set(target, expected)
   end
-  return will_be_updated
+
+  local source_permissions = mng.cmd_read("stat -c '%a' "..source)
+  local were_permissions_updated = mng.cmd_read("stat -c '%a' "..target) ~= source_permissions
+  if were_permissions_updated then
+    mng.cmd("chmod %s %s", source_permissions, target)
+  end
+
+  return was_content_updated or were_permissions_updated
 end
 
 --- Ensures symlinks exists & points to the exact file
@@ -495,7 +502,8 @@ end
 
 --- @return string?
 mng.file_get = function(path)
-  local f = io.open(path, "r")
+  local path_expanded = mng.cmd_read("echo %s", path)
+  local f = io.open(path_expanded, "r")
   if not f then return end
   local result = f:read("*a")
   f:close()

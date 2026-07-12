@@ -1,10 +1,8 @@
 local mng = require("mng")
 
 
--- TODO /etc/hosts
-mng.curl_proxy = "socks5://192.168.0.240"
-
 mng.symlink("/etc/hosts", "./hardware/common/hosts")
+mng.curl_proxy = "socks5://thor1"
 
 local hostname = mng.hostname_get()
 if hostname == "valholl" then
