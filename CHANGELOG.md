@@ -7,6 +7,7 @@
 - [ ] Write the message
 - [ ] Finish docs for mng.lua, rerun
 - [ ] (Extra):
+    - [ ] solve chsh & omz issues
     - [ ] docs for other modules
     - [ ] Make API consistent: one order for (source, target) args, multi-component strings everywhere (or not?)
     - [ ] Review w/ AI

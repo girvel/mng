@@ -100,34 +100,26 @@ mng.finish = function()
   os.exit(mng.exit_code)
 end
 
+----------------------------------------------------------------------------------------------------
+--- [SECTION] Core functionality
+----------------------------------------------------------------------------------------------------
+--- Functions representing core features of mng: managing packages, services, files
+----------------------------------------------------------------------------------------------------
+
 local all_packages = {
   ["LuaJIT"] = true,
   ["base-system"] = true,
   ["grub-x86_64-efi"] = true,
   ["linux-headers"] = true,
+  ["linux6.12"] = true,
 }
 
 local builtin_packages = {
   ["base-system"] = true,
   ["grub-x86_64-efi"] = true,
   ["linux-headers"] = true,
+  ["linux6.12"] = true,
 }
-
---- Runs code as a given user
---- @param new_user string? if nil, runs as root
---- @param f fun()
-mng.as_user = function(new_user, f)
-  local prev = mng.user
-  mng.user = new_user
-  f()
-  mng.user = prev
-end
-
-----------------------------------------------------------------------------------------------------
---- [SECTION] Core functionality
-----------------------------------------------------------------------------------------------------
---- Functions representing core features of mng: managing packages, services, files
-----------------------------------------------------------------------------------------------------
 
 local clean_packages = function()
   print("[CLN] Packages")
@@ -180,7 +172,7 @@ mng.package = function(packages)
   end
 
   local was_updated = false
-  for _, pkg in ipairs(mng.tokenize(packages)) do
+  for _, pkg in ipairs(stringx.tokenize(packages)) do
     if mng.cli_args.clean then
       all_packages[pkg] = true
     end
@@ -289,22 +281,6 @@ mng.dir = function(path)
   return will_be_updated
 end
 
-ffi.cdef [[
-  int chdir(const char *path);
-  char *get_current_dir_name(void);
-]]
-
---- Runs the function f with given working directory
---- @param path string
---- @param f fun()
-mng.dir_in = function(path, f)
-  local path_expanded = mng.cmd_read("echo "..path)
-  local prev_dir = ffi.C.get_current_dir_name()
-  ffi.C.chdir(path_expanded)
-  f()
-  ffi.C.chdir(prev_dir)
-end
-
 --- Ensures exact file content
 --- @param path string
 --- @param content string
@@ -360,22 +336,257 @@ mng.symlink = function(path, value)
   return true
 end
 
+--- Ensures there is a git repo at that path
+--- @param destination string path of the destination folder
+--- @param url string if does not start with protocol, defaults to https
+--- @param update? boolean whether to keep git pull-ing 
+--- @return boolean was_updated
+mng.git_repo = function(destination, url, update)
+  local was_updated = false
+
+  local repo_path_full
+  if url:match("^%S+://") then
+    repo_path_full = url
+  else
+    repo_path_full = "https://"..url
+  end
+
+  if mng.dir_exists(destination) then
+    if mng.cmd_read("cd %s; git remote get-url origin", destination) == repo_path_full then
+      goto update
+    end
+    mng.rm_rf(destination)
+  end
+  mng.cmd("git clone "..repo_path_full.." "..destination.." --recurse-submodules")
+  was_updated = true
+
+  ::update::
+  if update then  -- TODO hide update behind something like --light (or new --update thing)
+    mng.dir_in(destination, function()
+      local output
+
+      output = mng.cmd_read("git pull")
+      if not output:find("up to date") then
+        was_updated = true
+      end
+
+      output = mng.cmd_read("git submodule update --init --recursive")
+      if stringx.strip(output) ~= "" then
+        was_updated = true
+      end
+    end)
+  end
+
+  return was_updated
+end
+
 --- Ensures the current user's shell
 --- @param path string Full path to the shell
 --- @return boolean was_updated
 mng.shell = function(path)
-  local current_user = mng.user or os.getenv("USER")
-  local was_updated = mng.shell_get(current_user) ~= path
+  local was_updated = mng.shell_get() ~= path
   if was_updated then
     mng.shell_set(path)
   end
   return was_updated
 end
 
---- Gets hostname from /etc/hostname
---- @return string hostname
-mng.hostname_get = function()
-  return stringx.strip(assert(mng.file_get("/etc/hostname")))
+local xbps_synced = false
+
+--- Sets the main mirror for xbps
+--- @param mirror string
+--- @return boolean was_updated
+mng.xbps_mirror = function(mirror)
+  local was_updated = mng.file("/etc/xbps.d/00-repository-main.conf", "repository="..mirror)
+  if was_updated then
+    xbps_synced = true
+    mng.cmd("xbps-install -S")
+  end
+  return was_updated
+end
+
+--- Enables xbps repos
+--- @param package_list string space-separated list of xbps repos
+--- @return boolean was_updated
+mng.xbps_repo = function(package_list)
+  local was_updated = mng.package(package_list)
+  if was_updated then
+    xbps_synced = true
+    mng.cmd("xbps-install -Su")
+  end
+  return was_updated
+end
+
+--- Does the same thing as stow command but controlled
+---
+--- The stow sometimes creates symlinks wrong, like symlinking ~/.config instead of ~/.config/nvim;
+--- `mng.manual_stow` accepts a list of things that need to be symlinked.
+--- @param target string directory to create symlinks in
+--- @param source string directory where would symlinks lead
+--- @param symlinks string[] list of files in `source` that need symlinking
+--- @return boolean was_updated
+mng.manual_stow = function(target, source, symlinks)
+  local was_updated = false
+  for _, file in ipairs(symlinks) do
+    if mng.symlink(target.."/"..file, source.."/"..file) then
+      was_updated = true
+    end
+  end
+  return was_updated
+end
+
+local update_desktop_db_dirs = {}
+local update_desktop_db = function()
+  for dir in pairs(update_desktop_db_dirs) do
+    mng.cmd("update-desktop-database "..dir)
+  end
+end
+
+--- Installs a desktop file
+--- @param path string
+--- @return boolean was_updated
+mng.desktop_file = function(path)
+  local target_dir
+  if mng.user then
+    target_dir = "/home/"..mng.user.."/.local/share/applications/"
+  else
+    target_dir = "/usr/share/applications/"
+  end
+
+  local shortname = dir_head(path)
+  local was_updated = mng.symlink(target_dir..shortname, path)
+  if was_updated then
+    run_at_finish[update_desktop_db] = true
+    update_desktop_db_dirs[target_dir] = true
+  end
+  return was_updated
+end
+
+local update_icon_cache = function()
+  if mng.cmd_read("command -v gtk-update-icon-cache") ~= "" then
+    mng.cmd("gtk-update-icon-cache -f -t /usr/share/icons/hicolor")
+  end
+end
+
+--- Installs an icon
+--- @param path string
+--- @return boolean was_updated
+mng.icon = function(path)
+  local shortname = dir_head(path)
+  local resolution
+  if stringx.ends_with(path, ".svg") then
+    resolution = "scalable"
+  else
+    local info = mng.cmd_read("file -b %s", mng.cmd_quote(path))
+    local w, h = info:match("(%d+)%s*x%s*(%d+)")
+    if not w or not h then
+      error("Could not determine resolution for icon "..path)
+    end
+    resolution = w.."x"..h
+  end
+
+  local target_dir
+  if mng.user then
+    target_dir = "/home/"..mng.user.."/.local/share/icons/hicolor/"..resolution.."/apps/"
+  else
+    target_dir = "/usr/share/icons/hicolor/"..resolution.."/apps/"
+  end
+
+  local was_updated = false
+  if mng.dir(target_dir) then was_updated = true end
+
+  if mng.symlink(target_dir..shortname, path) then
+    run_at_finish[update_icon_cache] = true
+    was_updated = true
+  end
+
+  return was_updated
+end
+
+----------------------------------------------------------------------------------------------------
+-- [SECTION] Utility
+----------------------------------------------------------------------------------------------------
+
+--- Runs code as a given user
+--- @param new_user string? if nil, runs as root
+--- @param f fun()
+mng.as_user = function(new_user, f)
+  local prev = mng.user
+  mng.user = new_user
+  f()
+  mng.user = prev
+end
+
+local last_module_to_run
+local all_modules = {}
+local check_some_module_ran = function()
+  if last_module_to_run then return end
+
+  mng.exit_code = 1
+  print("[ERR] Unknown module "..mng.cli_args.module)
+  if #all_modules == 0 then
+    print("No modules defined.")
+  else
+    print("Available modules:")
+    for _, mod in ipairs(all_modules) do
+      print("- "..mod)
+    end
+  end
+end
+
+ffi.cdef [[
+  int chdir(const char *path);
+  char *get_current_dir_name(void);
+]]
+
+--- Runs the function f with given working directory
+--- @param path string
+--- @param f fun()
+mng.dir_in = function(path, f)
+  local path_expanded = mng.cmd_read("echo "..path)
+  local prev_dir = ffi.C.get_current_dir_name()
+  ffi.C.chdir(path_expanded)
+  f()
+  ffi.C.chdir(prev_dir)
+end
+
+--- Runs a module: a folder with init.lua
+--- @param folder_path string
+--- @param cannot_fail? boolean
+mng.module = function(folder_path, cannot_fail)
+  table.insert(all_modules, folder_path)
+  if not mng.dir_exists(folder_path) then
+    error("No module directory at "..folder_path)
+  end
+
+  local filepath = folder_path.."/init.lua"
+  if not mng.file_exists(filepath) then
+    error("Module is expected to have its logic defined in init.lua file")
+  end
+
+  if mng.cli_args.module and mng.cli_args.module ~= folder_path then
+    run_at_finish[check_some_module_ran] = true
+    if mng.cli_args.verbose then
+      print("[INF] Skipping module "..folder_path)
+    end
+    return
+  end
+  last_module_to_run = folder_path
+
+  if mng.cli_args.verbose then
+    print("[MOD] "..folder_path)
+  end
+
+  local ok, err = xpcall(dofile, debug.traceback, filepath)
+  if not ok then
+    print(("[ERR] Error while executing module %s: \n%s"):format(
+      folder_path,
+      err or "(no message provided)"
+    ))
+    if cannot_fail then
+      os.exit(1)
+    end
+  end
 end
 
 local cmd_fmt = function(fmt, ...)
@@ -427,10 +638,6 @@ mng.cmd_read = function(command, ...)
   return result, code
 end
 
-----------------------------------------------------------------------------------------------------
---- [SECTION] Auxiliary
-----------------------------------------------------------------------------------------------------
-
 --- Wraps the string into single quotes for shell usage, escapes inner single quotes
 --- @param expr string
 --- @return string
@@ -438,30 +645,14 @@ mng.cmd_quote = function(expr)
   return ("'%s'"):format(expr:gsub("'", "'\\''"))
 end
 
-local xbps_synced = false
-
---- Sets the main mirror for xbps
---- @param mirror string
---- @return boolean was_updated
-mng.xbps_mirror = function(mirror)
-  local was_updated = mng.file("/etc/xbps.d/00-repository-main.conf", "repository="..mirror)
-  if was_updated then
-    xbps_synced = true
-    mng.cmd("xbps-install -S")
-  end
-  return was_updated
-end
-
---- Enables xbps repos
---- @param package_list string space-separated list of xbps repos
---- @return boolean was_updated
-mng.xbps_repo = function(package_list)
-  local was_updated = mng.package(package_list)
-  if was_updated then
-    xbps_synced = true
-    mng.cmd("xbps-install -Su")
-  end
-  return was_updated
+--- Gets hostname from /etc/hostname
+---
+--- Conventionally hostname is used when you manage multiple machines and need to have separate
+--- configurations for them; you set different hostnames during initial installation and then use
+--- `mng.hostname_get` to differentiate machines.
+--- @return string hostname
+mng.hostname_get = function()
+  return stringx.strip(assert(mng.file_get("/etc/hostname")))
 end
 
 ----------------------------------------------------------------------------------------------------
@@ -490,15 +681,19 @@ mng.package_install = function(pkg)
   mng.cmd("xbps-install -y "..pkg)
 end
 
-mng.shell_get = function(this_user)
-  this_user = this_user or mng.user
+--- @return string
+mng.shell_get = function()
+  local this_user = mng.user or os.getenv("USER") or "root"
   return stringx.split(mng.cmd_read("getent passwd %s", this_user), ":")[7]
 end
 
+--- @param path string
 mng.shell_set = function(path)
   mng.cmd("chsh -s %s", path)
 end
 
+--- @param path string
+--- @return boolean
 mng.dir_exists = function(path)
   path = mng.cmd_read("echo %s", path)
   if path:sub(-1) ~= "/" then
@@ -507,6 +702,8 @@ mng.dir_exists = function(path)
   return mng.file_exists(path)
 end
 
+--- @param path string
+--- @return boolean
 mng.file_exists = function(path)
   path = mng.cmd_read("echo %s", path)
   local f = io.open(path, "r")
@@ -515,6 +712,8 @@ mng.file_exists = function(path)
   return true
 end
 
+--- @param path string
+--- @param content string
 mng.file_set = function(path, content)
   path = mng.cmd_read("echo %s", path)
   mng.cmd("touch %s", path)
@@ -523,6 +722,7 @@ mng.file_set = function(path, content)
   f:close()
 end
 
+--- @param path string
 --- @return string?
 mng.file_get = function(path)
   local path_expanded = mng.cmd_read("echo %s", path)
@@ -533,190 +733,35 @@ mng.file_get = function(path)
   return result
 end
 
-mng.recursive_remove = function(...)
+--- @param ... string
+mng.rm_rf = function(...)
   for i = 1, select("#", ...) do
     local path = select(i, ...)
     mng.cmd("rm -rf %s", mng.cmd_quote(path))
   end
 end
 
+--- @param path string
 mng.file_remove = function(path)
   mng.cmd("rm -f %s", mng.cmd_quote(path))
 end
 
---- @param repo_path string if does not start with protocol, defaults to https
---- @param destination string path of the destination folder
---- @param update? boolean whether to keep git pull-ing 
---- @return boolean was_updated
-mng.git_repo = function(repo_path, destination, update)
-  local was_updated = false
-
-  local repo_path_full
-  if repo_path:match("^%S+://") then
-    repo_path_full = repo_path
-  else
-    repo_path_full = "https://"..repo_path
-  end
-
-  if mng.dir_exists(destination) then
-    if mng.cmd_read("cd %s; git remote get-url origin", destination) == repo_path_full then
-      goto update
-    end
-    mng.recursive_remove(destination)
-  end
-  mng.cmd("git clone "..repo_path_full.." "..destination.." --recurse-submodules")
-  was_updated = true
-
-  ::update::
-  if update then  -- TODO hide update behind something like --light (or new --update thing)
-    mng.dir_in(destination, function()
-      local output
-
-      output = mng.cmd_read("git pull")
-      if not output:find("up to date") then
-        was_updated = true
-      end
-
-      output = mng.cmd_read("git submodule update --init --recursive")
-      if stringx.strip(output) ~= "" then
-        was_updated = true
-      end
-    end)
-  end
-
-  return was_updated
-end
-
-mng.manual_stow = function(source, target, symlinks)
-  for _, file in ipairs(symlinks) do
-    mng.symlink(target.."/"..file, source.."/"..file)
-  end
-end
-
-mng.stow = function(source, target)
-  mng.cmd("stow -d "..source.." -t "..target.." .")
-end
-
+--- @param path string
+--- @return boolean
 mng.symlink_exists = function(path)
   return mng.cmd_read("if [ -L %s ]; then echo 1; else echo 0; fi", path) == "1"
 end
 
+--- @param path string
+--- @return string
 mng.symlink_get = function(path)
   return mng.cmd_read("readlink -f %s", path)
 end
 
+--- @param path string
+--- @param value string
 mng.symlink_set = function(path, value)
   mng.cmd("ln -sfnT %s %s", value, path)
-end
-
-local update_desktop_db_dirs = {}
-local update_desktop_db = function()
-  for dir in pairs(update_desktop_db_dirs) do
-    mng.cmd("update-desktop-database "..dir)
-  end
-end
-
-mng.desktop_file = function(path)
-  local target_dir
-  if mng.user then
-    target_dir = "/home/"..mng.user.."/.local/share/applications/"
-  else
-    target_dir = "/usr/share/applications/"
-  end
-
-  local shortname = dir_head(path)
-  if mng.symlink(target_dir..shortname, path) then
-    run_at_finish[update_desktop_db] = true
-    update_desktop_db_dirs[target_dir] = true
-  end
-end
-
-local update_icon_cache = function()
-  if mng.cmd_read("command -v gtk-update-icon-cache") ~= "" then
-    mng.cmd("gtk-update-icon-cache -f -t /usr/share/icons/hicolor")
-  end
-end
-
-mng.icon = function(path)
-  local shortname = dir_head(path)
-  local resolution
-  if stringx.ends_with(path, ".svg") then
-    resolution = "scalable"
-  else
-    local info = mng.cmd_read("file -b %s", mng.cmd_quote(path))
-    local w, h = info:match("(%d+)%s*x%s*(%d+)")
-    if not w or not h then
-      error("Could not determine resolution for icon "..path)
-    end
-    resolution = w.."x"..h
-  end
-
-  local target_dir
-  if mng.user then
-    target_dir = "/home/"..mng.user.."/.local/share/icons/hicolor/"..resolution.."/apps/"
-  else
-    target_dir = "/usr/share/icons/hicolor/"..resolution.."/apps/"
-  end
-  mng.dir(target_dir)
-
-  if mng.symlink(target_dir..shortname, path) then
-    run_at_finish[update_icon_cache] = true
-  end
-end
-
-local last_module_to_run
-local all_modules = {}
-local check_some_module_ran = function()
-  if last_module_to_run then return end
-
-  mng.exit_code = 1
-  print("[ERR] Unknown module "..mng.cli_args.module)
-  if #all_modules == 0 then
-    print("No modules defined.")
-  else
-    print("Available modules:")
-    for _, mod in ipairs(all_modules) do
-      print("- "..mod)
-    end
-  end
-end
-
---- @param folder_path string
---- @param cannot_fail? boolean
-mng.module = function(folder_path, cannot_fail)
-  table.insert(all_modules, folder_path)
-  if not mng.dir_exists(folder_path) then
-    error("No module directory at "..folder_path)
-  end
-
-  local filepath = folder_path.."/init.lua"
-  if not mng.file_exists(filepath) then
-    error("Module is expected to have its logic defined in init.lua file")
-  end
-
-  if mng.cli_args.module and mng.cli_args.module ~= folder_path then
-    run_at_finish[check_some_module_ran] = true
-    if mng.cli_args.verbose then
-      print("[INF] Skipping module "..folder_path)
-    end
-    return
-  end
-  last_module_to_run = folder_path
-
-  if mng.cli_args.verbose then
-    print("[MOD] "..folder_path)
-  end
-
-  local ok, err = xpcall(dofile, debug.traceback, filepath)
-  if not ok then
-    print(("[ERR] Error while executing module %s: \n%s"):format(
-      folder_path,
-      err or "(no message provided)"
-    ))
-    if cannot_fail then
-      os.exit(1)
-    end
-  end
 end
 
 mng.curl_proxy = nil
@@ -732,9 +777,11 @@ mng.curl_file = function(filepath, url)
 end
 
 --- @return boolean was_updated
+--- @deprecated Not a finished function, does not work
 mng.theme_installed = function(name, url)
   -- TODO use tar or unzip
   -- TODO fix additional folder conflict
+  -- TODO Dark-Olympic is hardcoded
 
   local themes_dir = mng.user
     and ("/home/"..mng.user.."/.local/share/themes")
@@ -745,20 +792,14 @@ mng.theme_installed = function(name, url)
 
   local tmp_archive = "/tmp/theme.tar.gz"
   local tmp_folder = "/tmp/theme"
-  mng.recursive_remove(tmp_archive, tmp_folder)
+  mng.rm_rf(tmp_archive, tmp_folder)
   mng.dir(tmp_folder)
 
   mng.curl_file(tmp_archive, url)
   mng.cmd("tar -xf %s -C %s", tmp_archive, tmp_folder)
   mng.cmd("mv %s/**/Dark-Olympic %s/", tmp_folder, themes_dir)
-  mng.recursive_remove(tmp_archive, tmp_folder)
+  mng.rm_rf(tmp_archive, tmp_folder)
   return true
-end
-
---- @param str string
---- @return string[]
-mng.tokenize = function(str)
-  return stringx.split(stringx.strip(str), "%s+")
 end
 
 --- @class cli_args

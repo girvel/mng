@@ -2,7 +2,7 @@ local mng = require("mng")
 
 
 mng.as_user("girvel", function()
-  if not mng.git_repo("github.com/girvel/remote", "~/workshop/remote", true) then return end
+  if not mng.git_repo("~/workshop/remote", "github.com/girvel/remote", true) then return end
 
   mng.dir_in("~/workshop/remote", function()
     mng.cmd("pwd")

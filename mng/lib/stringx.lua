@@ -42,6 +42,12 @@ stringx.strip = function(str)
 end
 
 --- @param str string
+--- @return string[]
+stringx.tokenize = function(str)
+  return stringx.split(stringx.strip(str), "%s+")
+end
+
+--- @param str string
 --- @param prefix string
 --- @return boolean
 --- @nodiscard

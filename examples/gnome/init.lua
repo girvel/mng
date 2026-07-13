@@ -44,8 +44,8 @@ mng.as_user("girvel", function()
     ]]
   end
 
-  mng.git_repo("https://github.com/girvel/dotfiles", "~/dotfiles", true)
-  mng.manual_stow("~/dotfiles", "~", {
+  mng.git_repo("~/dotfiles", "github.com/girvel/dotfiles", true)
+  mng.manual_stow("~", "~/dotfiles", {
     ".config/alacritty",
     ".config/nvim",
     ".config/zsh",

@@ -1,3 +1,4 @@
+local stringx = require("mng.lib.stringx")
 local mng = require("mng")
 
 
@@ -11,7 +12,7 @@ flatpak.on = function(user)
 end
 
 flatpak.package = function(packages)
-  for _, pkg in ipairs(mng.tokenize(packages)) do
+  for _, pkg in ipairs(stringx.tokenize(packages)) do
     if not flatpak.package_is_installed(pkg) then
       flatpak.package_install(pkg)
     end

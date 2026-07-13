@@ -77,8 +77,6 @@ local parse_function = function(doc_lines, function_name, args)
       goto continue
     end
 
-    print(line)
-
     ::continue::
   end
 

@@ -13,7 +13,7 @@ mng.as_user("girvel", function()
     mng.cmd("flatpak override --user --filesystem=home com.google.Chrome")
   end
 
-  mng.git_repo("github.com/girvel/autoproxy", "~/workshop/autoproxy")
+  mng.git_repo("~/workshop/autoproxy", "github.com/girvel/autoproxy")
   mng.dir_in("~/workshop/autoproxy", function()
     mng.desktop_file("autoproxy_1.desktop")
     mng.desktop_file("autoproxy_2.desktop")
