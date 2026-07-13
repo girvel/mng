@@ -17,6 +17,7 @@ if hostname == "valholl" then
   mng.module("virt")
   mng.module("apps/remote")
   mng.module("apps/autoproxy")
+  mng.module("apps/arduino-cli")
 elseif hostname == "gjoll" then
   mng.module("apps/arduino-cli")
 end
