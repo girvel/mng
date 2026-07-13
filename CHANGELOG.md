@@ -1,13 +1,15 @@
 ## Before publishing
 
-- [ ] Write a README
-- [ ] Run the gnome example
-- [ ] Retest it cleanly
-- [ ] Retest the girvel example
-- [ ] Write the message
-- [ ] Finish docs for mng.lua, rerun
+- [x] Write a README
+- [x] Run the gnome example
+- [x] Finish docs for mng.lua
+- [x] Retest examples/gnome cleanly
+- [x] Write sovngard1 configuration for girvel/
+- [x] Retest the girvel example
+- [x] Write the message
+- [x] Fix the girvel example
 - [ ] (Extra):
-    - [ ] solve chsh & omz issues
+    - [x] solve chsh & omz issues
     - [ ] docs for other modules
     - [ ] Make API consistent: one order for (source, target) args, multi-component strings everywhere (or not?)
     - [ ] Review w/ AI

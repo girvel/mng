@@ -12,8 +12,8 @@ mng.as_user("girvel", function()
   mng.shell("/usr/bin/zsh")
   if not mng.dir_exists("~/.oh-my-zsh") then
     mng.cmd [[
-      sh -c \
-        "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+      RUNZSH=no CHSH=no sh -c \
+        "$(curl --connect-timeout 5 -fL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
     ]]
   end
   mng.dir("~/workshop")

@@ -6,9 +6,7 @@ local flatpak = {}
 
 flatpak.on = function(user)
   mng.package("flatpak")
-  mng.as_user(user, function()
-    mng.cmd("flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo")
-  end)
+  mng.cmd("flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo")
 end
 
 flatpak.package = function(packages)

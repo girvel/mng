@@ -689,7 +689,10 @@ end
 
 --- @param path string
 mng.shell_set = function(path)
-  mng.cmd("chsh -s %s", path)
+  local prev_user = mng.user
+  mng.user = nil
+  mng.cmd("chsh -s %s %s", path, prev_user)
+  mng.user = prev_user
 end
 
 --- @param path string

@@ -4,16 +4,15 @@ local gnome = require("mng.gnome")
 
 
 mng.start(...)
+mng.xbps_mirror("https://repo-de.voidlinux.org/current")
 
 -- MACHINE-SPECIFIC CONFIGURATION --
 
 local hostname = mng.hostname_get()
 if hostname == "sovngard1" then
-  mng.xbps_mirror("https://repo-de.voidlinux.org/current")
   mng.package("mesa-dri virtualbox-ose-guest virtualbox-ose-guest virtualbox-ose-guest-dkms")
   mng.service_on("vboxservice")
 elseif hostname == "valholl" then
-  mng.xbps_mirror("https://repo-de.voidlinux.org/current")
   mng.package("void-repo-nonfree")
   mng.package("nvidia")
 else
@@ -39,7 +38,7 @@ mng.as_user("girvel", function()
   mng.shell("/usr/bin/zsh")
   if not mng.dir_exists("~/.oh-my-zsh") then
     mng.cmd [[
-      sh -c \
+      RUNZSH=no CHSH=no sh -c \
         "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
     ]]
   end

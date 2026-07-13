@@ -1,10 +1,13 @@
 local mng = require("mng")
 
 
-mng.symlink("/etc/hosts", "./hardware/common/hosts")
-mng.curl_proxy = "socks5://thor1"
 
 local hostname = mng.hostname_get()
+if hostname ~= "sovngard1" then
+  mng.symlink("/etc/hosts", "./hardware/common/hosts")
+  mng.curl_proxy = "socks5://thor1"
+end
+
 if hostname == "valholl" then
   mng.package("nvidia nvidia-vaapi-driver nvidia-libs-32bit grub-x86_64-efi")
 
@@ -35,6 +38,9 @@ elseif hostname == "gjoll" then
   if mng.symlink("/etc/fstab", "./hardware/gjoll/fstab") then
     mng.cmd("mount -a")
   end
+elseif hostname == "sovngard1" then
+  mng.package("mesa-dri virtualbox-ose-guest virtualbox-ose-guest virtualbox-ose-guest-dkms")
+  mng.service_on("vboxservice")
 else
   error("No machine-specific configuration for "..hostname)
 end

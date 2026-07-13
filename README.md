@@ -45,7 +45,7 @@ mng.stop()
 Fair warning: this is a prototype, the installation can be rough: you may need to reboot, and oh-my-zsh launches zsh in the middle of installation, so the first time you need to manually exit it.
 
 - A simple example: my Ubuntu configuration recreated as GNOME + customizations, folder is `examples/gnome`
-- A complex example: my real current setup of two machines: PC with Niri as a compositor and an old laptop with no graphics, folder is `girvel`
+- A complex example: my real current setup of two machines: PC with Niri as a compositor and an old laptop with no graphics, folder is `girvel`; there is no display manager, run niri with `dbus-run-session niri`
 
 To launch an example, you need to:
 
