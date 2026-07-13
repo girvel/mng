@@ -431,40 +431,63 @@ end
 --- [SECTION] Auxiliary
 ----------------------------------------------------------------------------------------------------
 
+--- Wraps the string into single quotes for shell usage, escapes inner single quotes
+--- @param expr string
+--- @return string
 mng.cmd_quote = function(expr)
   return ("'%s'"):format(expr:gsub("'", "'\\''"))
 end
 
+local xbps_synced = false
+
+--- Sets the main mirror for xbps
+--- @param mirror string
+--- @return boolean was_updated
+mng.xbps_mirror = function(mirror)
+  local was_updated = mng.file("/etc/xbps.d/00-repository-main.conf", "repository="..mirror)
+  if was_updated then
+    xbps_synced = true
+    mng.cmd("xbps-install -S")
+  end
+  return was_updated
+end
+
+--- Enables xbps repos
+--- @param package_list string space-separated list of xbps repos
+--- @return boolean was_updated
+mng.xbps_repo = function(package_list)
+  local was_updated = mng.package(package_list)
+  if was_updated then
+    xbps_synced = true
+    mng.cmd("xbps-install -Su")
+  end
+  return was_updated
+end
+
+----------------------------------------------------------------------------------------------------
+-- [SECTION] Implementation
+----------------------------------------------------------------------------------------------------
+-- Contains implementation functions for core functionality; may be needed if you are writing
+-- something more complex.
+--
+-- Basically, any core function destructures into implementation ones. For example, `mng.package`
+-- is just `mng.package_is_installed` and `mng.package_install` joined by an if.
+----------------------------------------------------------------------------------------------------
+
+--- @param pkg string A single package name
+--- @return boolean
 mng.package_is_installed = function(pkg)
   -- automatic-install isn't switched off by xbps-install by default
   return mng.cmd_read("xbps-query %s -p state", pkg) == "installed"
 end
 
-local xbps_synced = false
+--- @param pkg string
 mng.package_install = function(pkg)
   if not xbps_synced and not mng.cli_args.no_sync then
     xbps_synced = true
     mng.cmd("xbps-install -S")
   end
   mng.cmd("xbps-install -y "..pkg)
-end
-
-mng.xbps_mirror = function(mirror)
-  mng.file("/etc/xbps.d/00-repository-main.conf", "repository="..mirror)
-  if mng.cli_args.no_sync then
-    xbps_synced = false
-  else
-    xbps_synced = true
-    mng.cmd("xbps-install -S")
-  end
-end
-
-mng.repo = function(package_list)
-  local was_updated = mng.package(package_list)
-  if was_updated then
-    mng.cmd("xbps-install -u")
-  end
-  return was_updated
 end
 
 mng.shell_get = function(this_user)

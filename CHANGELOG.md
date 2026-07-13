@@ -1,16 +1,21 @@
 ## Before publishing
 
 - [ ] Write a README
-- [ ] Document API thoroughly
-- [ ] Maybe format API into an .md thing?
-- [ ] Write a very minimal example
-- [ ] Make API consistent: one order for (source, target) args, multi-component strings everywhere (or not?)
-- [ ] Review w/ AI
-- [ ] TODOs
+- [ ] Run the gnome example
+- [ ] Retest it cleanly
+- [ ] Retest the girvel example
+- [ ] Write the message
+- [ ] Finish docs for mng.lua, rerun
+- [ ] (Extra):
+    - [ ] docs for other modules
+    - [ ] Make API consistent: one order for (source, target) args, multi-component strings everywhere (or not?)
+    - [ ] Review w/ AI
+    - [ ] TODOs
 
 ## Queue
 
-- [ ] Maybe the root should own the folder & the repo => sudoers being a symlink
+- [ ] Remap № to #
+- [ ] Maybe the root should own the folder & the repo => sudoers being a symlink?
 - [ ] Functionality
     - [ ] mng.fstab & maybe mng.fstab_symlink?
     - [ ] mng.group & mng.group_user
