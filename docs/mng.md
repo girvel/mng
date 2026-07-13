@@ -16,7 +16,9 @@ mng.start(...: string)
 
 Should be called in the beginning of the configuration file
 
-Ensures that the $USER is root, parses CLI args- `...`: `string` — CLI args; pass `...` here
+Ensures that the $USER is root, parses CLI args
+
+- `...`: `string` — CLI args; pass `...` here
 
 ## `mng.finish`
 
@@ -38,7 +40,9 @@ Functions representing core features of mng: managing packages, services, files
 mng.package(packages: string) -> was_updated: boolean
 ```
 
-Ensures that the listed packages are installed- `packages`: `string` — space-separated list of packages
+Ensures that the listed packages are installed
+
+- `packages`: `string` — space-separated list of packages
 
 ## `mng.service_on`
 
@@ -46,7 +50,9 @@ Ensures that the listed packages are installed- `packages`: `string` — space-s
 mng.service_on(...: string)
 ```
 
-Ensures services are turned on- `...`: `string` — service names
+Ensures services are turned on
+
+- `...`: `string` — service names
 
 ## `mng.service_off`
 
@@ -54,7 +60,9 @@ Ensures services are turned on- `...`: `string` — service names
 mng.service_off(...: string)
 ```
 
-Ensures services are turned off- `...`: `string` — service names
+Ensures services are turned off
+
+- `...`: `string` — service names
 
 ## `mng.dir`
 
@@ -86,7 +94,10 @@ Ensure target's content matches source's
 mng.symlink(path: string, value: string) -> was_updated: boolean
 ```
 
-Ensures symlinks exists & points to the exact file- `path`: `string` — where the symlink should be- `value`: `string` — what the symlink should point to
+Ensures symlinks exists & points to the exact file
+
+- `path`: `string` — where the symlink should be
+- `value`: `string` — what the symlink should point to
 
 ## `mng.git_repo`
 
@@ -94,7 +105,11 @@ Ensures symlinks exists & points to the exact file- `path`: `string` — where t
 mng.git_repo(destination: string, url: string, update: boolean?) -> was_updated: boolean
 ```
 
-Ensures there is a git repo at that path- `destination`: `string` — path of the destination folder- `url`: `string` — if does not start with protocol, defaults to https- `update`: `boolean?` — whether to keep git pull-ing 
+Ensures there is a git repo at that path
+
+- `destination`: `string` — path of the destination folder
+- `url`: `string` — if does not start with protocol, defaults to https
+- `update`: `boolean?` — whether to keep git pull-ing 
 
 ## `mng.shell`
 
@@ -102,7 +117,9 @@ Ensures there is a git repo at that path- `destination`: `string` — path of th
 mng.shell(path: string) -> was_updated: boolean
 ```
 
-Ensures the current user's shell- `path`: `string` — Full path to the shell
+Ensures the current user's shell
+
+- `path`: `string` — Full path to the shell
 
 ## `mng.xbps_mirror`
 
@@ -118,7 +135,9 @@ Sets the main mirror for xbps
 mng.xbps_repo(package_list: string) -> was_updated: boolean
 ```
 
-Enables xbps repos- `package_list`: `string` — space-separated list of xbps repos
+Enables xbps repos
+
+- `package_list`: `string` — space-separated list of xbps repos
 
 ## `mng.manual_stow`
 
@@ -128,7 +147,11 @@ mng.manual_stow(target: string, source: string, symlinks: string[]) -> was_updat
 
 Does the same thing as stow command but controlled
 
-The stow sometimes creates symlinks wrong, like symlinking ~/.config instead of ~/.config/nvim;`mng.manual_stow` accepts a list of things that need to be symlinked.- `target`: `string` — directory to create symlinks in- `source`: `string` — directory where would symlinks lead- `symlinks`: `string[]` — list of files in `source` that need symlinking
+The stow sometimes creates symlinks wrong, like symlinking ~/.config instead of ~/.config/nvim;`mng.manual_stow` accepts a list of things that need to be symlinked.
+
+- `target`: `string` — directory to create symlinks in
+- `source`: `string` — directory where would symlinks lead
+- `symlinks`: `string[]` — list of files in `source` that need symlinking
 
 ## `mng.desktop_file`
 
@@ -152,7 +175,9 @@ Installs an icon
 mng.as_user(new_user: string?, f: fun())
 ```
 
-Runs code as a given user- `new_user`: `string?` — if nil, runs as root
+Runs code as a given user
+
+- `new_user`: `string?` — if nil, runs as root
 
 ## `mng.dir_in`
 
@@ -212,7 +237,9 @@ Conventionally hostname is used when you manage multiple machines and need to ha
 
 ```lua
 mng.package_is_installed(pkg: string) -> boolean
-```- `pkg`: `string` — A single package name
+```
+
+- `pkg`: `string` — A single package name
 
 ## `mng.package_install`
 
@@ -297,3 +324,7 @@ mng.curl_file(filepath, url)
 ```lua
 mng.theme_installed(name, url) -> was_updated: boolean
 ```
+
+@class cli_args @field clean boolean @field light boolean @field module string? @field verbose boolean @field no_sync boolean @type cli_args
+
+@type string?

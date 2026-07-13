@@ -31,15 +31,27 @@ for _, record in ipairs(mod.records) do
       io.write("\n\n"..record.desc)
     end
 
+    local first_time = true
+
     for _, arg in ipairs(record.args) do
       if arg.desc then
-        io.write("- `"..arg.name.."`: `"..arg.type.."` — "..arg.desc)
+        if first_time then
+          first_time = false
+          io.write("\n")
+        end
+
+        io.write("\n- `"..arg.name.."`: `"..arg.type.."` — "..arg.desc)
       end
     end
 
     for _, ret in ipairs(record.returns) do
       if ret.desc then
-        io.write("- Return `")
+        if first_time then
+          first_time = false
+          io.write("\n")
+        end
+
+        io.write("\n- Return `")
         if ret.name then
           io.write(ret.name.."`: `")
         end
