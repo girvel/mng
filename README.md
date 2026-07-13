@@ -1,6 +1,6 @@
-# mng
-
 [API](docs/)
+
+# mng
 
 > [!WARNING]
 > It's a rough sketch of the idea, not a stable product
