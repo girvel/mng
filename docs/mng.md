@@ -325,6 +325,4 @@ mng.curl_file(filepath, url)
 mng.theme_installed(name, url) -> was_updated: boolean
 ```
 
-@class cli_args @field clean boolean @field light boolean @field module string? @field verbose boolean @field no_sync boolean @type cli_args
-
 @type string?
