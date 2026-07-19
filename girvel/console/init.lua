@@ -34,4 +34,6 @@ mng.as_user("girvel", function()
   else
     mng.symlink("~/.zshrc", "./console/.zshrc")
   end
+
+  mng.symlink("~/.config/htop/htoprc", "./console/htoprc")
 end)

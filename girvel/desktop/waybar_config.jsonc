@@ -68,7 +68,7 @@
         "tooltip": true
     },
     "memory": {
-        "on-click": "ghostty --confirm-close-surface=false -e htop",
+        "on-click": "ghostty --confirm-close-surface=false -e htop -s PERCENT_MEM",
         "format": "{}%  ",
         "tooltip-format": "{used:0.1f}/{total:0.1f} GB  "
     },
