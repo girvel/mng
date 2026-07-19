@@ -27,8 +27,8 @@
         "format": " {} ",
     },
     "niri/language": {
-        "format-en": "EN",
-        "format-ru": "RU",
+        "format-en": "🇬🇧",
+        "format-ru": "🇷🇺",
     },
     // "mpd": {
     //     "format": "{stateIcon} {consumeIcon}{randomIcon}{repeatIcon}{singleIcon}{artist} - {album} - {title} ({elapsedTime:%M:%S}/{totalTime:%M:%S}) ⸨{songPosition}|{queueLength}⸩ {volume}% ",
