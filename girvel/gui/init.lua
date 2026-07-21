@@ -1,11 +1,10 @@
-local flatpak = require("mng.flatpak")
 local mng = require("mng")
 
 
 mng.package [[
   mesa-dri vulkan-loader ttf-ubuntu-font-family dejavu-fonts-ttf
   telegram-desktop transmission-gtk love ghostty firefox
-  obs kdenlive audacity vlc ffmpeg qt5-wayland libreoffice
+  obs kdenlive audacity mpv ffmpeg qt5-wayland libreoffice
 ]]
 
 local ldtk = "/usr/local/bin/ldtk"
