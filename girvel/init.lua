@@ -18,6 +18,7 @@ if hostname == "valholl" then
   mng.module("apps/remote")
   mng.module("apps/autoproxy")
   mng.module("apps/arduino-cli")
+  mng.module("apps/iphone-usb")
 elseif hostname == "sovngard1" then
   mng.module("desktop")
   mng.module("gui")
