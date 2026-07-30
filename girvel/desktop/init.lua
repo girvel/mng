@@ -29,6 +29,7 @@ mng.as_user("girvel", function()
   mng.symlink("~/.config/xdg-terminals.list", "xdg-terminals.list")
   mng.symlink("~/.config/mimeapps.list", "./desktop/mimeapps.list")
   mng.file("~/.config/xfce4/helpers.rc", "TerminalEmulator=ghostty")
+  mng.symlink("~/.local/bin/fallen_layout.sh", "./desktop/fallen_layout.sh")
 
   mng.symlink("~/.local/share/icons/Vimix", "./desktop/Vimix")
   mng.symlink("~/Pictures/wallpapers", "./desktop/wallpapers")

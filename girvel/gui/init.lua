@@ -3,7 +3,7 @@ local mng = require("mng")
 
 mng.package [[
   mesa-dri vulkan-loader ttf-ubuntu-font-family dejavu-fonts-ttf
-  telegram-desktop transmission-gtk love ghostty firefox
+  telegram-desktop transmission-gtk love ImageMagick ghostty firefox
   obs kdenlive audacity mpv ffmpeg qt5-wayland libreoffice
 ]]
 

@@ -3,7 +3,7 @@ local mng = require("mng")
 
 
 mng.start(...)
-mng.xbps_mirror("https://repo-de.voidlinux.org/current")
+mng.xbps_mirror("https://repo-fi.voidlinux.org/")
 mng.xbps_repo("void-repo-nonfree void-repo-multilib void-repo-multilib-nonfree")
 
 mng.module("hardware", true)
