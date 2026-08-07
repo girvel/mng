@@ -36,5 +36,5 @@ mng.as_user("girvel", function()
   end
 
   mng.symlink("~/.config/htop/htoprc", "./console/htoprc")
-  mng.symlink("~/.local/bin/rebuild", "./console/rebuild")
+  mng.symlink("~/.local/bin/Rebuild", "./console/Rebuild")
 end)
