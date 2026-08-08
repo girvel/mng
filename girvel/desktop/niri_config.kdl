@@ -2,6 +2,7 @@ spawn-sh-at-startup "dbus-update-activation-environment WAYLAND_DISPLAY DISPLAY 
 spawn-sh-at-startup "pidof pipewire || pipewire"
 spawn-sh-at-startup "pidof wireplumber || (sleep 1; exec wireplumber)"
 spawn-sh-at-startup "pidof pipewire-pulse || (sleep 1; exec pipewire-pulse)"
+spawn-sh-at-startup "wl-clip-persist --clipboard both"
 spawn-sh-at-startup "pidof awww-daemon || awww-daemon"
 spawn-sh-at-startup "awww img  ~/Pictures/wallpapers/bastion.png"
 spawn-sh-at-startup "sleep 1 && /home/girvel/.local/bin/awww-paperd 2>&1 >/tmp/paperd.log"
