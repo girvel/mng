@@ -1,0 +1,38 @@
+{
+  "log": {
+    "level": "info"
+  },
+  "inbounds": [
+    {
+      "type": "socks",
+      "tag": "socks-in",
+      "listen": "127.0.0.1",
+      "listen_port": 2080
+    }
+  ],
+  "outbounds": [
+    {
+      "detour": "g-2",
+      "domain_strategy": "ipv4_only",
+      "private_key": "-----BEGIN OPENSSH PRIVATE KEY-----\nb3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAMwAAAAtzc2gtZW\nQyNTUxOQAAACDq3Xd6RPuhxHAEMvbgsZH+4MWnz8lGX2sObHJ+/pPM3AAAAJhuI5hTbiOY\nUwAAAAtzc2gtZWQyNTUxOQAAACDq3Xd6RPuhxHAEMvbgsZH+4MWnz8lGX2sObHJ+/pPM3A\nAAAEBVixeCM04JhyrDoYtVCgtJbI1xTGGw4IfHthaZlpSNmerdd3pE+6HEcAQy9uCxkf7g\nxafPyUZfaw5scn7+k8zcAAAAE3NlcnZlcnVzZXJAbXlzZXJ2ZXIBAg==\n-----END OPENSSH PRIVATE KEY-----",
+      "server": "185.167.234.186",
+      "server_port": 22,
+      "user": "tunnelbot",
+      "tag": "proxy",
+      "type": "ssh"
+    },
+    {
+      "domain_strategy": "ipv4_only",
+      "private_key": "-----BEGIN OPENSSH PRIVATE KEY-----\nb3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAMwAAAAtzc2gtZW\nQyNTUxOQAAACDq3Xd6RPuhxHAEMvbgsZH+4MWnz8lGX2sObHJ+/pPM3AAAAJhuI5hTbiOY\nUwAAAAtzc2gtZWQyNTUxOQAAACDq3Xd6RPuhxHAEMvbgsZH+4MWnz8lGX2sObHJ+/pPM3A\nAAAEBVixeCM04JhyrDoYtVCgtJbI1xTGGw4IfHthaZlpSNmerdd3pE+6HEcAQy9uCxkf7g\nxafPyUZfaw5scn7+k8zcAAAAE3NlcnZlcnVzZXJAbXlzZXJ2ZXIBAg==\n-----END OPENSSH PRIVATE KEY-----",
+      "server": "45.143.95.205",
+      "server_port": 22,
+      "user": "tunneluser",
+      "tag": "g-2",
+      "type": "ssh"
+    },
+    {
+      "tag": "direct",
+      "type": "direct"
+    }
+  ]
+}

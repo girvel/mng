@@ -23,7 +23,6 @@ mng.as_user("girvel", function()
     ".config/alacritty",
     ".config/nvim",
     ".config/zsh",
-    ".local/bin/cb",
     ".mozilla/firefox/girvel/chrome",
     ".mozilla/firefox/girvel/user.js",
     ".gitconfig",
