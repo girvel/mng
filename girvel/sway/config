@@ -4,6 +4,11 @@
 #
 # Read `man 5 sway` for a complete reference.
 
+exec wl-clip-persist --clipboard both
+exec pipewire
+exec wireplumber
+exec pipewire-pulse
+
 ### Variables
 #
 # Logo key. Use Mod1 for Alt.
@@ -53,12 +58,12 @@ output * bg /usr/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png fill
 #       middle_emulation enabled
 #   }
 #
-#   input type:keyboard {
-#       xkb_layout "eu"
-#   }
-#
 # You can also configure each device individually.
 # Read `man 5 sway-input` for more information about this section.
+
+input type:keyboard {
+    xkb_layout "eu"
+}
 
 ### Key bindings
 #
