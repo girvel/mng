@@ -2,7 +2,7 @@ spawn-sh-at-startup "dbus-update-activation-environment WAYLAND_DISPLAY DISPLAY 
 spawn-sh-at-startup "pidof pipewire || pipewire"
 spawn-sh-at-startup "pidof wireplumber || (sleep 1; exec wireplumber)"
 spawn-sh-at-startup "pidof pipewire-pulse || (sleep 1; exec pipewire-pulse)"
-spawn-sh-at-startup "wl-clip-persist --clipboard both"
+spawn-sh-at-startup "copyq --start-server"
 spawn-sh-at-startup "pidof awww-daemon || awww-daemon"
 spawn-sh-at-startup "awww img  ~/Pictures/wallpapers/bastion.png"
 spawn-sh-at-startup "sleep 1 && /home/girvel/.local/bin/awww-paperd 2>&1 >/tmp/paperd.log"
@@ -359,6 +359,7 @@ binds {
     // Suggested binds for running programs: terminal, app launcher, screen locker.
     Mod+T hotkey-overlay-title="Open a Terminal" { spawn "ghostty"; }
     Mod+D hotkey-overlay-title="Run an Application: fuzzel" { spawn "fuzzel"; }
+    Mod+B hotkey-overlay-title="Run an Application: firefox" { spawn "firefox"; }
     Mod+Shift+C { spawn "fallen_layout.sh"; }
     Super+Alt+L hotkey-overlay-title="Lock the Screen: swaylock" { spawn "swaylock"; }
 
@@ -395,6 +396,7 @@ binds {
     Mod+O repeat=false { toggle-overview; }
 
     Mod+Q repeat=false { close-window; }
+    Alt+F4 repeat=false { close-window; }
 
     Mod+Left  { focus-column-left; }
     Mod+Down  { focus-window-down; }
