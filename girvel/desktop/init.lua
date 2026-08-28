@@ -3,10 +3,10 @@ local mng = require("mng")
 
 
 mng.package [[
-  dbus elogind niri fuzzel Waybar wl-clipboard pipewire wireplumber font-awesome pavucontrol
-  alsa-utils xclip xwayland-satellite bluez blueman libspa-bluetooth qdirstat xdg-utils
+  dbus elogind niri fuzzel Waybar wl-clipboard pipewire wireplumber pavucontrol alsa-pipewire
+  alsa-utils xclip xwayland-satellite bluez blueman libspa-bluetooth qdirstat xdg-utils font-awesome
   qimgv Thunar thunar-archive-plugin tumbler ffmpegthumbnailer gedit awww
-  xdg-desktop-portal xdg-desktop-portal-gnome xdg-desktop-portal-gtk wl-clip-persist
+  xdg-desktop-portal xdg-desktop-portal-gnome xdg-desktop-portal-gtk CopyQ
 ]]
 mng.service_on("dbus", "bluetoothd")
 mng.cmd("usermod -aG bluetooth girvel")
@@ -21,6 +21,13 @@ mng.package("lua51-cjson")
 mng.as_user("girvel", function()
   mng.symlink("~/.local/bin/awww-paperd", "./desktop/awww-paperd")
 end)
+
+-- Alsa-pipewire compatibility enabled
+mng.symlink("/etc/alsa/conf.d/50-pipewire.conf",
+            "/usr/share/alsa/alsa.conf.d/50-pipewire.conf")
+
+mng.symlink("/etc/alsa/conf.d/99-pipewire-default.conf",
+            "/usr/share/alsa/alsa.conf.d/99-pipewire-default.conf")
 
 mng.as_user("girvel", function()
   mng.symlink("~/.config/niri/config.kdl", "./desktop/niri_config.kdl")
