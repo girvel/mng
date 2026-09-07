@@ -1,13 +1,12 @@
 spawn-sh-at-startup "dbus-update-activation-environment WAYLAND_DISPLAY DISPLAY XDG_CURRENT_DESKTOP"
+spawn-sh-at-startup "pidof wl-clip-persist || wl-clip-persist --clipboard regular"
 spawn-sh-at-startup "pidof pipewire || pipewire"
 spawn-sh-at-startup "pidof wireplumber || (sleep 1; exec wireplumber)"
 spawn-sh-at-startup "pidof pipewire-pulse || (sleep 1; exec pipewire-pulse)"
-spawn-sh-at-startup "copyq --start-server"
 spawn-sh-at-startup "pidof awww-daemon || awww-daemon"
 spawn-sh-at-startup "awww img  ~/Pictures/wallpapers/bastion.png"
 spawn-sh-at-startup "sleep 1 && /home/girvel/.local/bin/awww-paperd 2>&1 >/tmp/paperd.log"
 spawn-sh-at-startup "pidof blueman-applet || blueman-applet"
-spawn-sh-at-startup "pidof keyd || keyd"
 spawn-sh-at-startup "sleep 2 && waybar"
 
 xwayland-satellite {
@@ -358,9 +357,9 @@ binds {
 
     // Suggested binds for running programs: terminal, app launcher, screen locker.
     Mod+T hotkey-overlay-title="Open a Terminal" { spawn "ghostty"; }
-    Mod+D hotkey-overlay-title="Run an Application: fuzzel" { spawn "fuzzel"; }
-    Mod+B hotkey-overlay-title="Run an Application: firefox" { spawn "firefox"; }
-    Mod+Shift+C { spawn "fallen_layout.sh"; }
+    Mod+D hotkey-overlay-title="Application Picker: Fuzzel" { spawn "fuzzel"; }
+    Mod+B hotkey-overlay-title="Browser: Firefox" { spawn "firefox"; }
+    Mod+Shift+C hotkey-overlay-title="Fallen layout" { spawn "fallen_layout.sh"; }
     Super+Alt+L hotkey-overlay-title="Lock the Screen: swaylock" { spawn "swaylock"; }
 
     // Use spawn-sh to run a shell command. Do this if you need pipes, multiple commands, etc.

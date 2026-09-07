@@ -6,7 +6,7 @@ mng.package [[
   dbus elogind niri fuzzel Waybar wl-clipboard pipewire wireplumber pavucontrol alsa-pipewire
   alsa-utils xclip xwayland-satellite bluez blueman libspa-bluetooth qdirstat xdg-utils font-awesome
   qimgv Thunar thunar-archive-plugin tumbler ffmpegthumbnailer gedit awww
-  xdg-desktop-portal xdg-desktop-portal-gnome xdg-desktop-portal-gtk CopyQ
+  xdg-desktop-portal xdg-desktop-portal-gnome xdg-desktop-portal-gtk wl-clip-persist
 ]]
 mng.service_on("dbus", "bluetoothd")
 mng.cmd("usermod -aG bluetooth girvel")

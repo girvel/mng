@@ -1,10 +1,11 @@
+local flatpak = require("mng.flatpak")
 local mng = require("mng")
 
 
 mng.package [[
   mesa-dri vulkan-loader ttf-ubuntu-font-family dejavu-fonts-ttf
   telegram-desktop transmission-gtk love ImageMagick ghostty firefox
-  obs kdenlive audacity mpv ffmpeg qt5-wayland libreoffice
+  kdenlive audacity mpv ffmpeg qt5-wayland libreoffice
 ]]
 
 local ldtk = "/usr/local/bin/ldtk"
@@ -25,7 +26,9 @@ end
 mng.desktop_file("./gui/aseprite.desktop")
 mng.icon("./gui/aseprite.png")
 
+flatpak.on("girvel")
 mng.as_user("girvel", function()
+  flatpak.package("com.obsproject.Studio")
   mng.symlink("~/.config/ghostty/config", "./gui/ghostty_config")
 end)
 
