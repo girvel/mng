@@ -284,13 +284,22 @@ end
 --- Ensures exact file content
 --- @param path string
 --- @param content string
+--- @param permissions string?
 --- @return boolean was_updated
-mng.file = function(path, content)
+mng.file = function(path, content, permissions)
   local base_dir = dir_base(path)
   local will_be_updated = base_dir and mng.dir(base_dir) or mng.file_get(path) ~= content
   if will_be_updated then
     mng.file_set(path, content)
   end
+
+  if permissions then
+    will_be_updated = will_be_updated or mng.permissions_get(path) ~= permissions
+    if will_be_updated then
+      mng.permissions_set(path, permissions)
+    end
+  end
+
   return will_be_updated
 end
 
@@ -307,10 +316,10 @@ mng.file_sync = function(target, source)
     mng.file_set(target, expected)
   end
 
-  local source_permissions = mng.cmd_read("stat -c '%a' "..source)
-  local were_permissions_updated = mng.cmd_read("stat -c '%a' "..target) ~= source_permissions
+  local source_permissions = mng.permissions_get(source)
+  local were_permissions_updated = mng.permissions_get(target) ~= source_permissions
   if were_permissions_updated then
-    mng.cmd("chmod %s %s", source_permissions, target)
+    mng.permissions_set(target, source_permissions)
   end
 
   return was_content_updated or were_permissions_updated
@@ -747,6 +756,18 @@ end
 --- @param path string
 mng.file_remove = function(path)
   mng.cmd("rm -f %s", mng.cmd_quote(path))
+end
+
+--- @param path string
+--- @param permissions string?
+mng.permissions_set = function(path, permissions)
+  mng.cmd("chmod %s %s", permissions, path)
+end
+
+--- @param path string
+--- @return string
+mng.permissions_get = function(path)
+  return mng.cmd_read("stat -c '%a' "..path)
 end
 
 --- @param path string

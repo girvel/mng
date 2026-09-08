@@ -29,7 +29,11 @@ mng.symlink("/etc/alsa/conf.d/50-pipewire.conf",
 mng.symlink("/etc/alsa/conf.d/99-pipewire-default.conf",
             "/usr/share/alsa/alsa.conf.d/99-pipewire-default.conf")
 
+mng.file("/opt/keyd_fix/restart", "sv restart keyd", "770")
+mng.file("/etc/sudoers.d/keyd_fix", "girvel ALL=(root) NOPASSWD: /opt/keyd_fix/restart")
+
 mng.as_user("girvel", function()
+  mng.symlink("~/.desktop", "./desktop/.desktop")
   mng.symlink("~/.config/niri/config.kdl", "./desktop/niri_config.kdl")
   mng.symlink("~/.config/waybar/config.jsonc", "./desktop/waybar_config.jsonc")
   mng.symlink("~/.config/waybar/style.css", "./desktop/waybar_style.css")
