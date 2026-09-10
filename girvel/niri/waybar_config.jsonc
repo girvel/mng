@@ -15,7 +15,7 @@
         "cpu",
         "memory",
         "temperature",
-        // "network",
+        "network",
         "battery",
         "niri/language",
         // "mpd",
@@ -93,15 +93,17 @@
         // "format-full": "",
         "format-icons": ["", "", "", "", ""]
     },
-    // "network": {
-    //     // "interface": "wlp2*", // (Optional) To force the use of this interface
-    //     "format-wifi": "{essid} ({signalStrength}%)  ",
-    //     "format-ethernet": "{ipaddr}/{cidr}  ",
-    //     "tooltip-format": "{ifname} via {gwaddr}  ",
-    //     "format-linked": "{ifname} (No IP)  ",
-    //     "format-disconnected": "Disconnected ⚠ ",
-    //     "format-alt": "{ifname}: {ipaddr}/{cidr}"
-    // },
+    "network": {
+        // "interface": "wlp2*", // (Optional) To force the use of this interface
+        "format-wifi": " ",
+        "format-ethernet": " ",
+        "format-linked": "No IP ⚠",
+        "format-disconnected": "Disconnected ⚠",
+        "tooltip-format-wifi": "{ifname}: {ipaddr}/{cidr} via {gwaddr}\n{essid} ({signalStrength}%)  ",
+        "tooltip-format-ethernet": "{ifname}: {ipaddr}/{cidr} via {gwaddr}  ",
+        // "tooltip-format": "{ifname} via {gwaddr}  ",
+        "format-alt": "{ifname}: {ipaddr}/{cidr}"
+    },
     "pulseaudio": {
         // "scroll-step": 1, // %, can be a float
         "format": "{volume}% {icon} {format_source}",
