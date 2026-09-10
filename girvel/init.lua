@@ -11,7 +11,7 @@ mng.module("console")
 local hostname = mng.hostname_get()
 
 if hostname == "valholl" then
-  mng.module("desktop")
+  mng.module("niri")
   mng.module("gui")
   mng.module("virt")
   mng.module("apps/jbmono")
@@ -20,7 +20,7 @@ if hostname == "valholl" then
   mng.module("apps/arduino-cli")
   mng.module("apps/iphone-usb")
 elseif hostname == "sovngard1" then
-  mng.module("desktop")
+  mng.module("niri")
   mng.module("gui")
   mng.module("apps/jbmono")
 elseif hostname == "gjoll" then
