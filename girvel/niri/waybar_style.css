@@ -20,7 +20,8 @@ label.module, #window {
 #pulseaudio:hover,
 #bluetooth:hover,
 #cpu:hover,
-#memory:hover {
+#memory:hover,
+#custom-power:hover {
   background-color: #fcba03;
   color: #222222;
 }

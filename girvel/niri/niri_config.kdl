@@ -583,7 +583,7 @@ binds {
 
     // The quit action will show a confirmation dialog to avoid accidental exits.
     Mod+Shift+E hotkey-overlay-title=null { quit; }
-    Ctrl+Alt+Delete { quit; }
+    Ctrl+Alt+Delete hotkey-overlay-title="Меню выключения" { spawn-sh "power.lua"; }
 
     // Example volume keys mappings for PipeWire & WirePlumber.
     // The allow-when-locked=true property makes them work even when the session is locked.
