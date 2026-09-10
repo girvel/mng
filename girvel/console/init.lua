@@ -7,7 +7,12 @@ mng.package [[
 ]]
 mng.service_on("socklog-unix", "nanoklogd", "chronyd")
 
-mng.file("/etc/sysctl.d/20-quiet-console.conf", "kernel.printk = 3 4 1 3\n")  -- stop TTY spam
+-- stop TTY spam
+mng.file("/etc/sysctl.d/20-quiet-console.conf", "kernel.printk = 3 4 1 3\n")
+if mng.file("/etc/sv/dhcpcd/log/run", "#!/usr/bin/sh\nexec svlogd -tt /var/log/dhcpcd", "774") then
+  mng.cmd("sv restart dhcpcd")
+end
+
 mng.as_user("girvel", function()
   mng.shell("/usr/bin/zsh")
   if not mng.dir_exists("~/.oh-my-zsh") then
