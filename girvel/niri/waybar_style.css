@@ -25,3 +25,7 @@ label.module, #window {
   background-color: #fcba03;
   color: #222222;
 }
+
+#custom-power {
+  margin-right: 10px;
+}
