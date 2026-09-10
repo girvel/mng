@@ -1,0 +1,6 @@
+#!/bin/sh
+
+INSTALL_DIR=${INSTALL_DIR:-/usr/share/luajit-2.1}
+set -e
+mkdir -p $INSTALL_DIR
+cp -r mng.lua mng $INSTALL_DIR/
