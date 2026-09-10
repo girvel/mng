@@ -12,5 +12,5 @@ mng.package [[
 mng.service_on("dbus", "polkitd", "zramen")
 
 mng.as_user("girvel", function()
-  mng.symlink("~/.config/sway/config", "./sway/config")
+  mng.symlink("~/.config/sway/config", "./config")
 end)

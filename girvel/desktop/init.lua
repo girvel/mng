@@ -19,7 +19,7 @@ end
 
 mng.package("lua51-cjson")
 mng.as_user("girvel", function()
-  mng.symlink("~/.local/bin/awww-paperd", "./desktop/awww-paperd")
+  mng.symlink("~/.local/bin/awww-paperd", "awww-paperd")
 end)
 
 -- Alsa-pipewire compatibility enabled
@@ -33,24 +33,24 @@ mng.file("/opt/keyd_fix/restart", "sv restart keyd", "770")
 mng.file("/etc/sudoers.d/keyd_fix", "girvel ALL=(root) NOPASSWD: /opt/keyd_fix/restart")
 
 mng.as_user("girvel", function()
-  mng.symlink("~/.desktop", "./desktop/.desktop")
-  mng.symlink("~/.config/niri/config.kdl", "./desktop/niri_config.kdl")
-  mng.symlink("~/.config/waybar/config.jsonc", "./desktop/waybar_config.jsonc")
-  mng.symlink("~/.config/waybar/style.css", "./desktop/waybar_style.css")
-  mng.symlink("~/.config/pulse/client.conf", "./desktop/pulse_config_client.conf")
+  mng.symlink("~/.desktop", ".desktop")
+  mng.symlink("~/.config/niri/config.kdl", "niri_config.kdl")
+  mng.symlink("~/.config/waybar/config.jsonc", "waybar_config.jsonc")
+  mng.symlink("~/.config/waybar/style.css", "waybar_style.css")
+  mng.symlink("~/.config/pulse/client.conf", "pulse_config_client.conf")
   mng.symlink("~/.config/xdg-terminals.list", "xdg-terminals.list")
-  mng.symlink("~/.config/mimeapps.list", "./desktop/mimeapps.list")
+  mng.symlink("~/.config/mimeapps.list", "mimeapps.list")
   mng.file("~/.config/xfce4/helpers.rc", "TerminalEmulator=ghostty")
-  mng.symlink("~/.local/bin/fallen_layout.sh", "./desktop/fallen_layout.sh")
+  mng.symlink("~/.local/bin/fallen_layout.sh", "fallen_layout.sh")
 
-  mng.symlink("~/.local/share/icons/Vimix", "./desktop/Vimix")
-  mng.symlink("~/Pictures/wallpapers", "./desktop/wallpapers")
+  mng.symlink("~/.local/share/icons/Vimix", "Vimix")
+  mng.symlink("~/Pictures/wallpapers", "wallpapers")
   gnome.gsettings("org.blueman.general", "plugin-list", "['!AutoConnect', '!ConnectionNotifier']")
 
   gnome.gsettings("org.gnome.desktop.interface", "color-scheme", "'prefer-dark'")
   gnome.gsettings("org.gnome.desktop.interface", "monospace-font-name", "'JetBrainsMono Nerd Font'")
   mng.theme_installed("Dark-Olympic", "https://mxrepo.com/mx/repo/pool/main/d/dark-olympic-gtk-theme/dark-olympic-gtk-theme_1.2.2.orig.tar.xz")
-  mng.symlink("~/.config/gtk-3.0/settings.ini", "./desktop/gtk-settings.ini")
+  mng.symlink("~/.config/gtk-3.0/settings.ini", "gtk-settings.ini")
 
   gnome.gsettings("org.gnome.gedit.preferences.editor", "use-default-font", "true")
   gnome.gsettings("org.gnome.gedit.preferences.editor", "tabs-size", "4")

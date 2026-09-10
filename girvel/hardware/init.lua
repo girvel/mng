@@ -4,7 +4,7 @@ local mng = require("mng")
 
 local hostname = mng.hostname_get()
 if hostname ~= "sovngard1" then
-  mng.symlink("/etc/hosts", "./hardware/common/hosts")
+  mng.symlink("/etc/hosts", "./common/hosts")
   mng.curl_proxy = "socks5://thor1"
 end
 
@@ -30,12 +30,12 @@ if hostname == "valholl" then
   mng.dir("/mnt/d")
   mng.dir("/mnt/vault")
   mng.dir("/mnt/ubuntu")
-  if mng.symlink("/etc/fstab", "./hardware/valholl/fstab") then
+  if mng.symlink("/etc/fstab", "./valholl/fstab") then
     mng.cmd("mount -a")
   end
 elseif hostname == "gjoll" then
   -- TODO mng.fstab instead
-  if mng.symlink("/etc/fstab", "./hardware/gjoll/fstab") then
+  if mng.symlink("/etc/fstab", "./gjoll/fstab") then
     mng.cmd("mount -a")
   end
 elseif hostname == "sovngard1" then
@@ -49,5 +49,5 @@ mng.package("keyd")
 mng.dir("/etc/keyd")
 mng.service_on("keyd")
 mng.file("/etc/sv/keyd/run", "#!/bin/sh\nexec keyd 2>&1")  -- or else it crashes
-mng.symlink("/etc/keyd/remap.conf", "./hardware/common/remap.conf")
+mng.symlink("/etc/keyd/remap.conf", "./common/remap.conf")
 mng.file("/etc/rc.conf", "HARDWARECLOCK=localtime\nTIMEZONE=Asia/Yekaterinburg")

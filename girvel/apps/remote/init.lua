@@ -13,6 +13,6 @@ mng.as_user("girvel", function()
   end)
 end)
 
-mng.symlink("/etc/sv/remote/run", "./apps/remote/run")
-mng.symlink("/etc/sv/remote/log/run", "./apps/remote/log_run")
+mng.symlink("/etc/sv/remote/run", "./run")
+mng.symlink("/etc/sv/remote/log/run", "./log_run")
 mng.service_on("remote")

@@ -34,11 +34,11 @@ mng.as_user("girvel", function()
   })
 
   if mng.hostname_get() == "gjoll" then
-    mng.symlink("~/.zshrc", "./console/.zshrc-typewriter")
+    mng.symlink("~/.zshrc", "./.zshrc-typewriter")
   else
-    mng.symlink("~/.zshrc", "./console/.zshrc")
+    mng.symlink("~/.zshrc", "./.zshrc")
   end
 
-  mng.symlink("~/.config/htop/htoprc", "./console/htoprc")
-  mng.symlink("~/.local/bin/Rebuild", "./console/Rebuild")
+  mng.symlink("~/.config/htop/htoprc", "./htoprc")
+  mng.symlink("~/.local/bin/Rebuild", "./Rebuild")
 end)

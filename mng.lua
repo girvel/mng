@@ -1,8 +1,8 @@
-local ffi = require("ffi")
 --- The main module
 ---
 --- Contains universal functionality, s.a. essential functions, managing packages, files, services
 
+local ffi = require("ffi")
 local cli = require("mng.lib.cli")
 local tablex = require("mng.lib.tablex")
 local stringx = require("mng.lib.stringx")
@@ -568,8 +568,7 @@ mng.module = function(folder_path, cannot_fail)
     error("No module directory at "..folder_path)
   end
 
-  local filepath = folder_path.."/init.lua"
-  if not mng.file_exists(filepath) then
+  if not mng.file_exists(folder_path.."/init.lua") then
     error("Module is expected to have its logic defined in init.lua file")
   end
 
@@ -586,7 +585,13 @@ mng.module = function(folder_path, cannot_fail)
     print("[MOD] "..folder_path)
   end
 
-  local ok, err = xpcall(dofile, debug.traceback, filepath)
+  local ok, err do
+    local prev_dir = ffi.C.get_current_dir_name()
+    ffi.C.chdir(folder_path)
+    ok, err = xpcall(dofile, debug.traceback, "init.lua")
+    ffi.C.chdir(prev_dir)
+  end
+
   if not ok then
     print(("[ERR] Error while executing module %s: \n%s"):format(
       folder_path,
