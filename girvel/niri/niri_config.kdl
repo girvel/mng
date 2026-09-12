@@ -356,12 +356,12 @@ binds {
     Mod+D repeat=false hotkey-overlay-title="Запустить приложение" { spawn "fuzzel"; }
     Mod+B repeat=false hotkey-overlay-title="Запустить браузер (Firefox)" { spawn "firefox"; }
     Mod+T repeat=false hotkey-overlay-title="Запустить терминал" { spawn "ghostty"; }
-    Mod+Shift+C repeat=false hotkey-overlay-title="Запустить геймдев приложения" { spawn "fallen_layout.sh"; }
+    Mod+Shift+C repeat=false hotkey-overlay-title=null { spawn "fallen_layout.sh"; }
 
     Mod+Q repeat=false hotkey-overlay-title="Закрыть окно" { close-window; }
     Alt+F4 repeat=false { close-window; }
 
-    Mod+Shift+P repeat=false hotkey-overlay-title="Погасить экран" { power-off-monitors; }
+    Mod+Shift+P repeat=false hotkey-overlay-title=null { power-off-monitors; }
 
     Mod+O repeat=false hotkey-overlay-title=null { toggle-overview; }
 
