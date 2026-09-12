@@ -2,6 +2,7 @@
 local stringx = require("mng.lib.stringx")
 
 local ACTIONS = {
+  {"   Cancel"},
   {"󰍹  Power Off Monitors", "niri msg action power-off-monitors"},
   {"⏻  Power Off", "loginctl poweroff"},
   {"  Reboot", "loginctl reboot"},
@@ -25,7 +26,7 @@ end
 
 for _, tuple in ipairs(ACTIONS) do
   if response == tuple[1] then
-    os.execute(tuple[2])
+    if tuple[2] then os.execute(tuple[2]) end
     return
   end
 end
