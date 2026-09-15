@@ -4,14 +4,15 @@ local mng = require("mng")
 mng.package [[
   fuse man-pages-devel clang cmake zip unzip socklog-void chrony fzf tar xz nodejs
   zsh git curl wget neovim tree-sitter-cli ripgrep eza github-cli htop tree jq
+  7zip fastfetch gdb gdb-common go zvm
 ]]
 mng.service_on("socklog-unix", "nanoklogd", "chronyd")
 
 -- stop TTY spam
 mng.file("/etc/sysctl.d/20-quiet-console.conf", "kernel.printk = 3 4 1 3\n")
-if mng.file("/etc/sv/dhcpcd/log/run", "#!/usr/bin/sh\nexec svlogd -tt /var/log/dhcpcd", "774") then
-  mng.cmd("sv restart dhcpcd")
-end
+-- if mng.file("/etc/sv/dhcpcd/log/run", "#!/usr/bin/sh\nexec svlogd -tt /var/log/dhcpcd", "774") then
+--   mng.cmd("sv restart dhcpcd")
+-- end
 
 mng.as_user("girvel", function()
   mng.shell("/usr/bin/zsh")

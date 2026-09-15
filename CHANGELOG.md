@@ -29,9 +29,9 @@
 - [ ] Shortcuts for thunar, firefox
 - [ ] Allow double click/enter to select a file in a dialog
 - [ ] Display load of the most used CPU core
-- [ ] Grub fix -> mng
+- [x] Grub fix -> mng
 - [ ] Wi-Fi GUI
-- [ ] poweroff, reboot buttons
+- [x] poweroff, reboot buttons
 - [ ] Mail app
 - [ ] Display manager (probably ly)
 - [ ] nvim-ghostty.desktop
