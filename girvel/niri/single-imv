@@ -1,0 +1,17 @@
+#!/bin/bash
+
+PID=$(pgrep -n "^imv")
+
+if [ -n "$PID" ]; then
+    echo "FOUND $PID"
+    imv-msg "$PID" open "$1"
+    imv-msg "$PID" goto 99999
+    
+    WINDOW_ID=$(niri msg -j windows | jq -r '.[] | select(.app_id != null) | select(.app_id | contains("imv")) | .id' | head -n 1)
+    if [ -n "$WINDOW_ID" ]; then
+        niri msg action focus-window --id "$WINDOW_ID"
+    fi
+else
+    echo "NOT FOUND"
+    imv "$@"
+fi

@@ -1,3 +1,5 @@
 #!/usr/bin/bash
-cd /etc/mng/girvel
+cd /etc/mng
+sudo ./install
+cd girvel
 sudo luajit init.lua "$@"

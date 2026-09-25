@@ -512,6 +512,17 @@ mng.icon = function(path)
   return was_updated
 end
 
+--- @param path string
+--- @return boolean
+mng.binary = function(path)
+  local head = path:match("/?([^/]+)$")
+  if mng.user then
+    return mng.symlink("~/.local/bin/"..head, path)
+  else
+    return mng.symlink("/usr/local/bin/"..head, path)
+  end
+end
+
 ----------------------------------------------------------------------------------------------------
 -- [SECTION] Utility
 ----------------------------------------------------------------------------------------------------

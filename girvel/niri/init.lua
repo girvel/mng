@@ -5,7 +5,7 @@ local mng = require("mng")
 mng.package [[
   dbus elogind niri fuzzel Waybar wl-clipboard pipewire wireplumber pavucontrol alsa-pipewire
   alsa-utils xclip xwayland-satellite bluez blueman libspa-bluetooth qdirstat xdg-utils font-awesome
-  qimgv Thunar thunar-archive-plugin tumbler ffmpegthumbnailer gedit awww
+  Thunar thunar-archive-plugin tumbler ffmpegthumbnailer gedit awww
   xdg-desktop-portal xdg-desktop-portal-gnome xdg-desktop-portal-gtk wl-clip-persist xdg-desktop-portal-wlr
 ]]
 mng.service_on("dbus", "bluetoothd", "udevd")
@@ -22,15 +22,23 @@ mng.as_user("girvel", function()
   mng.symlink("~/.local/bin/awww-paperd", "awww-paperd")
 end)
 
--- Alsa-pipewire compatibility enabled
+-- Alsa-pipewire compatibility enabled --
 mng.symlink("/etc/alsa/conf.d/50-pipewire.conf",
             "/usr/share/alsa/alsa.conf.d/50-pipewire.conf")
 
 mng.symlink("/etc/alsa/conf.d/99-pipewire-default.conf",
             "/usr/share/alsa/alsa.conf.d/99-pipewire-default.conf")
 
+-- Fix keyd collision --
 mng.file("/opt/keyd_fix/restart", "sv restart keyd", "770")
 mng.file("/etc/sudoers.d/keyd_fix", "girvel ALL=(root) NOPASSWD: /opt/keyd_fix/restart")
+
+-- Image Viewer --
+mng.package("imv")
+mng.as_user("girvel", function()
+  mng.binary("./single-imv")
+  mng.desktop_file("./imv-single.desktop")
+end)
 
 mng.as_user("girvel", function()
   mng.symlink("~/.desktop", "./.desktop")
