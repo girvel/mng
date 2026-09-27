@@ -4,7 +4,6 @@
 #
 # Read `man 5 sway` for a complete reference.
 
-exec wl-clip-persist --clipboard both
 exec pipewire
 exec wireplumber
 exec pipewire-pulse

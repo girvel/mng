@@ -4,7 +4,7 @@ mng.package [[
   dbus elogind polkit
   sway xwayland-satellite
   pipewire wireplumber alsa-utils pavucontrol
-  fuzzel wl-clipboard wl-clip-persist
+  fuzzel wl-clipboard
   ttf-ubuntu-font-family dejavu-fonts-ttf
   zramen
 ]]
