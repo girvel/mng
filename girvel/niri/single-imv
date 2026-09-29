@@ -3,7 +3,6 @@
 PID=$(pgrep -n "^imv")
 
 if [ -n "$PID" ]; then
-    echo "FOUND $PID"
     imv-msg "$PID" open "$1"
     imv-msg "$PID" goto 99999
     
@@ -12,6 +11,5 @@ if [ -n "$PID" ]; then
         niri msg action focus-window --id "$WINDOW_ID"
     fi
 else
-    echo "NOT FOUND"
     imv "$@"
 fi

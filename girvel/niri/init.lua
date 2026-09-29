@@ -38,6 +38,7 @@ mng.package("imv")
 mng.as_user("girvel", function()
   mng.binary("./single-imv")
   mng.desktop_file("./imv-single.desktop")
+  mng.symlink("~/.config/imv/config", "./imv_config")
 end)
 
 mng.as_user("girvel", function()
