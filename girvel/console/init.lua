@@ -8,11 +8,12 @@ mng.package [[
 ]]
 mng.service_on("socklog-unix", "nanoklogd", "chronyd")
 
--- stop TTY spam
+-- stop TTY spam --
 mng.file("/etc/sysctl.d/20-quiet-console.conf", "kernel.printk = 3 4 1 3\n")
--- if mng.file("/etc/sv/dhcpcd/log/run", "#!/usr/bin/sh\nexec svlogd -tt /var/log/dhcpcd", "774") then
---   mng.cmd("sv restart dhcpcd")
--- end
+
+-- RAM optimization & safety --
+mng.package("earlyoom sysstat zramen")
+mng.service_on("earlyoom", "sysstat", "zramen")
 
 mng.as_user("girvel", function()
   mng.shell("/usr/bin/zsh")

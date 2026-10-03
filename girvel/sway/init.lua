@@ -6,10 +6,9 @@ mng.package [[
   pipewire wireplumber alsa-utils pavucontrol
   fuzzel wl-clipboard
   ttf-ubuntu-font-family dejavu-fonts-ttf
-  zramen
 ]]
 
-mng.service_on("dbus", "polkitd", "zramen")
+mng.service_on("dbus", "polkitd")
 
 mng.as_user("girvel", function()
   mng.symlink("~/.config/sway/config", "./config")
