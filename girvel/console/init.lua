@@ -10,6 +10,7 @@ mng.service_on("socklog-unix", "nanoklogd", "chronyd")
 
 -- stop TTY spam --
 mng.file("/etc/sysctl.d/20-quiet-console.conf", "kernel.printk = 3 4 1 3\n")
+mng.file_sync("/etc/runit/2", "./2")
 
 -- RAM optimization & safety --
 mng.package("earlyoom sysstat zramen")

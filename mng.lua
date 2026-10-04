@@ -272,13 +272,18 @@ end
 
 --- Ensures directory exists
 --- @param path string
+--- @param permissions? string
 --- @return boolean was_updated
-mng.dir = function(path)
-  local will_be_updated = not mng.dir_exists(path)
-  if will_be_updated then
+mng.dir = function(path, permissions)
+  local created = not mng.dir_exists(path)
+  if created then
     mng.cmd("mkdir -p "..path)
   end
-  return will_be_updated
+  local permissions_changed = mng.permissions_get(path) ~= permissions
+  if permissions_changed then
+    mng.permissions_set(path, permissions)
+  end
+  return created or permissions_changed
 end
 
 --- Ensures exact file content

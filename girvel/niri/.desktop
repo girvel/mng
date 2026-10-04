@@ -4,6 +4,6 @@ if [ -z "$DISPLAY" ] && [ "$XDG_VTNR" -eq 1 ]; then
     sudo /opt/keyd_fix/restart  # prevent keyd race condition (a hack)
     export XDG_SESSION_TYPE=wayland
     export XDG_CURRENT_DESKTOP=niri
-    mkdir -p /var/log/niri
-    exec zsh -c 'dbus-run-session niri --session 2>&1 | tee -a /var/log/niri/$(date -I)'
+    mkdir -p ~/.local/state/niri
+    exec zsh -c 'dbus-run-session niri --session 2>&1 | tee -a ~/.local/state/niri/$(date +%Y-%m-%d_%H-%M-%S).log'
 fi
