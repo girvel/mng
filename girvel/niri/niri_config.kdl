@@ -1,12 +1,13 @@
 spawn-sh-at-startup "dbus-update-activation-environment WAYLAND_DISPLAY DISPLAY XDG_CURRENT_DESKTOP"
-spawn-sh-at-startup "pidof pipewire || pipewire"
-spawn-sh-at-startup "pidof wireplumber || (sleep 1; exec wireplumber)"
-spawn-sh-at-startup "pidof pipewire-pulse || (sleep 1; exec pipewire-pulse)"
-spawn-sh-at-startup "pidof awww-daemon || awww-daemon"
+spawn-sh-at-startup "pkill pipewire; pkill wireplumber; pkill pipewire-pulse; pkill awww-daemon; pkill blueman-applet"
+spawn-sh-at-startup "(sleep 0.1; exec pipewire)"
+spawn-sh-at-startup "(sleep 1; exec wireplumber)"
+spawn-sh-at-startup "(sleep 1; exec pipewire-pulse)"
+spawn-sh-at-startup "sleep 0.1; awww-daemon"
 spawn-sh-at-startup "awww img  ~/Pictures/wallpapers/bastion.png"
-spawn-sh-at-startup "sleep 1 && /home/girvel/.local/bin/awww-paperd 2>&1 >/tmp/paperd.log"
-spawn-sh-at-startup "pidof blueman-applet || blueman-applet"
-spawn-sh-at-startup "sleep 2 && waybar"
+spawn-sh-at-startup "sleep 1; /home/girvel/.local/bin/awww-paperd 2>&1 >/tmp/paperd.log"
+spawn-sh-at-startup "blueman-applet"
+spawn-sh-at-startup "sleep 2; waybar"
 
 xwayland-satellite {
     
