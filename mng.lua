@@ -279,7 +279,7 @@ mng.dir = function(path, permissions)
   if created then
     mng.cmd("mkdir -p "..path)
   end
-  local permissions_changed = mng.permissions_get(path) ~= permissions
+  local permissions_changed = (not not permissions) and mng.permissions_get(path) ~= permissions
   if permissions_changed then
     mng.permissions_set(path, permissions)
   end
