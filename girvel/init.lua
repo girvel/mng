@@ -7,6 +7,7 @@ mng.xbps_repo("void-repo-nonfree void-repo-multilib void-repo-multilib-nonfree")
 
 mng.module("hardware", true)
 mng.module("console")
+mng.module("apps/jbmono")
 
 local hostname = mng.hostname_get()
 
@@ -14,7 +15,6 @@ if hostname == "valholl" then
   mng.module("niri")
   mng.module("gui")
   mng.module("virt")
-  mng.module("apps/jbmono")
   mng.module("apps/remote")
   mng.module("apps/autoproxy")
   mng.module("apps/arduino-cli")
@@ -22,12 +22,9 @@ if hostname == "valholl" then
 elseif hostname == "sovngard1" then
   mng.module("niri")
   mng.module("gui")
-  mng.module("apps/jbmono")
 elseif hostname == "gjoll" then
   mng.module("sway")
-  mng.module("apps/jbmono")
   mng.module("apps/arduino-cli")
-  mng.module("apps/sing-box")
 end
 
 mng.finish()
